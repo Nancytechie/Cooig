@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/notice/noticedetailscreen.dart';
 import 'package:cooig_firebase/notice/noticeupload.dart';
 
@@ -15,7 +16,9 @@ import 'package:intl/intl.dart';
 //import 'package:cooig_firebase/foundpage.dart';
 
 class Noticeboard extends StatefulWidget {
-  const Noticeboard({super.key});
+  final dynamic userid;
+
+  const Noticeboard({super.key, required this.userid});
 
   @override
   _NoticeboardState createState() => _NoticeboardState();
@@ -27,7 +30,7 @@ class _NoticeboardState extends State<Noticeboard> {
   late Future<List<Map<String, dynamic>>> _noticesFuture;
   // Get the current user ID from Firebase Authentication
   // final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-  final String userId = 'gklD4of1KLed1Y0lWmA9hRhW6cp1';
+  get userId async => widget.userid;
   @override
   void initState() {
     super.initState();
@@ -210,6 +213,7 @@ class _NoticeboardState extends State<Noticeboard> {
           ],
         ),
         backgroundColor: Colors.transparent,
+        bottomNavigationBar: Nav(userId: widget.userid),
         body: Column(
           children: [
             Padding(
@@ -250,7 +254,9 @@ class _NoticeboardState extends State<Noticeboard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Noticeboard()),
+                                builder: (context) => Noticeboard(
+                                      userid: widget.userid,
+                                    )),
                           );
                         },
                         child: Text(
@@ -281,7 +287,9 @@ class _NoticeboardState extends State<Noticeboard> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const upcomingNotice()),
+                                builder: (context) => upcomingNotice(
+                                      userid: widget.userid,
+                                    )),
                           );
                         },
                         child: Text(

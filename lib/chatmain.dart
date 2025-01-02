@@ -73,7 +73,7 @@ class _mainChatState extends State<mainChat> {
         },
         '/group_screen': (context) => GroupScreen(),
         '/group_chat': (context) => GroupChatScreen(),
-        '/noticeboard': (context) => Noticeboard(),
+        //'/noticeboard': (context) => Noticeboard(),
         '/camera': (context) => CameraScreen(),
         '/imageOptions': (context) {
           final args = ModalRoute.of(context)!.settings.arguments;

@@ -136,7 +136,7 @@ class _MySearchPageState extends State<MySearchPage> {
                       data['full_name'],
                       style: const TextStyle(color: Colors.white),
                     ),
-                    subtitle: Text(data['course_name']),
+                    //subtitle: Text(data['course_name']),
                     onTap: () {},
                   );
                 });

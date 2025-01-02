@@ -5,8 +5,10 @@ import 'dart:io';
 //import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/gif.dart';
+//import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/mapscreen.dart';
 import 'package:cooig_firebase/poll.dart';
+import 'package:cooig_firebase/postpage.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -50,18 +52,22 @@ class _PostScreenState extends State<PostScreen> {
   void initState() {
     super.initState();
     player.positionStream.listen((pos) {
-      setState(() {
-        position = pos;
-        sliderValue = position.inSeconds.toDouble();
-      });
+      if (mounted) {
+        setState(() {
+          position = pos;
+          sliderValue = position.inSeconds.toDouble();
+        });
+      }
     });
     player.durationStream.listen((dur) {
-      setState(() {
-        duration = dur ?? Duration.zero;
-        if (duration != Duration.zero) {
-          sliderValue = position.inSeconds.toDouble();
-        }
-      });
+      if (mounted) {
+        setState(() {
+          duration = dur ?? Duration.zero;
+          if (duration != Duration.zero) {
+            sliderValue = position.inSeconds.toDouble();
+          }
+        });
+      }
     });
   }
 
@@ -131,7 +137,7 @@ class _PostScreenState extends State<PostScreen> {
     return false;
   }
 
-  Future<void> _uploadFile(File file, String userID) async {
+  Future<String> _uploadFile(File file, String userID) async {
     try {
       // Get a reference to Firebase Storage
       final storageRef = FirebaseStorage.instance.ref();
@@ -143,16 +149,10 @@ class _PostScreenState extends State<PostScreen> {
       await fileRef.putFile(file);
 
       // Get the file's download URL
-      final downloadURL = await fileRef.getDownloadURL();
-
-      // Save the URL to Firestore
-      await FirebaseFirestore.instance.collection(userID).add({
-        'userID': userID,
-        'urls': [downloadURL],
-        'timestamp': FieldValue.serverTimestamp(),
-      });
+      return await fileRef.getDownloadURL();
     } catch (e) {
       print('Error uploading file: $e');
+      throw Exception('File upload failed');
     }
   }
 
@@ -236,30 +236,56 @@ class _PostScreenState extends State<PostScreen> {
       String filePath = result.files.single.path!;
       await player.setFilePath(filePath);
       duration = player.duration ?? Duration.zero;
-      setState(() {
-        _audioFiles = result.paths.map((path) => File(path!)).toList();
+      if (mounted) {
+        setState(() {
+          _audioFiles = result.paths.map((path) => File(path!)).toList();
 
-        sliderValue = 0.0;
-        position = Duration.zero;
-        isPlaying = false;
-      });
+          sliderValue = 0.0;
+          position = Duration.zero;
+          isPlaying = false;
+        });
+      }
     }
   }
 
   Future<void> _onPostButtonClick() async {
     String postID = _generatePostID();
-    for (var file in media) {
-      await _uploadFile(file, widget.userId);
+    List<String> mediaUrls = [];
+    String posttext = _postController.text.trim();
+    try {
+      // Upload all media files and get their URLs
+      for (var file in media) {
+        String downloadUrl = await _uploadFile(file, widget.userId);
+        mediaUrls.add(downloadUrl); // Collect the download URLs
+      }
+
+      // Save the post data to Firestore
+      await FirebaseFirestore.instance
+          .collection('posts_upload')
+          .doc(postID)
+          .set({
+        'postID': postID,
+        'userID': widget.userId,
+        //'username': widget.username, // Replace with the actual username
+        'timestamp': FieldValue.serverTimestamp(),
+        'media': mediaUrls, // List of uploaded media URLs
+        'text': posttext,
+      });
+
+      // Clear media and reset state after successful upload
+      setState(() {
+        media.clear();
+        _cameraImages.clear();
+        _galleryFiles.clear();
+        _audioFiles.clear();
+        _postController.clear();
+      });
+
+      Fluttertoast.showToast(msg: "Post uploaded successfully");
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Error uploading post: $e");
+      print(e);
     }
-
-    // Clear media after upload
-    setState(() {
-      media.clear();
-      _cameraImages.clear();
-      _galleryFiles.clear();
-    });
-
-    Fluttertoast.showToast(msg: "Post uploaded successfully");
   }
 
   void _showLocationPermissionsDialog(BuildContext context) {
@@ -401,7 +427,14 @@ class _PostScreenState extends State<PostScreen> {
           ElevatedButton(
             onPressed: () {
               _onPostButtonClick();
-              Navigator.pop(context);
+              if (mounted) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PostPage(userid: widget.userId)),
+                );
+              }
+              //Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF635A8F), // Background color
@@ -418,21 +451,21 @@ class _PostScreenState extends State<PostScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              const Row(
+              Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     backgroundImage:
                         NetworkImage('https://via.placeholder.com/150'),
                     // Replace with user's profile picture
                     radius: 25,
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: TextField(
-                      //controller: _postController,
+                      controller: _postController,
                       maxLines: null,
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
+                      style: const TextStyle(color: Colors.white),
+                      decoration: const InputDecoration(
                         hintText: " What's on your mind ?",
                         hintStyle: TextStyle(color: Colors.grey),
                         border: InputBorder.none,
@@ -493,6 +526,43 @@ class _PostScreenState extends State<PostScreen> {
                       }).toList(),
                     )
                   : Container(),
+              /*
+              _galleryFiles.isNotEmpty
+                  ? SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: _galleryFiles.map((file) {
+                          if (file.path.endsWith('.mp4')) {
+                            int index = _galleryFiles.indexOf(file);
+                            if (index < _chewieControllers.length) {
+                              return Container(
+                                padding: const EdgeInsets.all(5),
+                                child: AspectRatio(
+                                  aspectRatio: aspectRatio,
+                                  child: Chewie(
+                                    controller: _chewieControllers[index],
+                                  ),
+                                ),
+                              );
+                            }
+                          } else if (file.path.endsWith('.jpg') ||
+                              file.path.endsWith('.png')) {
+                            return Container(
+                              padding: const EdgeInsets.all(5),
+                              child: AspectRatio(
+                                aspectRatio: aspectRatio,
+                                child: Image.file(
+                                  file,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            );
+                          }
+                          return Container(); // Handle other file types or skip
+                        }).toList(),
+                      ),
+                    )
+                  : Container(),
               _documentFiles.isNotEmpty
                   ? Wrap(
                       children: _documentFiles.map((file) {
@@ -514,7 +584,7 @@ class _PostScreenState extends State<PostScreen> {
                         );
                       }).toList(),
                     )
-                  : Container(),
+                  : Container(),*/
               _audioFiles.isNotEmpty
                   ? Wrap(
                       children: _audioFiles.map((file) {
@@ -599,8 +669,8 @@ class _PostScreenState extends State<PostScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const MyPollPage(
-                                  userId: '',
+                            builder: (context) => MyPollPage(
+                                  userId: widget.userId,
                                 )),
                       );
                     }),

@@ -60,7 +60,7 @@ class _UploadScreenState extends State<Screen> {
           .collection('users')
           .doc(widget.userId)
           .update({
-        'image': downloadURL,
+        'profilepic': downloadURL,
       });
 
       return;

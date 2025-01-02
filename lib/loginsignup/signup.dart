@@ -27,17 +27,23 @@ class _SignUpState extends State<SignUp> {
   List<String> _courses = [];
   String? _selectedCourse;
 
-  String defaultvalue = "";
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+
   String _errorMessage = ''; // Variable to hold error message
 
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkEmailVerificationStatus();
+    _loadData();
+  }
 
   @override
   void dispose() {
@@ -48,102 +54,16 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
   Future<void> _loadData() async {
     try {
-      // Load college names
-      final String collegeResponse =
-          await rootBundle.loadString('assets/kaggledata/college_name.csv');
-      final List<List<dynamic>> collegeData =
-          const CsvToListConverter().convert(collegeResponse);
-      _collegeNames = collegeData
-          .skip(1)
-          .map((row) => row[0].toString())
-          .toList(); // Extracting only the 'name' column
-
-      // Load courses
-      final String courseResponse =
-          await rootBundle.loadString('assets/kaggledata/Courses_name.csv');
-      final List<List<dynamic>> courseData =
-          const CsvToListConverter().convert(courseResponse);
-      _courses = courseData
-          .skip(1)
-          .map((row) => row[0].toString())
-          .toList(); // Extracting only the 'course' column
-
-      setState(() {});
+      // Load college names and courses...
     } catch (e) {
-      print("Error loading CSV: $e");
+      print("Error loading data: $e");
     }
   }
 
   Future<void> _signUpWithEmail() async {
-    setState(() {
-      _errorMessage = ''; // Clear any previous error messages
-    });
-
-    // Check if all fields are filled and password matches
-    if (_nameController.text.isEmpty) {
-      setState(() {
-        _errorMessage = 'Please enter your full name.';
-      });
-      return;
-    }
-
-    if (_emailController.text.isEmpty) {
-      setState(() {
-        _errorMessage = 'Please enter your email.';
-      });
-      return;
-    }
-
-    if (_passwordController.text.isEmpty) {
-      setState(() {
-        _errorMessage = 'Please enter your password.';
-      });
-      return;
-    }
-
-    if (_confirmPasswordController.text.isEmpty) {
-      setState(() {
-        _errorMessage = 'Please confirm your password.';
-      });
-      return;
-    }
-
-    if (_selectedCollege == null) {
-      setState(() {
-        _errorMessage = 'Please select your college.';
-      });
-      return;
-    }
-
-    if (_selectedCourse == null) {
-      setState(() {
-        _errorMessage = 'Please select your course.';
-      });
-      return;
-    }
-
-    if (_passwordController.text != _confirmPasswordController.text) {
-      setState(() {
-        _errorMessage = 'Passwords do not match.';
-      });
-      return;
-    }
-
-    // Password validation (optional)
-    if (_passwordController.text.length < 6) {
-      setState(() {
-        _errorMessage = 'Password must be at least 6 characters long.';
-      });
-      return;
-    }
+    // Validation logic...
 
     try {
       UserCredential userCredential =
@@ -152,28 +72,32 @@ class _SignUpState extends State<SignUp> {
         password: _passwordController.text,
       );
 
-      // Add user details to Firestore
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'full_name': _nameController.text,
-        'college_name': _selectedCollege,
-        'course_name': _selectedCourse,
-        'email': _emailController.text,
-        'image': '',
-      });
+      User? user = userCredential.user;
+      if (user != null) {
+        await user.sendEmailVerification();
+        Fluttertoast.showToast(
+          msg: "Verification email sent. Please check your inbox.",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+        );
 
-      Fluttertoast.showToast(
-        msg: "Sign up successful!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Verify Your Email"),
+            content: Text(
+                "A verification link has been sent to ${user.email}. Please verify your email to complete the sign-up process."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text("OK"),
+              ),
+            ],
+          ),
+        );
 
-      // Navigate to home page
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const Userprofile()),
-      );
+        _checkEmailVerificationStatus(); // Start polling for verification
+      }
     } catch (e) {
       print("Error signing up: $e");
       Fluttertoast.showToast(
@@ -182,8 +106,55 @@ class _SignUpState extends State<SignUp> {
         gravity: ToastGravity.CENTER,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.0,
       );
+    }
+  }
+
+  Future<void> _checkEmailVerificationStatus() async {
+    User? user = _auth.currentUser;
+
+    if (user != null) {
+      bool emailVerified = false;
+
+      while (!emailVerified) {
+        await Future.delayed(const Duration(seconds: 3)); // Wait 3 seconds
+        await user?.reload(); // Refresh user information
+        user = _auth.currentUser; // Get updated user instance
+        emailVerified = user!.emailVerified;
+
+        if (emailVerified) {
+          Fluttertoast.showToast(
+            msg: "Email verified successfully!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
+
+          // Add user details to Firestore
+          await _firestore.collection('users').doc(user.uid).set({
+            'full_name': _nameController.text,
+            'college_name': _selectedCollege,
+            'course_name': _selectedCourse,
+            'email': user.email,
+            'image': '',
+            'username': '',
+            'branch': '',
+            'bio': '',
+            'profilepic': '',
+            'year': '',
+          });
+
+          // Navigate to Userprofile
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+                builder: (context) => Userprofile(
+                      userid: user!.uid,
+                    )),
+          );
+          break;
+        }
+      }
     }
   }
 
@@ -276,7 +247,9 @@ class _SignUpState extends State<SignUp> {
                       ),
                       const SizedBox(height: 17),
                       DropdownSearch<String>(
-                        items: _collegeNames,
+                        items: [
+                          "Indira Gandhi Delhi Technical University For Women"
+                        ],
                         dropdownDecoratorProps: DropDownDecoratorProps(
                           dropdownSearchDecoration: InputDecoration(
                             enabledBorder: OutlineInputBorder(
@@ -313,7 +286,14 @@ class _SignUpState extends State<SignUp> {
                       ),
                       const SizedBox(height: 17),
                       DropdownSearch<String>(
-                        items: _courses,
+                        items: [
+                          "Bachelors of Technology",
+                          "Masters of Technology",
+                          "Bachelors in Business Administration",
+                          "Masters in Business Administration",
+                          "Bachelors in Architecture",
+                          "Masters in Planning ",
+                        ],
                         dropdownDecoratorProps: const DropDownDecoratorProps(
                           dropdownSearchDecoration: InputDecoration(
                             enabledBorder: OutlineInputBorder(
@@ -327,7 +307,7 @@ class _SignUpState extends State<SignUp> {
                             prefixIcon: Icon(Icons.book),
                             labelStyle: TextStyle(
                               color: Color.fromARGB(255, 148, 147, 147),
-                            ),
+                            ), //add text for others
                           ),
                         ),
                         dropdownBuilder: (context, selectedItem) {

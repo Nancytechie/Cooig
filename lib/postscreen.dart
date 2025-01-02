@@ -1,8 +1,207 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+class PostWidget extends StatelessWidget {
+  final String userName;
+  final String userImage;
+  final String text;
+  final List<String> mediaUrls;
+  final Timestamp timestamp;
+
+  const PostWidget({
+    super.key,
+    required this.userName,
+    required this.userImage,
+    required this.text,
+    required this.mediaUrls,
+    required this.timestamp,
+  });
+
+  String _formatTimestamp(Timestamp timestamp) {
+    final dateTime = timestamp.toDate();
+    return "${dateTime.day}/${dateTime.month}/${dateTime.year} at ${dateTime.hour}:${dateTime.minute}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: userImage.isNotEmpty
+                    ? NetworkImage(userImage)
+                    : const AssetImage('assets/default_avatar.png')
+                        as ImageProvider,
+                radius: 20,
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    userName,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _formatTimestamp(timestamp),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 10),
+          if (mediaUrls.isNotEmpty)
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 200,
+                enlargeCenterPage: true,
+                enableInfiniteScroll: false,
+                aspectRatio: 16 / 9,
+              ),
+              items: mediaUrls.map((url) {
+                if (url.endsWith('.jpg') || url.endsWith('.png')) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Image.network(
+                      url,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
+                  );
+                } else if (url.endsWith('.mp4')) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    child: const Center(
+                      child:
+                          Icon(Icons.videocam, color: Colors.white, size: 50),
+                    ),
+                  );
+                } else {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    child: const Center(
+                      child: Icon(Icons.file_present,
+                          color: Colors.white, size: 50),
+                    ),
+                  );
+                }
+              }).toList(),
+            ),
+        ],
+      ),
+    );
+  }
+}
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 class PostScreen extends StatelessWidget {
   final String userId;
 
@@ -16,7 +215,7 @@ class PostScreen extends StatelessWidget {
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('posts')
+            .collection('posts_upload')
             .doc(userId)
             .collection('userPosts')
             .orderBy('timestamp', descending: true)
@@ -162,3 +361,4 @@ class PostWidget extends StatelessWidget {
     );
   }
 }
+*/

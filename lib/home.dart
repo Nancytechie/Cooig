@@ -4,12 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/academic_section/branch_page.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/chatmain.dart';
-import 'package:cooig_firebase/profile/editprofile.dart';
+//import 'package:cooig_firebase/profile/editprofile.dart';
 import 'package:cooig_firebase/notifications.dart';
 import 'package:cooig_firebase/post.dart';
 import 'package:cooig_firebase/clips.dart'; // Import the ClipsScreen
 import 'package:cooig_firebase/search.dart';
-import 'package:cooig_firebase/upload.dart';
+//import 'package:cooig_firebase/upload.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  final List<ChewieController> _chewieControllers = [];
+  // final List<ChewieController> _chewieControllers = [];
   late Future<DocumentSnapshot> _userDataFuture;
 
   @override
@@ -36,6 +36,7 @@ class _HomepageState extends State<Homepage> {
         FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
   }
 
+/*
   @override
   void dispose() {
     // Dispose all ChewieControllers to free up resources
@@ -44,7 +45,7 @@ class _HomepageState extends State<Homepage> {
     }
     super.dispose();
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,7 +187,7 @@ class _HomepageState extends State<Homepage> {
                         } else {
                           var data =
                               snapshot.data!.data() as Map<String, dynamic>;
-                          String? imageUrl = data['image'] as String?;
+                          String? imageUrl = data['profilepic'] as String?;
 
                           return Row(
                             children: [
@@ -288,6 +289,7 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
               const SizedBox(height: 20),
+              /*
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: 300,
@@ -420,6 +422,7 @@ class _HomepageState extends State<Homepage> {
                   },
                 ),
               ),
+              */
             ],
           ),
         ),
