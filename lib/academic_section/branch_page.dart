@@ -363,44 +363,257 @@ class SemesterPage extends StatelessWidget {
     Map<String, Map<int, Map<String, List<Map<String, String>>>>> data = {
       'CSE-AI': {
         1: {
-          'Math': [
-            {'Unit 1': 'https://link-to-unit-1'},
-            {'Unit 2': 'https://link-to-unit-2'},
+          // First Semester
+          'Probability and Statistics': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Physics': [
-            {'Unit 1': 'https://link-to-physics-unit-1'},
-            {'Unit 2': 'https://link-to-physics-unit-2'},
+          'Environmental Sciences': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Programming': [
-            {'Unit 1': 'https://programming-unit-1'},
+          'Programming with Python': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'IT Workshop': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Communication Skills': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Applied Mathematics': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Applied Physics': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
         },
         2: {
-          'Data Structures': [
-            {'Unit 1': 'https://ds-unit-1'},
-            {'Unit 2': 'https://ds-unit-2'},
+          // Second Semester
+          'Introduction to Data Science': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Algorithms': [
-            {'Unit 1': 'https://algorithms-unit-1'},
+          'Soft Skills and Personality Development': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Data Structures': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
         },
         3: {
-          'AI Fundamentals': [
-            {'Unit 1': 'https://ai-unit-1'},
+          // Third Semester
+          'Artificial Intelligence': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Mathematics': [
-            {'Unit 1': 'https://math-unit-1'},
+          'Data Structures': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Discrete Structures': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Software Engineering': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Material Science and Engineering': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Numerical Methods': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
         },
         4: {
-          'Machine Learning': [
-            {'Unit 1': 'https://ml-unit-1'},
+          // Fourth Semester
+          'Computer Networks': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Probability and Statistics': [
-            {'Unit 1': 'https://stats-unit-1'},
+          'Operating Systems': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Design and Analysis of Algorithms': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Optimization Techniques and Decision Making': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Disaster Management': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
         },
-        // Continue adding subjects for semesters 5-8
+        5: {
+          // Fifth Semester
+          'Machine Learning': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Cyber Security': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Deep Learning – I': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Theory of Computation': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Professional Ethics and Human Values': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        6: {
+          // Sixth Semester
+          'Natural Language Processing': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Deep Learning – II': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Departmental Elective – I': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Departmental Elective – II': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Digital Image Processing': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Management Elective': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        7: {
+          // Seventh Semester
+          'Recent Trends in AI': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Big Data Analytics': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Multimodal Data Analysis': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        8: {
+          // Eighth Semester
+          'Creativity, Innovation and Entrepreneurship': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Departmental Elective – V': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Departmental Elective – VI': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
       },
       'CSE': {
         1: {
