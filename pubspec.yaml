@@ -138,6 +138,7 @@ dependencies:
   #pro_image_editor: ^3.0.0-dev.3
   pro_image_editor: ^5.4.1
   flutter_image_compress: ^2.3.0
+  sliding_up_panel: ^2.0.0+1
 
 
 
