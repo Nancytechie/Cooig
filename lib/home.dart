@@ -9,12 +9,8 @@ import 'package:cooig_firebase/notifications.dart';
 import 'package:cooig_firebase/post.dart';
 import 'package:cooig_firebase/clips.dart'; // Import the ClipsScreen
 import 'package:cooig_firebase/search.dart';
-<<<<<<< HEAD
-//import 'package:cooig_firebase/upload.dart';
-=======
 import 'package:cooig_firebase/upload.dart';
 import 'package:google_fonts/google_fonts.dart';
->>>>>>> 81516a68eb047976e7051450d128bdbc35e373dd
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:flutter/material.dart';
