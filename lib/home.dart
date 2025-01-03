@@ -4,14 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/academic_section/branch_page.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/chatmain.dart';
-import 'package:cooig_firebase/comments/home_comment_screen.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
 import 'package:cooig_firebase/notifications.dart';
 import 'package:cooig_firebase/post.dart';
 import 'package:cooig_firebase/clips.dart'; // Import the ClipsScreen
 import 'package:cooig_firebase/search.dart';
+<<<<<<< HEAD
+//import 'package:cooig_firebase/upload.dart';
+=======
 import 'package:cooig_firebase/upload.dart';
 import 'package:google_fonts/google_fonts.dart';
+>>>>>>> 81516a68eb047976e7051450d128bdbc35e373dd
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +32,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  final List<ChewieController> _chewieControllers = [];
+  // final List<ChewieController> _chewieControllers = [];
   late Future<DocumentSnapshot> _userDataFuture;
   final PanelController _panelController = PanelController();
 
@@ -40,6 +43,7 @@ class _HomepageState extends State<Homepage> {
         FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
   }
 
+/*
   @override
   void dispose() {
     // Dispose all ChewieControllers to free up resources
@@ -48,7 +52,7 @@ class _HomepageState extends State<Homepage> {
     }
     super.dispose();
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,85 +137,68 @@ class _HomepageState extends State<Homepage> {
         ),
         // Pass userId to the NavigationDrawer
         bottomNavigationBar: Nav(userId: widget.userId),
-        body: SlidingUpPanel(
-            controller: _panelController,
-            maxHeight: MediaQuery.of(context).size.height * 0.95,
-            minHeight: 0.0,
-            panel: CommentSection(
-              userId: widget.userId,
-              username: "bbc", //change wit user name
-            ),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(
-                  30.0), // Rounded corners for the top-left corner
-              topRight: Radius.circular(
-                  30.0), // Rounded corners for the top-right corner
-            ),
-            body: SingleChildScrollView(
-                child: IntrinsicHeight(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: InkWell(
-                        splashColor: Colors.blue.withOpacity(0.3),
-                        highlightColor: Colors.transparent,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    PostScreen(userId: widget.userId)),
-                          );
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(top: 35.0),
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          width: 320,
-                          height: 90,
-                          decoration: ShapeDecoration(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
+        body: SingleChildScrollView(
+            child: IntrinsicHeight(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Center(
+              child: InkWell(
+                splashColor: Colors.blue.withOpacity(0.3),
+                highlightColor: Colors.transparent,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            PostScreen(userId: widget.userId)),
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(top: 35.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  width: 320,
+                  height: 90,
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: FutureBuilder<DocumentSnapshot>(
+                    future: _userDataFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError ||
+                          !snapshot.hasData ||
+                          !snapshot.data!.exists) {
+                        return const Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 5.0),
+                              child: CircleAvatar(
+                                radius: 30,
+                                backgroundImage: NetworkImage(
+                                    'https://via.placeholder.com/150'),
+                              ),
                             ),
-                          ),
-                          child: FutureBuilder<DocumentSnapshot>(
-                            future: _userDataFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
-                              } else if (snapshot.hasError ||
-                                  !snapshot.hasData ||
-                                  !snapshot.data!.exists) {
-                                return const Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 5.0),
-                                      child: CircleAvatar(
-                                        radius: 30,
-                                        backgroundImage: NetworkImage(
-                                            'https://via.placeholder.com/150'),
-                                      ),
-                                    ),
-                                    SizedBox(width: 16),
-                                    Text(
-                                      "What's on your head?",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 17,
-                                        fontFamily: 'Arial',
-                                        fontWeight: FontWeight.w400,
-                                        height: 1.1,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              } else {
-                                var data = snapshot.data!.data()
-                                    as Map<String, dynamic>;
-                                String? imageUrl = data['image'] as String?;
+                            SizedBox(width: 16),
+                            Text(
+                              "What's on your head?",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontFamily: 'Arial',
+                                fontWeight: FontWeight.w400,
+                                height: 1.1,
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        var data =
+                            snapshot.data!.data() as Map<String, dynamic>;
+                        String? imageUrl = data['image'] as String?;
 
                                 return Row(
                                   children: [
@@ -287,60 +274,56 @@ class _HomepageState extends State<Homepage> {
                     //         ),
                     //       ),
 
-                    //       ...List.generate(
-                    //         20,
-                    //         (index) => Container(
-                    //           height: 56.0,
-                    //           width: 56.0,
-                    //           margin: EdgeInsets.only(
-                    //             left: 30.0,
-                    //             right: index == 19 ? 30.0 : 0.0,
-                    //           ),
-                    //           alignment: Alignment.center,
-                    //           decoration: BoxDecoration(
-                    //             shape: BoxShape.circle,
-                    //             border: Border.all(
-                    //                 width: 2.0, color: Colors.purpleAccent),
-                    //             image: const DecorationImage(
-                    //               image:
-                    //                   NetworkImage('https://via.placeholder.com/150'),
-                    //               fit: BoxFit.cover,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    const SizedBox(height: 50),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 300,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0, vertical: 10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.13),
-                        borderRadius: BorderRadius.circular(
-                            20), // Adjust the value as needed
-                      ),
-                      child: FutureBuilder<DocumentSnapshot>(
-                          future: _userDataFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            } else if (snapshot.hasError ||
-                                !snapshot.hasData ||
-                                !snapshot.data!.exists) {
-                              return const Center(
-                                  child: Text('Error fetching user data'));
-                            } else {
-                              var data =
-                                  snapshot.data!.data() as Map<String, dynamic>;
-                              String? profileImageUrl =
-                                  data['image'] as String?;
-                              String? userName = data['full_name'] as String?;
+            //       ...List.generate(
+            //         20,
+            //         (index) => Container(
+            //           height: 56.0,
+            //           width: 56.0,
+            //           margin: EdgeInsets.only(
+            //             left: 30.0,
+            //             right: index == 19 ? 30.0 : 0.0,
+            //           ),
+            //           alignment: Alignment.center,
+            //           decoration: BoxDecoration(
+            //             shape: BoxShape.circle,
+            //             border: Border.all(
+            //                 width: 2.0, color: Colors.purpleAccent),
+            //             image: const DecorationImage(
+            //               image:
+            //                   NetworkImage('https://via.placeholder.com/150'),
+            //               fit: BoxFit.cover,
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            const SizedBox(height: 50),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 300,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.13),
+                borderRadius:
+                    BorderRadius.circular(20), // Adjust the value as needed
+              ),
+              child: FutureBuilder<DocumentSnapshot>(
+                  future: _userDataFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError ||
+                        !snapshot.hasData ||
+                        !snapshot.data!.exists) {
+                      return const Center(
+                          child: Text('Error fetching user data'));
+                    } else {
+                      var data = snapshot.data!.data() as Map<String, dynamic>;
+                      String? profileImageUrl = data['image'] as String?;
+                      String? userName = data['full_name'] as String?;
 
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -505,67 +488,51 @@ class _HomepageState extends State<Homepage> {
 
                                   // User Profile and Icons (Avatar + Username + Save + Calendar + Share)
 
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundImage: profileImageUrl !=
-                                                    null &&
-                                                profileImageUrl.isNotEmpty
-                                            ? NetworkImage(profileImageUrl)
-                                            : const AssetImage(
-                                                    'assets/default_avatar.png')
-                                                as ImageProvider,
-                                        radius: 22,
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                        userName ?? 'Anonymous',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      IconButton(
-                                          icon: const Icon(
-                                              Icons.favorite_border_outlined,
-                                              color: Colors.white),
-                                          onPressed: () {}),
-                                      IconButton(
-                                        icon: const Icon(
-                                            Icons.chat_bubble_outline,
-                                            color: Colors.white),
-                                        onPressed: () =>
-                                            _panelController.open(),
-                                        // onPressed: () {
-                                        //   // Navigator.push(
-                                        //   //   context,
-                                        //   //   MaterialPageRoute(
-                                        //   //     builder: (context) => CommentSection(
-                                        //   //       userId:
-                                        //   //          widget.userId, // Pass the current user's ID
-                                        //   //       username:
-                                        //   //           userName, // Pass the current user's username
-                                        //       ),
-                                        //     ),
-                                        //   );
-                                        // },
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.near_me,
-                                            color: Colors.white),
-                                        onPressed: () {},
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            }
-                          }),
-                    )
-                  ]),
-            ))));
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: profileImageUrl != null &&
+                                        profileImageUrl.isNotEmpty
+                                    ? NetworkImage(profileImageUrl)
+                                    : const AssetImage(
+                                            'assets/default_avatar.png')
+                                        as ImageProvider,
+                                radius: 22,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                userName ?? 'Anonymous',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                  icon: const Icon(
+                                      Icons.favorite_border_outlined,
+                                      color: Colors.white),
+                                  onPressed: () {}),
+                              IconButton(
+                                icon: const Icon(Icons.chat_bubble_outline,
+                                    color: Colors.white),
+                                onPressed: () {},
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.near_me,
+                                    color: Colors.white),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    }
+                  }),
+            )
+          ]),
+        )));
   }
 }

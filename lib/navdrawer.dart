@@ -6,8 +6,6 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 
 /*
-drawer: NavigationDrawer(
-          userId: widget.userId),
           */
 
 class NavigationDrawer extends StatelessWidget {
@@ -54,7 +52,7 @@ class NavigationDrawer extends StatelessWidget {
                             snapshot.data!.data() as Map<String, dynamic>;
                         String? email = data['course_name'] as String?;
                         String? name = data['full_name'] as String?;
-                        String? imageUrl = data['image'] as String?;
+                        String? imageUrl = data['profile pic'] as String?;
 
                         return UserAccountsDrawerHeader(
                           accountEmail: Text(email ?? "No Course Available"),
@@ -81,7 +79,9 @@ class NavigationDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const EditProfilePage()),
+                      builder: (context) => EditProfilePage(
+                            userid: null,
+                          )),
                 );
               },
             ),

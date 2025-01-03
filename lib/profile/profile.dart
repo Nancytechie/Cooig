@@ -4,17 +4,22 @@ import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
 import 'package:cooig_firebase/profile/societydetails.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cooig_firebase/upload.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:line_icons/line_icons.dart';
 
 // ignore: depend_on_referenced_packages
-
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final dynamic userid;
+
+  const ProfilePage({super.key, required this.userid});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -22,19 +27,19 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   File? _bannerImage;
-  File? _profileImage;
+  File? _profilepic;
   String? bannerImageUrl;
-  String? profileImageUrl;
+  String? profilepic;
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _bioController = TextEditingController();
   bool _isEditing = false;
   TabController? _tabController;
-
+//profile
   String? username;
   String? bio;
   String? branch;
@@ -71,7 +76,7 @@ class _ProfilePageState extends State<ProfilePage>
       try {
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .doc(widget.userid)
             .update({
           'bonds': _bondsCount - 1,
           'isBonded': false,
@@ -88,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage>
       try {
         await FirebaseFirestore.instance
             .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .doc(widget.userid)
             .update({
           'bonds': _bondsCount + 1,
           'isBonded': true,
@@ -117,71 +122,128 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   // Fetch user data from Firestore
-  Future<void> _fetchUserData() async {
-    DocumentSnapshot userDoc =
-        await _firestore.collection('users').doc(_auth.currentUser!.uid).get();
-
-    setState(() {
-      username = userDoc['username'] ?? 'Username';
-      bio = userDoc['bio'] ?? 'Bio goes here';
-      branch = userDoc['branch'] ?? 'Branch';
-      year = userDoc['year'] ?? 'Year';
-      _usernameController.text = username ?? '';
-      _bioController.text = bio ?? '';
-      _bondsCount = userDoc['bonds'] ?? 0;
-      // Fetching image URLs (if available)
-      bannerImageUrl = userDoc['bannerImageUrl'];
-      profileImageUrl = userDoc['profileImageUrl'];
-    });
-  }
-
-  // Upload image to Firebase Storage
-  Future<void> _uploadImageToFirebase(File imageFile, bool isBanner) async {
+  Future<void> _uploadImageToFirebase(File image, bool isBanner) async {
     try {
-      String path =
-          'user_${_auth.currentUser!.uid}/${isBanner ? "banner" : "profile"}';
-      UploadTask uploadTask = _storage.ref(path).putFile(imageFile);
+      final String fileName =
+          '${widget.userid}_${isBanner ? 'banner' : 'profile'}.jpg';
+      final ref = _storage.ref().child('user_images').child(fileName);
 
+      // Upload image to Firebase Storage
+      UploadTask uploadTask = ref.putFile(image);
       TaskSnapshot snapshot = await uploadTask;
+
+      // Get the download URL
       String downloadUrl = await snapshot.ref.getDownloadURL();
 
-      await _firestore.collection('users').doc(_auth.currentUser!.uid).update({
-        isBanner ? 'bannerImageUrl' : 'profileImageUrl': downloadUrl,
+      // Update Firestore with the new URL
+      await _firestore.collection('users').doc(widget.userid).update({
+        isBanner ? 'bannerImageUrl' : 'profilepic': downloadUrl,
       });
 
+      // Update state to reflect changes
       setState(() {
         if (isBanner) {
           bannerImageUrl = downloadUrl;
         } else {
-          profileImageUrl = downloadUrl;
+          profilepic = downloadUrl;
         }
       });
+
+      print("Image uploaded and URL updated successfully.");
     } catch (e) {
-      print('Failed to upload image: $e');
+      print("Error uploading image: $e");
     }
   }
 
+  Future<void> _fetchUserData() async {
+    try {
+      // Fetch user document from Firestore
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(widget.userid).get();
+
+      if (userDoc.exists) {
+        // Safely access user data
+        Map<String, dynamic>? userData =
+            userDoc.data() as Map<String, dynamic>?;
+
+        setState(() {
+          // Fetch and set the required fields with fallbacks
+          username = userData?['username'] ?? "Username";
+          bio = userData?['bio'] ?? "Bio goes here";
+          branch = userData?['branch'] ?? "Branch";
+          year = userData?['year'] ?? "Year";
+          _bondsCount = userData?['bonds'] ?? 0;
+
+          // Text controllers for editable fields
+          _usernameController.text = username!;
+          _bioController.text = bio!;
+
+          // Image URLs
+          bannerImageUrl = userData?['bannerImageUrl'] ?? null;
+          profilepic = userData?['profilepic'] ?? null;
+        });
+      } else {
+        // Handle case where the document does not exist
+        setState(() {
+          username = "Username";
+          bio = "Bio goes here";
+          branch = "Branch";
+          year = "Year";
+          _bondsCount = 0;
+
+          _usernameController.text = username!;
+          _bioController.text = bio!;
+
+          bannerImageUrl = null;
+          profilepic = null;
+        });
+      }
+    } catch (e) {
+      // Handle errors
+      print("Error fetching user data: $e");
+      setState(() {
+        username = "Username";
+        bio = "Bio goes here";
+        branch = "Branch";
+        year = "Year";
+        _bondsCount = 0;
+
+        _usernameController.text = username!;
+        _bioController.text = bio!;
+
+        bannerImageUrl = null;
+        profilepic = null;
+      });
+    }
+  }
+
+/*
   // Navigate to the Edit Profile Page
   void _navigateToEditProfile() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProfilePage(),
+        builder: (context) => EditProfilePage(
+          userid: widget.userid,
+        ),
       ),
     );
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Cooig',
         textSize: 30.0,
+        //iconTheme: const IconThemeData(color: Colors.white),
       ),
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.black,
+      bottomNavigationBar: Nav(userId: widget.userid),
+      drawer: NavigationDrawer(userId: widget.userid),
       body: Column(
         children: [
-          // Banner and Profile Image Section
+          // Banner and Profile Image Sections
           Stack(
             clipBehavior: Clip.none,
             alignment: Alignment.center,
@@ -204,10 +266,9 @@ class _ProfilePageState extends State<ProfilePage>
                   child: CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.white,
-                    backgroundImage: profileImageUrl != null
-                        ? NetworkImage(profileImageUrl!)
-                        : null,
-                    child: profileImageUrl == null
+                    backgroundImage:
+                        profilepic != null ? NetworkImage(profilepic!) : null,
+                    child: profilepic == null
                         ? Icon(Icons.person, size: 50, color: Colors.grey[700])
                         : null,
                   ),
@@ -223,11 +284,11 @@ class _ProfilePageState extends State<ProfilePage>
                 right: 14,
                 child: _buildCircularBox(year ?? 'Year'),
               ),
-              Positioned(
+              /*Positioned(
                 top: 10,
                 right: 10,
                 child: GestureDetector(
-                  onTap: _navigateToEditProfile,
+                  onTap: () {},
                   child: Row(
                     children: [
                       Icon(Icons.edit, color: Colors.white),
@@ -236,7 +297,7 @@ class _ProfilePageState extends State<ProfilePage>
                     ],
                   ),
                 ),
-              ),
+              ),*/
             ],
           ),
 
@@ -421,7 +482,7 @@ class _ProfilePageState extends State<ProfilePage>
         if (isBanner) {
           _bannerImage = File(pickedImage.path);
         } else {
-          _profileImage = File(pickedImage.path);
+          _profilepic = File(pickedImage.path);
         }
       });
 
@@ -429,8 +490,187 @@ class _ProfilePageState extends State<ProfilePage>
       if (isBanner) {
         _uploadImageToFirebase(_bannerImage!, true);
       } else {
-        _uploadImageToFirebase(_profileImage!, false);
+        _uploadImageToFirebase(_profilepic!, false);
       }
     }
+  }
+}
+
+class NavigationDrawer extends StatelessWidget {
+  final String userId;
+
+  const NavigationDrawer({super.key, required this.userId});
+
+  @override
+  Widget build(BuildContext context) => Drawer(
+        backgroundColor: Colors.transparent,
+        child: ListView(
+          padding: const EdgeInsets.all(0),
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+              padding: const EdgeInsets.all(0),
+              child: Center(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: FutureBuilder<DocumentSnapshot>(
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(userId)
+                        .get(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError ||
+                          !snapshot.hasData ||
+                          !snapshot.data!.exists) {
+                        return UserAccountsDrawerHeader(
+                          accountEmail: const Text(""),
+                          accountName: const Text(""),
+                          currentAccountPicture: buildProfilePicture(
+                              'https://via.placeholder.com/150', context),
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                        );
+                      } else {
+                        var data =
+                            snapshot.data!.data() as Map<String, dynamic>;
+                        String? email = data['course_name'] as String?;
+                        String? name = data['full_name'] as String?;
+                        String? imageUrl = data['profilepic'] as String?;
+
+                        return UserAccountsDrawerHeader(
+                          accountEmail: Text(email ?? "No Course Available"),
+                          accountName: Text(name ?? "No Name Available"),
+                          currentAccountPicture: buildProfilePicture(
+                            imageUrl ?? 'https://via.placeholder.com/150',
+                            context,
+                          ),
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Iconsax.user_edit, color: Colors.white),
+              title: const Text("Edit Profile",
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditProfilePage(
+                      userid: userId,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading:
+                  const Icon(CupertinoIcons.group_solid, color: Colors.white),
+              title: const Text(
+                "Create Society",
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SocietyDetailsPage(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Iconsax.security_safe, color: Colors.white),
+              title:
+                  const Text("Privacy", style: TextStyle(color: Colors.white)),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Icons.bookmark, color: Colors.white),
+              title: const Text("Bookmarked",
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(LineIcons.handshake, color: Colors.white),
+              title: const Text("Help", style: TextStyle(color: Colors.white)),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(LineIcons.cog, color: Colors.white),
+              title:
+                  const Text("Settings", style: TextStyle(color: Colors.white)),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: const Icon(Iconsax.logout, color: Colors.white),
+              title:
+                  const Text("Log out", style: TextStyle(color: Colors.white)),
+              onTap: () {},
+            ),
+          ],
+        ),
+      );
+
+  Widget buildProfilePicture(String imageUrl, BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            width: 100, // Adjust size as needed
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(width: 2.0, color: Colors.purpleAccent),
+            ),
+            child: CircleAvatar(
+              backgroundImage: NetworkImage(imageUrl),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 3, // Adjust as needed to position the icon
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Screen(
+                          userId: userId,
+                        )), // Replace with your screen
+              );
+            },
+            child: Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                border: Border.all(width: 2.0, color: const Color(0xFF5334C7)),
+              ),
+              child: const Icon(
+                Icons.add,
+                color: Colors.purple,
+                size: 10,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

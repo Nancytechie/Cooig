@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooig_firebase/home.dart';
+//import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/pollpage.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -247,8 +247,7 @@ class PollPage extends State<MyPollPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const PollScreen(
-                        userId: 'gklD4of1KLed1Y0lWmA9hRhW6cp1')),
+                    builder: (context) => PollScreen(userId: widget.userId)),
               );
             },
             style: ElevatedButton.styleFrom(

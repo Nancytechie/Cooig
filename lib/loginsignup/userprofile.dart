@@ -2,22 +2,25 @@ import 'package:cooig_firebase/background.dart';
 import 'package:cooig_firebase/home.dart';
 //import 'package:cooig_firebase/lostpage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 
+//userid created should be passed
 class Userprofile extends StatefulWidget {
-  const Userprofile({super.key});
+  final dynamic userid;
+
+  const Userprofile({super.key, required this.userid});
 
   @override
   _UserprofileState createState() => _UserprofileState();
 }
 
 class _UserprofileState extends State<Userprofile> {
-  final _auth = FirebaseAuth.instance;
+  //final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   final _picker = ImagePicker();
   File? _imageFile;
@@ -53,35 +56,55 @@ class _UserprofileState extends State<Userprofile> {
     });
 
     try {
-      User? user = _auth.currentUser;
-      String userid = _auth.currentUser!.uid;
-      if (user == null) throw 'No user logged in';
+      if (widget.userid == null) throw 'No user logged in';
 
+      // Fetch existing user data to preserve it
+      final userDoc =
+          await _firestore.collection('users').doc(widget.userid).get();
+      Map<String, dynamic> existingData =
+          userDoc.exists ? userDoc.data() ?? {} : {};
+
+      // Upload the new profile picture if selected
       String? imageUrl;
       if (_imageFile != null) {
         final storageRef = FirebaseStorage.instance
             .ref()
-            .child('user_profile_pics/${user.uid}.jpg');
+            .child('user_profile_pics/${widget.userid}.jpg');
         await storageRef.putFile(_imageFile!);
         imageUrl = await storageRef.getDownloadURL();
       }
 
-      await _firestore.collection('users').doc(user.uid).set({
-        'username': _username ?? '',
-        'branch': _branch ?? '',
-        'bio': _bio ?? '',
-        'profile_pic': imageUrl ?? '',
-        'year': defaultvalue,
-      }, SetOptions(merge: true));
+      // Merge new data with existing data
+      final updatedData = {
+        'username': _username ?? existingData['username'] ?? '',
+        'branch': _branch ?? existingData['branch'] ?? '',
+        'bio': _bio ?? existingData['bio'] ?? '',
+        'profilepic': imageUrl ?? existingData['profilepic'] ?? '',
+        'year':
+            defaultvalue.isNotEmpty ? defaultvalue : existingData['year'] ?? '',
+        // Preserve other fields like email or any other data
+        'full_name': existingData['full_name'],
+        'college_name': existingData['college_name'],
+        'course_name': existingData['course_name'],
+        'email': existingData['email'],
+      };
+
+      // Save the merged data
+      await _firestore
+          .collection('users')
+          .doc(widget.userid)
+          .set(updatedData, SetOptions(merge: true));
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Details saved successfully!')),
       );
 
+      // Navigate to the homepage
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-            builder: (context) =>
-                Homepage(userId: userid)), // Replace with your home page
+          builder: (context) =>
+              Homepage(userId: widget.userid), // Replace with your home page
+        ),
       );
     } catch (e) {
       _showErrorSnackBar('Failed to save details: $e');
@@ -92,6 +115,53 @@ class _UserprofileState extends State<Userprofile> {
     }
   }
 
+/*
+  Future<void> _saveDetails() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // User? user = _auth.currentUser;
+      // String userid = userid;
+      // String userid = widget.userid;
+      if (widget.userid == null) throw 'No user logged in';
+
+      String? imageUrl;
+      if (_imageFile != null) {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('user_profile_pics/${widget.userid}.jpg');
+        await storageRef.putFile(_imageFile!);
+        imageUrl = await storageRef.getDownloadURL();
+      }
+
+      await _firestore.collection('users').doc(widget.userid).set({
+        'username': _username ?? '',
+        'branch': _branch ?? '',
+        'bio': _bio ?? '',
+        'profilepic': imageUrl ?? '',
+        'year': defaultvalue,
+      }, SetOptions(merge: true));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Details saved successfully!')),
+      );
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) =>
+                Homepage(userId: widget.userid)), // Replace with your home page
+      );
+    } catch (e) {
+      _showErrorSnackBar('Failed to save details: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+*/
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
@@ -139,6 +209,40 @@ class _UserprofileState extends State<Userprofile> {
                     Stack(
                       alignment: Alignment.center,
                       children: [
+                        /* GestureDetector(
+                          onTap: () => _pickImage(true),
+                          child: Container(
+                            width: double.infinity,
+                            height: 150,
+                            color: Colors.grey[300],
+                            child: bannerImageUrl != null
+                                ? Image.network(bannerImageUrl!,
+                                    fit: BoxFit.cover)
+                                : Icon(Icons.camera_alt,
+                                    color: Colors.grey[700]),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+
+                        // Profile Image
+                        Positioned(
+                          bottom: -50,
+                          child: GestureDetector(
+                            onTap: () => _pickImage(false),
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.white,
+                              backgroundImage: profilepic != null
+                                  ? NetworkImage(profilepic!)
+                                  : null,
+                              child: profilepic == null
+                                  ? Icon(Icons.person,
+                                      size: 50, color: Colors.grey[700])
+                                  : null,
+                            ),
+                          ),
+                        ),
+*/
                         CircleAvatar(
                           radius: 50,
                           backgroundColor: Colors.grey[300],
@@ -277,3 +381,4 @@ class _UserprofileState extends State<Userprofile> {
     );
   }
 }
+//unique username for all 

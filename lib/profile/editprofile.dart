@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -8,21 +7,23 @@ import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  final dynamic userid;
+
+  const EditProfilePage({super.key, required this.userid});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+//  final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   File? _bannerImage;
-  File? _profileImage;
+  File? _profilepic;
   String? bannerImageUrl;
-  String? profileImageUrl;
+  String? profilepic;
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _bioController = TextEditingController();
   TextEditingController _yearController = TextEditingController();
@@ -41,7 +42,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _fetchUserData() async {
     DocumentSnapshot userDoc =
-        await _firestore.collection('users').doc(_auth.currentUser!.uid).get();
+        await _firestore.collection('users').doc(widget.userid).get();
 
     setState(() {
       username = userDoc['username'] ?? 'Username';
@@ -53,28 +54,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _yearController.text = year ?? '';
       _branchController.text = branch ?? '';
       bannerImageUrl = userDoc['bannerImageUrl'];
-      profileImageUrl = userDoc['profileImageUrl'];
+      profilepic = userDoc['profilepic'];
     });
   }
 
   Future<void> _uploadImageToFirebase(File imageFile, bool isBanner) async {
     try {
-      String path =
-          'user_${_auth.currentUser!.uid}/${isBanner ? "banner" : "profile"}';
+      String path = 'user_${widget.userid}/${isBanner ? "banner" : "profile"}';
       UploadTask uploadTask = _storage.ref(path).putFile(imageFile);
 
       TaskSnapshot snapshot = await uploadTask;
       String downloadUrl = await snapshot.ref.getDownloadURL();
 
-      await _firestore.collection('users').doc(_auth.currentUser!.uid).update({
-        isBanner ? 'bannerImageUrl' : 'profileImageUrl': downloadUrl,
+      await _firestore.collection('users').doc(widget.userid).update({
+        isBanner ? 'bannerImageUrl' : 'profilepic': downloadUrl,
       });
 
       setState(() {
         if (isBanner) {
           bannerImageUrl = downloadUrl;
         } else {
-          profileImageUrl = downloadUrl;
+          profilepic = downloadUrl;
         }
       });
     } catch (e) {
@@ -84,7 +84,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _saveChanges() async {
     try {
-      await _firestore.collection('users').doc(_auth.currentUser!.uid).update({
+      await _firestore.collection('users').doc(widget.userid).update({
         'username': _usernameController.text,
         'bio': _bioController.text,
         'year': _yearController.text,
@@ -110,10 +110,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Profile', style: GoogleFonts.lexend()),
-        backgroundColor: const Color.fromARGB(255, 9, 9, 9),
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white, // Set text color to white
       ),
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.black,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -141,10 +141,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   child: CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.white,
-                    backgroundImage: profileImageUrl != null
-                        ? NetworkImage(profileImageUrl!)
-                        : null,
-                    child: profileImageUrl == null
+                    backgroundImage:
+                        profilepic != null ? NetworkImage(profilepic!) : null,
+                    child: profilepic == null
                         ? Icon(Icons.person, size: 50, color: Colors.grey[700])
                         : null,
                   ),

@@ -5,6 +5,7 @@ import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/loginsignup/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -19,7 +20,7 @@ class _LoginState extends State<Login> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+  bool passwordVisible = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String _errorMessage = ''; // Variable to hold error message
@@ -65,43 +66,55 @@ class _LoginState extends State<Login> {
                   Homepage(userId: userid)), // Replace with your desired page
         );
       } else {
-        setState(() {
-          _errorMessage = 'Login failed. Please try again later.';
-        });
+        Fluttertoast.showToast(
+          msg: 'Login failed. Please try again later.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
       }
     } on FirebaseAuthException catch (e) {
       // Handling specific Firebase authentication errors
       if (e.code == 'user-not-found') {
-        setState(() {
-          _errorMessage =
-              'No user found for that email. Please check the email address.';
-        });
-      } else if (e.code == 'wrong-password') {
-        setState(() {
-          _errorMessage = 'Incorrect password. Please try again.';
-        });
+        Fluttertoast.showToast(
+          msg: 'No user found for that email. Please check the email address.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+      } else if (e.code == 'invalid-credential') {
+        Fluttertoast.showToast(
+          msg: 'Incorrect password. Please try again.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
       } else if (e.code == 'invalid-email') {
-        setState(() {
-          _errorMessage =
-              'The email address is not valid. Please check the format.';
-        });
+        Fluttertoast.showToast(
+          msg: 'The email address is not valid. Please check the format.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
       } else if (e.code == 'too-many-requests') {
-        setState(() {
-          _errorMessage = 'Too many login attempts. Please try again later.';
-        });
+        Fluttertoast.showToast(
+          msg: 'Too many login attempts. Please try again later.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
       } else {
-        setState(() {
-          _errorMessage =
-              'An unexpected error occurred. Please try again later.';
-        });
+        Fluttertoast.showToast(
+          msg: 'An unexpected error occurred. Please try again later.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
       }
       print(
-          "Firebase Auth Error: ${e.message}"); // Optional: for debugging purposes
+          "Firebase Auth Error: ${e.code}"); // Optional: for debugging purposes
     } catch (e) {
       // Handling other types of errors (e.g., network connectivity)
-      setState(() {
-        _errorMessage = 'An unexpected error occurred. Please try again later.';
-      });
+
+      Fluttertoast.showToast(
+        msg: 'An unexpected error occurred. Please try again later.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
       print("General Error: $e"); // Optional: for debugging purposes
     }
   }
@@ -225,13 +238,27 @@ class _LoginState extends State<Login> {
                       const SizedBox(height: 22),
                       TextField(
                         controller: _passwordController,
-                        obscureText: true,
-                        decoration: const InputDecoration(
+                        obscureText: !passwordVisible,
+                        decoration: InputDecoration(
                           labelText: 'Password',
-                          prefixIcon: Icon(Icons.lock, color: Colors.white),
-                          labelStyle: TextStyle(
+                          prefixIcon:
+                              const Icon(Icons.lock, color: Colors.white),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                passwordVisible = !passwordVisible;
+                              });
+                            },
+                          ),
+                          labelStyle: const TextStyle(
                               color: Color.fromARGB(255, 148, 147, 147)),
-                          enabledBorder: OutlineInputBorder(
+                          enabledBorder: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.white),
                             borderRadius: BorderRadius.horizontal(
                               left: Radius.circular(25),

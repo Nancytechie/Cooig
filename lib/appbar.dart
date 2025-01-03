@@ -6,11 +6,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double textSize;
   final Widget? leading;
 
+  final dynamic iconTheme;
+
   const CustomAppBar({
     super.key,
     required this.title,
     this.textSize = 30.0,
     this.leading,
+    this.iconTheme,
   });
 
   @override

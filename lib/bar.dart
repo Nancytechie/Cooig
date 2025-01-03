@@ -20,10 +20,13 @@ class Nav extends StatefulWidget {
 class _NavState extends State<Nav> {
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
+    if (_selectedIndex == index) {
+      return;
+    }
     setState(() {
       _selectedIndex = index;
     });
-
+// cant switch back to home  nav bar can
     switch (_selectedIndex) {
       case 0:
         Navigator.push(
@@ -43,7 +46,10 @@ class _NavState extends State<Nav> {
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const Noticeboard()),
+          MaterialPageRoute(
+              builder: (context) => Noticeboard(
+                    userid: widget.userId,
+                  )),
         );
         break;
       case 3:
@@ -53,10 +59,14 @@ class _NavState extends State<Nav> {
         );
         break;
       case 4:
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
+          MaterialPageRoute(
+              builder: (context) => ProfilePage(
+                    userid: widget.userId,
+                  )),
         );
+
         break;
     }
   }

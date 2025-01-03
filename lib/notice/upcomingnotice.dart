@@ -17,8 +17,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 // import 'package:share/share.dart';
 
+// ignore: camel_case_types
 class upcomingNotice extends StatefulWidget {
-  const upcomingNotice({super.key});
+  final dynamic userid;
+
+  const upcomingNotice({super.key, required this.userid});
 
   @override
   _upcomingNoticeState createState() => _upcomingNoticeState();
@@ -206,7 +209,9 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Noticeboard()),
+                                builder: (context) => Noticeboard(
+                                      userid: widget.userid,
+                                    )),
                           );
                         },
                         child: Text(
@@ -237,7 +242,9 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const upcomingNotice()),
+                                builder: (context) => upcomingNotice(
+                                      userid: widget.userid,
+                                    )),
                           );
                         },
                         child: Text(
