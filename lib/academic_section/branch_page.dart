@@ -617,135 +617,1981 @@ class SemesterPage extends StatelessWidget {
       },
       'CSE': {
         1: {
-          'Math': [
-            {'Unit 1': 'https://link-to-math-1'},
-            {'Unit 2': 'https://link-to-math-2'},
+          'Applied Mathematics': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Physics': [
-            {'Unit 1': 'https://link-to-physics-1'},
-            {'Unit 2': 'https://link-to-physics-2'},
+          'Applied Physics': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Programming with C': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Communication Skills (CS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Web Application Development': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Basics of Electrical and Electronics Engineering (BEE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
         },
         2: {
-          'Data Structures': [
-            {'Unit 1': 'https://ds-unit-1'},
-            {'Unit 2': 'https://ds-unit-2'},
+          'Math 102': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Computer Networks': [
-            {'Unit 1': 'https://cn-unit-1'},
+          'Computer Science 102': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Data Structures': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Discrete Mathematics': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Electronics 102': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
         },
-        // Continue adding subjects for CSE and all other branches for 3-8 semesters
+        3: {
+          'Numerical Method (NM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Data Structures (DS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Discrete Structures (DM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Software Engineering (SE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Material Science and Engineering (MSE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Artificial Intelligence (AI)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        4: {
+          'Software Engineering': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Computer Networks': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Digital Logic': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Compiler Design': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Operating System Concepts': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        5: {
+          'Theory of Computation (TOC)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Data Communication and Computer Network (DCCN)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Artificial Intelligence (AI)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Professional Ethics and Human Values (PEHV)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Modelling and Simulation (MS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        6: {
+          'Computer Vision': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Software Testing': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Artificial Intelligence': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Cloud Computing': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Web Technologies': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        7: {
+          'Mobile Computing (MC)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Evolutionary Computing (EC)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Machine Learning (ML)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'E-Commerce (E Com)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Knowledge Engineering (KE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        8: {
+          'Capstone Project': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Enterprise Applications': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Agile Development': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Mobile App Development': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Cloud Technologies': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
       },
       'IT': {
         1: {
-          'Math': [
-            {'Unit 1': 'https://math-unit-1'},
-            {'Unit 2': 'https://math-unit-2'},
+          // First Semester
+          'Applied Mathematics (AM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Electronics': [
-            {'Unit 1': 'https://electronics-unit-1'},
+          'Applied Physics (AP)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Communication Skills (CS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Programming with Python': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Web Application Development': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'IT Workshop': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
         },
         2: {
-          'Software Engineering': [
-            {'Unit 1': 'https://se-unit-1'},
+          // Second Semester
+          'Applied Mathematics - II': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Operating Systems': [
-            {'Unit 1': 'https://os-unit-1'},
+          'Applied Physics - II': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Environmental Sciences (EVS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Basic Electrical Engineering (BEE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Programming in C': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
         },
-        // Continue adding subjects for IT and other semesters
+        3: {
+          // Third Semester
+          'Discrete Structures (DM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Software Engineering (SE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Data Structures (DS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Database Management Systems (DBMS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Material Science & Engineering (MSE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Numerical Method (NM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        4: {
+          // Fourth Semester
+          'Operating Systems (OS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Object-Oriented Programming (OOPS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Computer Organization and Architecture (COA)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Design and Analysis of Algorithms (DAA)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Optimization Techniques (OT)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Operations Management (OM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Disaster Management (DM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        5: {
+          // Fifth Semester
+          'Artificial Intelligence and Machine Learning (AI & ML)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Data Communication and Computer Network (DCCN)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Modeling and Simulation (MS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Professional Ethics and Human Values (PEHV)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Theory of Computation (TOC)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        6: {
+          // Sixth Semester
+          'Wireless Networks (WN)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Cloud Computing (CC)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Data Mining and Machine Learning (DMML)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Advanced Data Structure and Algorithm (ADSA)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Compiler Design (CD)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Computer Vision (CV)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Financial Management (FM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        7: {
+          // Seventh Semester
+          'Mobile Computing (MC)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Software Testing (ST)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Big Data Analytics (BD)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Cybersecurity and Forensics (CSF)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'E-Commerce': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Soft Computing': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Distributed Systems (DS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
+        8: {
+          // Eighth Semester
+          'Information and Network Security (INS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Natural Language Processing (NLP)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Information Retrieval (IR)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Cryptography': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+        },
       },
-      'MAE': {
+      "mae": {
         1: {
-          'Engineering Mechanics': [
-            {'Unit 1': 'https://eng-mechanics-unit-1'},
+          // First Semester
+          'Applied Mathematics (AM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Material Science': [
-            {'Unit 1': 'https://material-science-unit-1'},
+          'Applied Physics (AP)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
+          'Communication Skills (CS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Programming Fundamentals': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Elements of Mechanical Engineering and Workshop': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Basics of Electrical and Electronics Engineering': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ]
         },
         2: {
-          'Fluid Mechanics': [
-            {'Unit 1': 'https://fluid-mechanics-unit-1'},
+          // Second Semester
+          'Applied Mathematics – II': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
-          'Thermodynamics': [
-            {'Unit 1': 'https://thermodynamics-unit-1'},
+          'Applied Physics – II': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
           ],
+          'Environmental Sciences (EVS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Programming in C': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Basic Electrical Engineering': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ]
         },
-        // Continue adding subjects for MAE and other semesters
+        3: {
+          // Third Semester
+          'Production Technology (PT)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Strength Of Materials (SOM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Thermal Engineering (TE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Numerical Techniques for Engineers (NTE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Machine Drawing Lab (MED)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Database Management System (DBMS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ]
+        },
+        4: {
+          // Fourth Semester
+          'Production Technology-II (PT)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Theory of Machines (TOM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Engineering Materials (EMat)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Thermal Engineering -II (TE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Object Oriented Programming (OOPS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Disaster Management (DM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ]
+        },
+        5: {
+          // Fifth Semester
+          'Machine Design (MD)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Fluid Mechanics and Hydraulic Machines (FM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Automobile Engineering (AE)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Artificial Intelligence': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Professional Ethics and Human Values (PEHV)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ]
+        },
+        6: {
+          // Sixth Semester
+          'Heat Transfer (HT)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Computer Aided Design (CAD)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Production Management (PM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Quality Management & Six Sigma (QMS)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Industrial Tribology (I.Tr.)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Combustion, Emission & Pollution Control (CEPC)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Advanced Machine Design (AMD)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Marketing Management (MKM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Financial Management (FM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ]
+        },
+        7: {
+          // Seventh Semester
+          'Finite Element Analysis (FEA)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Mechatronics (MT)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Hydraulic & Pneumatic Control (HPC)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Internet of Things (IoT)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Machine Learning for Mechanical Engineers (ML)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ]
+        },
+        8: {
+          // Eighth Semester
+          'Computer Aided Manufacturing (CAM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Robotics (RBT)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Reliability & Maintenance (RM)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Renewable Energy Sources (RES)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ],
+          'Design of Pressure Vessels (DPV)': [
+            {'Unit 1': ''},
+            {'Unit 2': ''},
+            {'Unit 3': ''},
+            {'Unit 4': ''},
+          ]
+        }
       },
       'ECE': {
         1: {
-          'Mathematics': [
-            {'Unit 1': 'https://math-unit-1'},
+          "Probability and Statistics": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
-          'Electronics': [
-            {'Unit 1': 'https://electronics-unit-1'},
+          "Environmental Sciences": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
+          "Signals and Systems": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Communication Skills": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Electronics Workshop": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Programming Fundamentals": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
         },
         2: {
-          'Signals and Systems': [
-            {'Unit 1': 'https://signals-systems-unit-1'},
+          "Applied Mathematics - II": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
-          'Digital Electronics': [
-            {'Unit 1': 'https://digital-electronics-unit-1'},
+          "Applied Physics - II": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
+          "Environmental Sciences (EVS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Communication Skills": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Engineering Mechanics": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Workshop Practice": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
         },
-        // Continue adding subjects for ECE and other semesters
+        3: {
+          "Analog Electronics (AE)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Network Analysis & Synthesis (NAS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Digital Electronics (DE)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Signals & Systems (SS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Database Management System (DBMS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        4: {
+          "Linear Integrated Circuits": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Digital System Design": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Electromagnetic Field Theory": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Communication Systems": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Object Oriented Programming (OOP)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Disaster Management": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        5: {
+          "Digital Communication Systems (DCS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Control Systems (CS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Data Communication & Computer Networks (DCCN)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Artificial Intelligence (AI)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Professional Ethics and Human Values (PEHV)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Modelling and Simulation (MS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        6: {
+          "Digital Signal Processing (DSP)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Information Theory & Coding (ITC)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "VLSI Design": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Microprocessors & Microcontrollers (MPMC)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Cloud Computing (CC)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Marketing Management (MM)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        7: {
+          "Microwave Techniques (MT)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Cyber Security and Forensics (CSF)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Wireless and Mobile Communication (WMC)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Big Data Analytics": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        8: {
+          "Embedded Systems (ES)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Information Retrieval (IR)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Non Conventional Energy Resources (NCER)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Wireless Sensor Network": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        }
       },
       'ECE-AI': {
         1: {
-          'Math': [
-            {'Unit 1': 'https://math-unit-1'},
-            {'Unit 2': 'https://math-unit-2'},
+          "Probability and Statistics": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
-          'Physics': [
-            {'Unit 1': 'https://physics-unit-1'},
+          "Environmental Sciences": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
+          "Signals and Systems": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Communication Skills": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Electronics Workshop": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Programming Fundamentals": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
         },
         2: {
-          'AI Fundamentals': [
-            {'Unit 1': 'https://ai-fundamentals-unit-1'},
+          "Digital Electronics": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
-          'Data Structures': [
-            {'Unit 1': 'https://ds-unit-1'},
+          "Signals and Systems": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
+          "Programming with Python": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "IT Workshop": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Probability and Statistics": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
         },
-        // Continue adding subjects for ECE-AI and other semesters
+        3: {
+          "Communication Systems": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Network Analysis and Synthesis": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Neural Network and Artificial Intelligence": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Data Structures": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Database Management System": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        4: {
+          "Linear Integrated Circuits": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Electromagnetic Field Theory": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Digital Communication Systems": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Optimization Techniques and Decision Making": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Object Oriented Programming": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Disaster Management": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        5: {
+          "Control Systems": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Digital Signal Processing": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Machine Learning": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Computer Networks": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Professional Ethics and Human Values": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        6: {
+          "VLSI Design": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Microprocessors & Microcontrollers": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Digital Image Processing": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Cloud Computing": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Semantic Web": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Marketing Management": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        7: {
+          "Software Project Management": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Wireless and Mobile Communication": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Deep Learning": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Computer Vision": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Multimodal Data Analysis": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        8: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        }
       },
       'AI-ML': {
         1: {
-          'Math': [
-            {'Unit 1': 'https://math-unit-1'},
+          "Probability and Statistics (PS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
-          'Statistics': [
-            {'Unit 1': 'https://stats-unit-1'},
+          "Environmental Sciences (EVS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
+          "Signals and Systems (SNS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Communication Skills (CS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Electronics Workshop (EW)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Programming Fundamentals (PF)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
         },
         2: {
-          'Machine Learning': [
-            {'Unit 1': 'https://ml-unit-1'},
+          "Object Oriented Programming using Java (OOPS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
-          'Deep Learning': [
-            {'Unit 1': 'https://dl-unit-1'},
+          "Fundamentals of Data Structure": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
+          "Introduction to Data Science": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Environmental Science (EVS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Probability and Statistics (PS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "IT Workshop (ITW)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
         },
-        // Continue adding subjects for AI-ML and other semesters
+        3: {
+          "Discrete Structures (DM)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Software Engineering (SE)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Material Science and Engineering (MSE)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Numerical Methods (NM)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Database Management System (DBMS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Artificial Intelligence (AI)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        4: {
+          "Computer Networks (CN)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Operating System (OS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Design and Analysis of Algorithms (DAA)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Machine Learning (ML)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Optimization Techniques (OT)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Operations Management (OM)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Disaster Management (DM)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        5: {
+          "Optimization Techniques and Decision Making (OTDM)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Cryptography and Network Security (CNS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Social Networking and Mining (SNM)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Theory of Computation (TOC)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Professional Ethics and Human Values (PEHV)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        6: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        7: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        8: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        }
       },
       'DMAM': {
         1: {
-          'Mathematics': [
-            {'Unit 1': 'https://math-unit-1'},
+          "Probability and Statistics (PS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
+          "Environmental Sciences (EVS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Signals and Systems (SNS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Communication Skills (CS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Electronics Workshop (EW)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Programming Fundamentals (PF)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
         },
         2: {
-          'Advanced Mathematics': [
-            {'Unit 1': 'https://adv-math-unit-1'},
+          "Object Oriented Programming using Java (OOPS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
           ],
+          "Fundamentals of Data Structure (FDS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Introduction to Data Science (IDS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Environmental Science (EVS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "Probability and Statistics (PS)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "IT Workshop (ITW)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
         },
-        // Continue adding subjects for DMAM and other semesters
+        3: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        4: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        5: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        6: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        7: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        },
+        8: {
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ],
+          "(To be updated)": [
+            {"Unit 1": ""},
+            {"Unit 2": ""},
+            {"Unit 3": ""},
+            {"Unit 4": ""}
+          ]
+        }
       },
     };
 

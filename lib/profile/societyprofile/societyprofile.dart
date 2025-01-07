@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
+import 'package:cooig_firebase/profile/profile.dart';
+import 'package:cooig_firebase/profile/societyprofile/editsocietyprofile.dart';
 import 'package:cooig_firebase/profile/societyprofile/societydetails.dart';
-import 'package:cooig_firebase/profile/societyprofile/societyprofile.dart';
 import 'package:cooig_firebase/upload.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -17,16 +18,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
 
 // ignore: depend_on_referenced_packages
-class ProfilePage extends StatefulWidget {
+class Societyprofile extends StatefulWidget {
   final dynamic userid;
 
-  const ProfilePage({super.key, required this.userid});
+  const Societyprofile({super.key, required this.userid});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<Societyprofile> createState() => _SocietyprofileState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
+class _SocietyprofileState extends State<Societyprofile>
     with SingleTickerProviderStateMixin {
   // final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -36,15 +37,15 @@ class _ProfilePageState extends State<ProfilePage>
   File? _profilepic;
   String? bannerImageUrl;
   String? profilepic;
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _bioController = TextEditingController();
+  TextEditingController _societyNameController = TextEditingController();
+  TextEditingController _aboutController = TextEditingController();
   bool _isEditing = false;
   TabController? _tabController;
 //profile
-  String? username;
-  String? bio;
-  String? branch;
-  String? year;
+  String? societyName;
+  String? about;
+  String? category;
+  String? establishedYear;
   int _bondsCount = 0;
   int _postsCount = 0; // Replace with actual post count variable if available
   bool _isBonded = false;
@@ -76,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage>
       // Unbond action
       try {
         await FirebaseFirestore.instance
-            .collection('users')
+            .collection('societydetails')
             .doc(widget.userid)
             .update({
           'bonds': _bondsCount - 1,
@@ -93,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage>
       // Bond action
       try {
         await FirebaseFirestore.instance
-            .collection('users')
+            .collection('societydetails')
             .doc(widget.userid)
             .update({
           'bonds': _bondsCount + 1,
@@ -137,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage>
       String downloadUrl = await snapshot.ref.getDownloadURL();
 
       // Update Firestore with the new URL
-      await _firestore.collection('users').doc(widget.userid).update({
+      await _firestore.collection('societydetails').doc(widget.userid).update({
         isBanner ? 'bannerImageUrl' : 'profilepic': downloadUrl,
       });
 
@@ -159,8 +160,10 @@ class _ProfilePageState extends State<ProfilePage>
   Future<void> _fetchUserData() async {
     try {
       // Fetch user document from Firestore
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(widget.userid).get();
+      DocumentSnapshot userDoc = await _firestore
+          .collection('societydetails')
+          .doc(widget.userid)
+          .get();
 
       if (userDoc.exists) {
         // Safely access user data
@@ -169,15 +172,15 @@ class _ProfilePageState extends State<ProfilePage>
 
         setState(() {
           // Fetch and set the required fields with fallbacks
-          username = userData?['username'] ?? "Username";
-          bio = userData?['bio'] ?? "Bio goes here";
-          branch = userData?['branch'] ?? "Branch";
-          year = userData?['year'] ?? "Year";
+          societyName = userData?['societyName'] ?? "societyName";
+          about = userData?['about'] ?? "About goes here";
+          category = userData?['category'] ?? "category";
+          establishedYear = userData?['establishedYear'] ?? "Est";
           _bondsCount = userData?['bonds'] ?? 0;
 
           // Text controllers for editable fields
-          _usernameController.text = username!;
-          _bioController.text = bio!;
+          _societyNameController.text = societyName!;
+          _aboutController.text = about!;
 
           // Image URLs
           bannerImageUrl = userData?['bannerImageUrl'] ?? null;
@@ -186,14 +189,14 @@ class _ProfilePageState extends State<ProfilePage>
       } else {
         // Handle case where the document does not exist
         setState(() {
-          username = "Username";
-          bio = "Bio goes here";
-          branch = "Branch";
-          year = "Year";
+          societyName = "Society Name";
+          about = "about goes here";
+          category = "category";
+          establishedYear = "Est";
           _bondsCount = 0;
 
-          _usernameController.text = username!;
-          _bioController.text = bio!;
+          _societyNameController.text = societyName!;
+          _aboutController.text = about!;
 
           bannerImageUrl = null;
           profilepic = null;
@@ -203,14 +206,14 @@ class _ProfilePageState extends State<ProfilePage>
       // Handle errors
       print("Error fetching user data: $e");
       setState(() {
-        username = "Username";
-        bio = "Bio goes here";
-        branch = "Branch";
-        year = "Year";
+        societyName = "societyName";
+        about = "about goes here";
+        category = "category";
+        establishedYear = "establishedYear";
         _bondsCount = 0;
 
-        _usernameController.text = username!;
-        _bioController.text = bio!;
+        _societyNameController.text = societyName!;
+        _aboutController.text = about!;
 
         bannerImageUrl = null;
         profilepic = null;
@@ -224,7 +227,7 @@ class _ProfilePageState extends State<ProfilePage>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EditProfilePage(
+        builder: (context) => EditSocietyprofile(
           userid: widget.userid,
         ),
       ),
@@ -276,14 +279,14 @@ class _ProfilePageState extends State<ProfilePage>
                 ),
               ),
               Positioned(
-                bottom: -60,
+                bottom: -50,
                 left: 14,
-                child: _buildCircularBox(branch ?? 'Branch'),
+                child: _buildCircularBox(category ?? 'category'),
               ),
               Positioned(
-                bottom: -60,
+                bottom: -50,
                 right: 14,
-                child: _buildCircularBox(year ?? 'Year'),
+                child: _buildCircularBox(establishedYear ?? 'establishedYear'),
               ),
               /*Positioned(
                 top: 10,
@@ -304,15 +307,28 @@ class _ProfilePageState extends State<ProfilePage>
 
           SizedBox(height: 60),
 
-          // Username Display
+          // societyName Display
           Center(
-            child: Text(
-              username ?? 'Username',
-              style: GoogleFonts.lexend(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize
+                  .min, // Ensures the Row takes up only as much space as needed
+              children: [
+                Text(
+                  societyName ?? 'Society Name',
+                  style: GoogleFonts.lexend(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                    width: 2), // Add spacing between the text and the icon
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                  size: 24,
+                ),
+              ],
             ),
           ),
 
@@ -417,9 +433,9 @@ class _ProfilePageState extends State<ProfilePage>
           ),
           SizedBox(height: 15),
 
-          // Bio Display
+          // about Display
           Text(
-            bio ?? 'Bio goes here :)',
+            about ?? 'about goes here :)',
             style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[300]),
           ),
 
@@ -457,11 +473,11 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
-  // Helper function to display circular boxes (branch/year)
+  // Helper function to display circular boxes (category/establishedYear)
   Widget _buildCircularBox(String text) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xff50555C),
+        color: Color.fromARGB(255, 135, 178, 239),
         borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
@@ -518,7 +534,7 @@ class NavigationDrawer extends StatelessWidget {
                   alignment: Alignment.center,
                   child: FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance
-                        .collection('users')
+                        .collection('societydetails')
                         .doc(userId)
                         .get(),
                     builder: (context, snapshot) {
@@ -540,7 +556,7 @@ class NavigationDrawer extends StatelessWidget {
                         var data =
                             snapshot.data!.data() as Map<String, dynamic>;
                         String? email = data['course_name'] as String?;
-                        String? name = data['full_name'] as String?;
+                        String? name = data['societyName'] as String?;
                         String? imageUrl = data['profilepic'] as String?;
 
                         return UserAccountsDrawerHeader(
@@ -568,7 +584,7 @@ class NavigationDrawer extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditProfilePage(
+                    builder: (context) => EditSocietyprofile(
                       userid: userId,
                     ),
                   ),
@@ -616,15 +632,16 @@ class NavigationDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.swap_calls, color: Colors.white),
-              title:
-                  const Text("Switch to society", style: TextStyle(color: Colors.white)),
+              title: const Text("Switch to main account",
+                  style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Societyprofile(userid: userId,),
-                  ),
-                );
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(
+                        userid: userId,
+                      ),
+                    ));
               },
             ),
             ListTile(
