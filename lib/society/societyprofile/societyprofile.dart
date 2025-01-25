@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/loginsignup/login.dart';
-import 'package:cooig_firebase/profile/editprofile.dart';
-import 'package:cooig_firebase/profile/profile.dart';
-import 'package:cooig_firebase/society/recruitment/form_submit.dart';
+
+
 import 'package:cooig_firebase/society/societyprofile/editsocietyprofile.dart';
-import 'package:cooig_firebase/society/societyprofile/societydetails.dart';
+
 import 'package:cooig_firebase/upload.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/background.dart';
 import 'package:cooig_firebase/home.dart';
-import 'package:cooig_firebase/society/societyprofile/societydetails.dart';
+
 import 'package:cooig_firebase/society/society_signup.dart';
 //import 'package:cooig_firebase/.dart';
 import 'package:firebase_auth/firebase_auth.dart';

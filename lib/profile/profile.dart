@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
-import 'package:cooig_firebase/society/societyprofile/societydetails.dart';
-import 'package:cooig_firebase/society/societyprofile/societyprofile.dart';
 import 'package:cooig_firebase/society/society_login.dart';
 import 'package:cooig_firebase/upload.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
