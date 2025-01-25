@@ -31,11 +31,32 @@ class _upcomingNoticeState extends State<upcomingNotice> {
   String query = '';
   bool isFoundSelected = true;
   late Future<List<Map<String, dynamic>>> _noticesFuture;
+  bool isSocietyRole = false;
 
   @override
   void initState() {
     super.initState();
     _noticesFuture = _fetchNotices();
+    _checkUserRole();
+  }
+
+  Future<void> _checkUserRole() async {
+    try {
+      // Fetch the user's role from Firestore using their ID
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users') // Replace with your users collection name
+          .doc(widget.userid) // User ID passed to the widget
+          .get();
+
+      if (userDoc.exists) {
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        setState(() {
+          isSocietyRole = userData['role'] == 'Society'; // Check the role
+        });
+      }
+    } catch (e) {
+      print('Error fetching user role: $e');
+    }
   }
 
   void _onItemTapped(int index) {
@@ -263,25 +284,27 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                   ),
                   Row(
                     children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const NoticeUploadPage()),
-                          );
-                        },
-                        icon: const Icon(Icons.add, color: Colors.white),
-                        label: const Text(
-                          'Notice',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                      if (isSocietyRole) // Conditionally render the button
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NoticeUploadPage()),
+                            );
+                          },
+                          icon: const Icon(Icons.add, color: Colors.white),
+                          label: const Text(
+                            'Notice',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: const Color(0XFF9752C5),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 8),
+                          ),
                         ),
-                        style: TextButton.styleFrom(
-                          backgroundColor: const Color(0XFF9752C5),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 8),
-                        ),
-                      ),
                     ],
                   ),
                 ],

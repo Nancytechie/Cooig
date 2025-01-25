@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/background.dart';
+import 'package:cooig_firebase/society/societyprofile/societyprofile.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -65,10 +66,7 @@ class _SocietyDetailsPageState extends State<SocietyDetailsPage> {
       }
 
       // Store society details in Firestore
-      await FirebaseFirestore.instance
-          .collection('societydetails')
-          .doc(societyId)
-          .set({
+      final societyDetails = {
         'societyName': _societyNameController.text,
         'about': _aboutController.text,
         'email': _emailController.text,
@@ -76,10 +74,26 @@ class _SocietyDetailsPageState extends State<SocietyDetailsPage> {
         'category': _selectedCategory,
         'status': _selectedStatus,
         'logoUrl': logoUrl,
-      });
+      };
+
+      await FirebaseFirestore.instance
+          .collection('societydetails')
+          .doc(societyId)
+          .set(societyDetails);
 
       // Display success message
       Fluttertoast.showToast(msg: "Society created successfully");
+
+      // Navigate to Welcome Splash Screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => WelcomeSplashScreen(
+            societyName: 'societyName',
+            userid: societyId,
+          ),
+        ),
+      );
 
       // Clear the form
       _clearForm();
@@ -402,6 +416,43 @@ class _SocietyDetailsPageState extends State<SocietyDetailsPage> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class WelcomeSplashScreen extends StatelessWidget {
+  final String societyName;
+  final dynamic userid;
+
+  const WelcomeSplashScreen(
+      {Key? key, required this.societyName, required this.userid})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // Navigate to the society profile page after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Societyprofile(userid: userid)),
+      );
+    });
+
+    return Scaffold(
+      backgroundColor: const Color(0XFF9752C5), // App theme color
+      body: Center(
+        child: Text(
+          "Welcome $societyName!",
+          style: GoogleFonts.ebGaramond(
+            textStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          textAlign: TextAlign.center,
         ),
       ),
     );

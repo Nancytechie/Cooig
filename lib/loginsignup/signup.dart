@@ -143,6 +143,7 @@ class _SignUpState extends State<SignUp> {
             'bio': '',
             'profilepic': '',
             'year': '',
+            "role": "Student",
           });
 
           // Navigate to Userprofile

@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
+import 'package:cooig_firebase/loginsignup/login.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
 import 'package:cooig_firebase/profile/profile.dart';
-import 'package:cooig_firebase/profile/societyprofile/editsocietyprofile.dart';
-import 'package:cooig_firebase/profile/societyprofile/societydetails.dart';
+import 'package:cooig_firebase/society/recruitment/form_submit.dart';
+import 'package:cooig_firebase/society/societyprofile/editsocietyprofile.dart';
+import 'package:cooig_firebase/society/societyprofile/societydetails.dart';
 import 'package:cooig_firebase/upload.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -16,6 +18,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // ignore: depend_on_referenced_packages
 class Societyprofile extends StatefulWidget {
@@ -39,6 +42,8 @@ class _SocietyprofileState extends State<Societyprofile>
   String? profilepic;
   TextEditingController _societyNameController = TextEditingController();
   TextEditingController _aboutController = TextEditingController();
+  final _LinkController = TextEditingController();
+
   bool _isEditing = false;
   TabController? _tabController;
 //profile
@@ -46,67 +51,30 @@ class _SocietyprofileState extends State<Societyprofile>
   String? about;
   String? category;
   String? establishedYear;
-  int _bondsCount = 0;
-  int _postsCount = 0; // Replace with actual post count variable if available
-  bool _isBonded = false;
-
-  Future<void> _toggleBondStatus() async {
-    if (_isBonded) {
-      // Show confirmation dialog to unbond
-      bool confirmUnbond = await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Unbond"),
-            content: Text("Are you sure you want to unbond?"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text("Unbond"),
-              ),
-            ],
-          );
-        },
-      );
-      if (!confirmUnbond) return;
-
-      // Unbond action
+  String? status;
+  String? link;
+  Future<void> _openLink(BuildContext context, String url) async {
+    debugPrint('Opening URL: $url'); // Log the URL for debugging
+    if (url.isNotEmpty && Uri.tryParse(url)?.hasScheme == true) {
       try {
-        await FirebaseFirestore.instance
-            .collection('societydetails')
-            .doc(widget.userid)
-            .update({
-          'bonds': _bondsCount - 1,
-          'isBonded': false,
-        });
-        setState(() {
-          _bondsCount--;
-          _isBonded = false;
-        });
+        final Uri uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          debugPrint('Could not launch URL: $url'); // Log the error
+          throw 'Could not open the link';
+        }
       } catch (e) {
-        print('Failed to unbond: $e');
+        debugPrint('Error launching URL: $e'); // Log the exception
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to open link: $e')),
+        );
       }
     } else {
-      // Bond action
-      try {
-        await FirebaseFirestore.instance
-            .collection('societydetails')
-            .doc(widget.userid)
-            .update({
-          'bonds': _bondsCount + 1,
-          'isBonded': true,
-        });
-        setState(() {
-          _bondsCount++;
-          _isBonded = true;
-        });
-      } catch (e) {
-        print('Failed to bond: $e');
-      }
+      debugPrint('Invalid URL provided: $url'); // Log invalid URLs
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid URL')),
+      );
     }
   }
 
@@ -138,7 +106,7 @@ class _SocietyprofileState extends State<Societyprofile>
       String downloadUrl = await snapshot.ref.getDownloadURL();
 
       // Update Firestore with the new URL
-      await _firestore.collection('societydetails').doc(widget.userid).update({
+      await _firestore.collection('users').doc(widget.userid).update({
         isBanner ? 'bannerImageUrl' : 'profilepic': downloadUrl,
       });
 
@@ -160,10 +128,8 @@ class _SocietyprofileState extends State<Societyprofile>
   Future<void> _fetchUserData() async {
     try {
       // Fetch user document from Firestore
-      DocumentSnapshot userDoc = await _firestore
-          .collection('societydetails')
-          .doc(widget.userid)
-          .get();
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(widget.userid).get();
 
       if (userDoc.exists) {
         // Safely access user data
@@ -172,11 +138,12 @@ class _SocietyprofileState extends State<Societyprofile>
 
         setState(() {
           // Fetch and set the required fields with fallbacks
-          societyName = userData?['societyName'] ?? "societyName";
+          societyName = userData?['societyName'] ?? "Society Name";
           about = userData?['about'] ?? "About goes here";
-          category = userData?['category'] ?? "category";
-          establishedYear = userData?['establishedYear'] ?? "Est";
-          _bondsCount = userData?['bonds'] ?? 0;
+          category = userData?['category'] ?? "Category";
+          establishedYear = userData?['establishedYear'] ?? "Year";
+          status = userData?['status'] ?? "Non-Recruiting";
+          link = userData?['Link'] ?? "";
 
           // Text controllers for editable fields
           _societyNameController.text = societyName!;
@@ -190,10 +157,9 @@ class _SocietyprofileState extends State<Societyprofile>
         // Handle case where the document does not exist
         setState(() {
           societyName = "Society Name";
-          about = "about goes here";
-          category = "category";
-          establishedYear = "Est";
-          _bondsCount = 0;
+          about = "About goes here";
+          category = "Category";
+          establishedYear = "Year";
 
           _societyNameController.text = societyName!;
           _aboutController.text = about!;
@@ -206,11 +172,10 @@ class _SocietyprofileState extends State<Societyprofile>
       // Handle errors
       print("Error fetching user data: $e");
       setState(() {
-        societyName = "societyName";
-        about = "about goes here";
-        category = "category";
-        establishedYear = "establishedYear";
-        _bondsCount = 0;
+        societyName = "Society Name";
+        about = "About goes here";
+        category = "Category";
+        establishedYear = "Year";
 
         _societyNameController.text = societyName!;
         _aboutController.text = about!;
@@ -221,19 +186,6 @@ class _SocietyprofileState extends State<Societyprofile>
     }
   }
 
-/*
-  // Navigate to the Edit Profile Page
-  void _navigateToEditProfile() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditSocietyprofile(
-          userid: widget.userid,
-        ),
-      ),
-    );
-  }
-*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -288,20 +240,6 @@ class _SocietyprofileState extends State<Societyprofile>
                 right: 14,
                 child: _buildCircularBox(establishedYear ?? 'establishedYear'),
               ),
-              /*Positioned(
-                top: 10,
-                right: 10,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, color: Colors.white),
-                      SizedBox(width: 5),
-                      Text('Edit', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-              ),*/
             ],
           ),
 
@@ -339,71 +277,40 @@ class _SocietyprofileState extends State<Societyprofile>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
-                children: [
-                  Text(
-                    _postsCount.toString(),
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    'Posts',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: 40),
-              Column(
-                children: [
-                  Text(
-                    _bondsCount.toString(),
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    'Bonds',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                ],
+                children: [],
               ),
             ],
           ),
-
-          SizedBox(height: 15),
 
           // Bond Action Button
           SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // The Join button
               ElevatedButton(
-                onPressed: _toggleBondStatus,
+                onPressed: status == 'Recruiting'
+                    ? () {
+                        _openLink(context, link!);
+                      }
+                    : null, // Disable the button if not recruiting
                 child: Row(
                   children: [
                     Icon(
-                      _isBonded ? Icons.check : Icons.favorite,
+                      Icons.group_add, // Icon for joining
                       color: Colors.white,
                     ),
                     SizedBox(width: 5),
                     Text(
-                      _isBonded ? 'Bonded' : 'Bond',
+                      'Join', // Text on the button
                       style: TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0XFF9752C5),
+                  backgroundColor: status == 'Recruiting'
+                      ? Colors.blue // Blue for recruiting
+                      : Colors.grey, // Grey for not recruiting
                   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -477,7 +384,7 @@ class _SocietyprofileState extends State<Societyprofile>
   Widget _buildCircularBox(String text) {
     return Container(
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 135, 178, 239),
+        color: Color.fromARGB(255, 112, 24, 171),
         borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
@@ -534,7 +441,7 @@ class NavigationDrawer extends StatelessWidget {
                   alignment: Alignment.center,
                   child: FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance
-                        .collection('societydetails')
+                        .collection('users')
                         .doc(userId)
                         .get(),
                     builder: (context, snapshot) {
@@ -555,12 +462,12 @@ class NavigationDrawer extends StatelessWidget {
                       } else {
                         var data =
                             snapshot.data!.data() as Map<String, dynamic>;
-                        String? email = data['course_name'] as String?;
+                        String? email = data['category'] as String?;
                         String? name = data['societyName'] as String?;
                         String? imageUrl = data['profilepic'] as String?;
 
                         return UserAccountsDrawerHeader(
-                          accountEmail: Text(email ?? "No Course Available"),
+                          accountEmail: Text(email ?? "No category Available"),
                           accountName: Text(name ?? "No Name Available"),
                           currentAccountPicture: buildProfilePicture(
                             imageUrl ?? 'https://via.placeholder.com/150',
@@ -578,7 +485,7 @@ class NavigationDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Iconsax.user_edit, color: Colors.white),
-              title: const Text("Edit Profile",
+              title: const Text("Edit Society Profile",
                   style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.push(
@@ -592,20 +499,10 @@ class NavigationDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading:
-                  const Icon(CupertinoIcons.group_solid, color: Colors.white),
-              title: const Text(
-                "Create Society",
-                style: TextStyle(color: Colors.white),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SocietyDetailsPage(),
-                  ),
-                );
-              },
+              leading: const Icon(Icons.group_add, color: Colors.white),
+              title: const Text("Recruitment",
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {},
             ),
             ListTile(
               leading: const Icon(Iconsax.security_safe, color: Colors.white),
@@ -638,9 +535,7 @@ class NavigationDrawer extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfilePage(
-                        userid: userId,
-                      ),
+                      builder: (context) => Login(),
                     ));
               },
             ),

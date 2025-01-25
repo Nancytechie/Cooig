@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
-import 'package:cooig_firebase/profile/societyprofile/societydetails.dart';
-import 'package:cooig_firebase/profile/societyprofile/societyprofile.dart';
+import 'package:cooig_firebase/society/societyprofile/societydetails.dart';
+import 'package:cooig_firebase/society/societyprofile/societyprofile.dart';
+import 'package:cooig_firebase/society/society_login.dart';
 import 'package:cooig_firebase/upload.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -579,14 +580,14 @@ class NavigationDrawer extends StatelessWidget {
               leading:
                   const Icon(CupertinoIcons.group_solid, color: Colors.white),
               title: const Text(
-                "Create Society",
+                "Society login",
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SocietyDetailsPage(),
+                    builder: (context) => SocietyLogin(),
                   ),
                 );
               },
@@ -614,19 +615,7 @@ class NavigationDrawer extends StatelessWidget {
                   const Text("Settings", style: TextStyle(color: Colors.white)),
               onTap: () {},
             ),
-            ListTile(
-              leading: const Icon(Icons.swap_calls, color: Colors.white),
-              title:
-                  const Text("Switch to society", style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Societyprofile(userid: userId,),
-                  ),
-                );
-              },
-            ),
+            
             ListTile(
               leading: const Icon(Iconsax.logout, color: Colors.white),
               title:

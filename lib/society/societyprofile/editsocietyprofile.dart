@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EditSocietyprofile extends StatefulWidget {
   final dynamic userid;
@@ -19,40 +20,43 @@ class _EditSocietyprofileState extends State<EditSocietyprofile> {
 //  final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
-
-  File? _bannerImage;
-  File? _profilepic;
   String? bannerImageUrl;
   String? profilepic;
   TextEditingController _societyNameController = TextEditingController();
   TextEditingController _aboutController = TextEditingController();
   TextEditingController _establishedYearController = TextEditingController();
   TextEditingController _categoryController = TextEditingController();
+  TextEditingController _statusController = TextEditingController();
+  final _LinkController = TextEditingController();
 
   String? societyName;
   String? about;
   String? category;
   String? establishedYear;
+  String? status;
 
   @override
   void initState() {
     super.initState();
     _fetchUserData();
   }
+   
 
   Future<void> _fetchUserData() async {
     DocumentSnapshot userDoc =
-        await _firestore.collection('societydetails').doc(widget.userid).get();
+        await _firestore.collection('users').doc(widget.userid).get();
 
     setState(() {
       societyName = userDoc['societyName'] ?? 'societyName';
       about = userDoc['about'] ?? 'about goes here';
       category = userDoc['category'] ?? 'category';
       establishedYear = userDoc['establishedYear'] ?? 'establishedYear';
+      status = userDoc['status'] ?? 'Non-Recruiting';
       _societyNameController.text = societyName ?? '';
       _aboutController.text = about ?? '';
       _establishedYearController.text = establishedYear ?? '';
       _categoryController.text = category ?? '';
+      _statusController.text = status!;
       bannerImageUrl = userDoc['bannerImageUrl'];
       profilepic = userDoc['profilepic'];
     });
@@ -66,7 +70,7 @@ class _EditSocietyprofileState extends State<EditSocietyprofile> {
       TaskSnapshot snapshot = await uploadTask;
       String downloadUrl = await snapshot.ref.getDownloadURL();
 
-      await _firestore.collection('societydetails').doc(widget.userid).update({
+      await _firestore.collection('users').doc(widget.userid).update({
         isBanner ? 'bannerImageUrl' : 'profilepic': downloadUrl,
       });
 
@@ -83,12 +87,16 @@ class _EditSocietyprofileState extends State<EditSocietyprofile> {
   }
 
   Future<void> _saveChanges() async {
+   
     try {
-      await _firestore.collection('societydetails').doc(widget.userid).update({
+      await _firestore.collection('users').doc(widget.userid).update({
         'societyName': _societyNameController.text,
         'about': _aboutController.text,
         'establishedYear': _establishedYearController.text,
         'category': _categoryController.text,
+        'status': _statusController.text,
+        "role": "Society",
+        'Link': _LinkController.text,
       });
       Navigator.pop(context); // Navigate back after saving
     } catch (e) {
@@ -257,6 +265,63 @@ class _EditSocietyprofileState extends State<EditSocietyprofile> {
                     borderSide: BorderSide(color: Colors.grey, width: 1),
                   ),
                 ),
+              ),
+
+              SizedBox(height: 15),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  labelText: 'Status',
+                  prefixIcon: const Icon(Icons.check_circle),
+                  labelStyle: const TextStyle(
+                    color: Color.fromARGB(255, 247, 245, 245),
+                  ),
+                ),
+                value: status, // Bind status value to display the current one
+                items: ['Recruiting', 'Non-Recruiting']
+                    .map((status) => DropdownMenuItem(
+                          value: status,
+                          child: Text(status),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    status = value;
+                    _statusController.text =
+                        value!; // Update controller's text when dropdown value changes
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select a status';
+                  }
+                  return null;
+                },
+                style: TextStyle(color: Colors.white),
+                dropdownColor: Colors.black,
+              ),
+              const SizedBox(height: 16),
+
+              // Notes Link Input Field
+              TextFormField(
+                controller: _LinkController,
+                decoration: InputDecoration(
+                  labelText: 'Recruitment Form Link',
+                  labelStyle: TextStyle(color: Colors.white),
+                  filled: true,
+                  fillColor: Colors.grey[850],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: 'Enter the link (Google Form recommended)',
+                  hintStyle: TextStyle(color: Colors.white70),
+                ),
+                style: TextStyle(color: Colors.white),
+                keyboardType: TextInputType.url,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the Google Drive link';
+                  }
+                },
               ),
 
               SizedBox(height: 30),
