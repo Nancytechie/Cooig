@@ -87,6 +87,7 @@ class _UserprofileState extends State<Userprofile> {
         'college_name': existingData['college_name'],
         'course_name': existingData['course_name'],
         'email': existingData['email'],
+        "role": "Student",
       };
 
       // Save the merged data
