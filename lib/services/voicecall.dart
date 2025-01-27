@@ -5,7 +5,8 @@ class VoiceCallScreen extends StatefulWidget {
   final String userId;
   final String userName;
 
-  VoiceCallScreen({required this.userId, required this.userName});
+  const VoiceCallScreen(
+      {super.key, required this.userId, required this.userName});
 
   @override
   _VoiceCallScreenState createState() => _VoiceCallScreenState();

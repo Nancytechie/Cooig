@@ -83,12 +83,12 @@ class _GifScreenState extends State<GifScreen> {
                         fit: BoxFit.cover,
                       ),
                       const SizedBox(height: 10),
-                      Text(
-                        "GIF URL: ${_selectedGif!.images!.original!.url}",
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.grey),
-                        textAlign: TextAlign.center,
-                      ),
+                      //Text(
+                      //"GIF URL: ${_selectedGif!.images!.original!.url}",
+                      //style:
+                      //  const TextStyle(fontSize: 12, color: Colors.grey),
+                      //textAlign: TextAlign.center,
+                      //),
                     ],
                   )
                 : const Text(

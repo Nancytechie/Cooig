@@ -1,5 +1,5 @@
 import 'package:cooig_firebase/lostandfound/foundpage.dart';
-import 'package:cooig_firebase/home.dart';
+import 'package:cooig_firebase/home.dart' hide Container, SizedBox;
 import 'package:cooig_firebase/notice/noticeboard.dart';
 import 'package:cooig_firebase/profile/profile.dart';
 import 'package:cooig_firebase/shop/shopscreen.dart';

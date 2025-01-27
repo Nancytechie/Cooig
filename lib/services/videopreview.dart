@@ -7,7 +7,7 @@ import 'package:chewie/chewie.dart';
 class VideoPreviewScreen extends StatefulWidget {
   final File videoFile;
 
-  VideoPreviewScreen({required this.videoFile});
+  const VideoPreviewScreen({super.key, required this.videoFile});
 
   @override
   _VideoPreviewScreenState createState() => _VideoPreviewScreenState();

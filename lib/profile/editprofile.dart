@@ -24,10 +24,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   File? _profilepic;
   String? bannerImageUrl;
   String? profilepic;
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _bioController = TextEditingController();
-  TextEditingController _yearController = TextEditingController();
-  TextEditingController _branchController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _yearController = TextEditingController();
+  final TextEditingController _branchController = TextEditingController();
 
   String? username;
   String? bio;
@@ -264,17 +264,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
               // Save Changes Button
               ElevatedButton(
                 onPressed: _saveChanges,
-                child: Text(
-                  'Save Changes',
-                  style:
-                      TextStyle(color: Colors.white), // Set text color to white
-                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
+                ),
+                child: Text(
+                  'Save Changes',
+                  style:
+                      TextStyle(color: Colors.white), // Set text color to white
                 ),
               ),
             ],

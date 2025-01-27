@@ -11,6 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 // import 'package:share/
 class Lostpage extends StatefulWidget {
+  const Lostpage({super.key});
+
   @override
   _LostpageState createState() => _LostpageState();
 }
@@ -83,7 +85,7 @@ class _LostpageState extends State<Lostpage> {
 
   @override
   Widget build(BuildContext context) {
-    int _currentIndex;
+    int currentIndex;
     return RadialGradientBackground(
       colors: [Color(0XFF9752C5), Color(0xFF000000)],
       radius: 0.0,

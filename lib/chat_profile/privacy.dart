@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class PrivacyScreen extends StatefulWidget {
+  const PrivacyScreen({super.key});
+
   @override
   _PrivacyScreenState createState() => _PrivacyScreenState();
 }
@@ -245,7 +247,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
                         });
                       },
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
               actions: [

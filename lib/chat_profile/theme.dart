@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'solid_color_wallpapers.dart'; // Import the Solid color theme screen
 
 class ThemeSelectionScreen extends StatefulWidget {
-  final Function(Color) onThemeSelected; // Callback to update the background color
+  final Function(Color)
+      onThemeSelected; // Callback to update the background color
 
-  ThemeSelectionScreen({required this.onThemeSelected});
+  const ThemeSelectionScreen({super.key, required this.onThemeSelected});
 
   @override
   _ThemeSelectionScreenState createState() => _ThemeSelectionScreenState();
@@ -46,7 +47,8 @@ class _ThemeSelectionScreenState extends State<ThemeSelectionScreen> {
                               _selectedColor =
                                   selectedColor; // Update the local color
                             });
-                            widget.onThemeSelected(selectedColor); // Notify parent
+                            widget.onThemeSelected(
+                                selectedColor); // Notify parent
                           },
                         ),
                       ),

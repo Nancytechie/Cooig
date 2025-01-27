@@ -39,6 +39,7 @@ class IndividualChatScreen extends StatefulWidget {
   final String? duration; // Accept background color as a parameter
 
   const IndividualChatScreen({
+    super.key,
     required this.currentUserId,
     required this.chatUserId,
     required this.fullName,
@@ -69,7 +70,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   DateTime? recordingStartTime; // To track when recording starts
   String recordingDuration = "00:00"; // To store calculated duration
   late FlutterSoundPlayer _audioPlayer;
-  bool _isPlaying = false;
+  final bool _isPlaying = false;
   String? _currentAudioUrl;
 
   @override
@@ -454,7 +455,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                 child: Align(
                   alignment:
                       showAbove ? Alignment.bottomCenter : Alignment.topCenter,
-                  child: Container(
+                  child: SizedBox(
                     width: dialogWidth,
                     child: AlertDialog(
                       contentPadding: EdgeInsets.zero,
@@ -716,7 +717,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
       return await uploadTask.ref.getDownloadURL(); // Get the download URL
     } catch (e) {
       print("Error uploading file: $e");
-      throw e; // Rethrow the error to handle it later
+      rethrow; // Rethrow the error to handle it later
     }
   }
 
@@ -729,7 +730,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
       return await uploadTask.ref.getDownloadURL(); // Get the download URL
     } catch (e) {
       print("Error uploading image: $e");
-      throw e; // Rethrow the error to handle it later
+      rethrow; // Rethrow the error to handle it later
     }
   }
 
@@ -754,7 +755,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
 
   Future<void> _selectFromGallery() async {
     try {
-      final List<XFile>? pickedFiles = await ImagePicker().pickMultiImage();
+      final List<XFile> pickedFiles = await ImagePicker().pickMultiImage();
       if (pickedFiles != null && pickedFiles.isNotEmpty) {
         await _handleImageUpload(pickedFiles);
       } else {
@@ -853,7 +854,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
       return await uploadTask.ref.getDownloadURL(); // Get the download URL
     } catch (e) {
       print("Error uploading document: $e");
-      throw e;
+      rethrow;
     }
   }
 
@@ -1057,10 +1058,12 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => HomePage(
+                    userid: widget.currentUserId,
                     fullName: widget.fullName,
                     image: widget.image,
                     conversationId: conversationId ?? '',
                     currentUserId: widget.currentUserId,
+                    //userid: widget.currentUserId,
                   ),
                 ),
               );
@@ -1360,6 +1363,8 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
 }
 
 class WaveWidget extends StatefulWidget {
+  const WaveWidget({super.key});
+
   @override
   _WaveWidgetState createState() => _WaveWidgetState();
 }
@@ -1418,7 +1423,8 @@ class MessageBubble extends StatefulWidget {
   final Color? backgroundColor;
   final bool isTypingIndicator;
 
-  MessageBubble({
+  const MessageBubble({
+    super.key,
     required this.message,
     required this.isSentByCurrentUser,
     required this.onFavoriteToggled,
@@ -1672,7 +1678,7 @@ class _MessageBubbleState extends State<MessageBubble> {
 
                     // Conditional Wave Animation
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                         height: 20,
                         child: Row(
                           children: List.generate(
@@ -1708,8 +1714,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                                 widget.message.msg, localDocumentPath);
                           }
                           final result = await OpenFile.open(localDocumentPath);
-                          if (result != null &&
-                              result.message != 'File not found') {
+                          if (result.message != 'File not found') {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content: Text("Unable to open the document")));
                           }
@@ -1803,6 +1808,8 @@ Future<void> _downloadDocument(String documentUrl, String localPath) async {
 }
 
 class AnimatedDot extends StatefulWidget {
+  const AnimatedDot({super.key});
+
   @override
   _AnimatedDotState createState() => _AnimatedDotState();
 }
@@ -1861,18 +1868,18 @@ class AudioMessageWidget extends StatefulWidget {
   final String duration; // Added: Accept pre-calculated duration
 
   const AudioMessageWidget({
-    Key? key,
+    super.key,
     required this.audioFilePath,
     required this.isSentByCurrentUser,
     required this.duration, // Pass the pre-calculated duration here
-  }) : super(key: key);
+  });
 
   @override
   _AudioMessageWidgetState createState() => _AudioMessageWidgetState();
 }
 
 class _AudioMessageWidgetState extends State<AudioMessageWidget> {
-  FlutterSoundPlayer _player = FlutterSoundPlayer();
+  final FlutterSoundPlayer _player = FlutterSoundPlayer();
   bool _isPlaying = false;
   double _currentPosition = 0.0;
 
@@ -1963,12 +1970,12 @@ class SwipeableContainer extends StatefulWidget {
   final Message message; // Pass the message object
 
   const SwipeableContainer({
-    Key? key,
+    super.key,
     required this.child,
     required this.isSentByCurrentUser,
     required this.onSwipeReply,
     required this.message, // Include message object
-  }) : super(key: key);
+  });
 
   @override
   _SwipeableContainerState createState() => _SwipeableContainerState();
@@ -2041,7 +2048,7 @@ class _SwipeableContainerState extends State<SwipeableContainer> {
 class AnimatedWaveBar extends StatefulWidget {
   final int index;
 
-  const AnimatedWaveBar({Key? key, required this.index}) : super(key: key);
+  const AnimatedWaveBar({super.key, required this.index});
 
   @override
   _AnimatedWaveBarState createState() => _AnimatedWaveBarState();
@@ -2097,7 +2104,7 @@ class _AnimatedWaveBarState extends State<AnimatedWaveBar>
 class StaticWaveBar extends StatelessWidget {
   final int index;
 
-  const StaticWaveBar({Key? key, required this.index}) : super(key: key);
+  const StaticWaveBar({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {

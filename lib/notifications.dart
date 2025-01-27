@@ -84,8 +84,7 @@ class _NotificationsState extends State<Notifications> {
 class NotificationCard extends StatelessWidget {
   final Map<String, dynamic> notification;
 
-  const NotificationCard({Key? key, required this.notification})
-      : super(key: key);
+  const NotificationCard({super.key, required this.notification});
 
   IconData _getIcon(String type) {
     switch (type) {
@@ -150,12 +149,12 @@ class RadialGradientBackground extends StatelessWidget {
   final Widget child;
 
   const RadialGradientBackground({
-    Key? key,
+    super.key,
     required this.colors,
     required this.radius,
     required this.centerAlignment,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

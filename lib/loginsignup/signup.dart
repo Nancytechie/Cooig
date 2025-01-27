@@ -21,10 +21,10 @@ class _SignUpState extends State<SignUp> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  List<String> _collegeNames = [];
+  final List<String> _collegeNames = [];
   String? _selectedCollege;
 
-  List<String> _courses = [];
+  final List<String> _courses = [];
   String? _selectedCourse;
 
   final TextEditingController _emailController = TextEditingController();
@@ -33,7 +33,7 @@ class _SignUpState extends State<SignUp> {
       TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
-  String _errorMessage = ''; // Variable to hold error message
+  final String _errorMessage = ''; // Variable to hold error message
 
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;

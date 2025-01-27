@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LightThemeWallpapers extends StatefulWidget {
+  const LightThemeWallpapers({super.key});
+
   @override
   _LightThemeWallpapersState createState() => _LightThemeWallpapersState();
 }
@@ -38,8 +40,8 @@ class _LightThemeWallpapersState extends State<LightThemeWallpapers> {
                 // Add your 'Next' button logic here
                 print('Next button pressed');
               },
-              child: Icon(Icons.arrow_forward_ios),
               backgroundColor: Colors.purple,
+              child: Icon(Icons.arrow_forward_ios),
             )
           : null,
     );

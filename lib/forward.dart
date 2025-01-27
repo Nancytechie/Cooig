@@ -8,14 +8,14 @@ import 'package:cooig_firebase/services/message_service.dart';
 class ForwardScreen extends StatefulWidget {
   final Message message;
 
-  ForwardScreen({required this.message});
+  const ForwardScreen({super.key, required this.message});
 
   @override
   _ForwardScreenState createState() => _ForwardScreenState();
 }
 
 class _ForwardScreenState extends State<ForwardScreen> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   List<User> users = [];
   List<User> selectedUsers = [];

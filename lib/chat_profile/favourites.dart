@@ -7,8 +7,7 @@ import 'package:cooig_firebase/services/imageview.dart';
 class FavoritesScreen extends StatefulWidget {
   final String currentUserId;
 
-  const FavoritesScreen({Key? key, required this.currentUserId})
-      : super(key: key);
+  const FavoritesScreen({super.key, required this.currentUserId});
 
   @override
   _FavoritesScreenState createState() => _FavoritesScreenState();

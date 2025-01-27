@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class GroupChatScreen extends StatelessWidget {
+  const GroupChatScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,13 +28,15 @@ class GroupChatScreen extends StatelessWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.video_call, color: Colors.white), // Video call icon
+            icon:
+                Icon(Icons.video_call, color: Colors.white), // Video call icon
             onPressed: () {
               // Handle video call action
             },
           ),
           IconButton(
-            icon: Icon(Icons.more_vert, color: Colors.white), // More options icon
+            icon:
+                Icon(Icons.more_vert, color: Colors.white), // More options icon
             onPressed: () {
               // Handle more options action
             },
@@ -87,7 +91,8 @@ class GroupChatScreen extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.sticky_note_2, color: Colors.white), // Sticker icon
+            icon:
+                Icon(Icons.sticky_note_2, color: Colors.white), // Sticker icon
             onPressed: () {
               // Handle sticker action
             },

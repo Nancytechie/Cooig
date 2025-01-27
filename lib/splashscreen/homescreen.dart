@@ -1,8 +1,10 @@
+//import 'package:cooig_firebase/chat_profile/home.dart';
+import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/loginsignup/login.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 // Home screen design
 
 class homescreen extends StatefulWidget {
@@ -27,8 +29,48 @@ class _homescreenState extends State<homescreen> {
       return GradientContainer(
           changeScreen, const [Color(0XFF9752C5), Colors.black]);
     } else {
-      return const Login();
+      return AuthWrapper();
     }
+  }
+}
+
+/*
+
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: AuthWrapper(),
+    );
+  }
+}
+*/
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show loading screen while waiting
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasData) {
+          // User is signed in
+          return Homepage(userId: FirebaseAuth.instance.currentUser!.uid);
+        } else {
+          // User is signed out
+          return Login();
+        }
+      },
+    );
   }
 }
 

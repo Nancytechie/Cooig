@@ -6,7 +6,7 @@ class MediaScreen extends StatelessWidget {
   final String
       conversationId; // Pass the conversation ID to fetch relevant data
 
-  MediaScreen({required this.conversationId});
+  const MediaScreen({super.key, required this.conversationId});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,8 @@ class MediaTabContent extends StatelessWidget {
   final String conversationId;
   final List<String> mediaType; // Specify the type of media to fetch
 
-  MediaTabContent({required this.conversationId, required this.mediaType});
+  const MediaTabContent(
+      {super.key, required this.conversationId, required this.mediaType});
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +166,8 @@ class FullScreenMediaPreview extends StatelessWidget {
   final String mediaUrl;
   final bool isVideo;
 
-  FullScreenMediaPreview({required this.mediaUrl, required this.isVideo});
+  const FullScreenMediaPreview(
+      {super.key, required this.mediaUrl, required this.isVideo});
 
   @override
   Widget build(BuildContext context) {

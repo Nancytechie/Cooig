@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'group_chat_screen.dart';
 
 class GroupScreen extends StatefulWidget {
+  const GroupScreen({super.key});
+
   @override
   _GroupScreenState createState() => _GroupScreenState();
 }
@@ -63,11 +65,13 @@ class _GroupScreenState extends State<GroupScreen> {
                 IconButton(
                   icon: Icon(Icons.person, color: Colors.grey),
                   onPressed: () {
-                    Navigator.pop(context); // Assuming home screen is the previous screen
+                    Navigator.pop(
+                        context); // Assuming home screen is the previous screen
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.group, color: Colors.blue), // Blue color for active group icon
+                  icon: Icon(Icons.group,
+                      color: Colors.blue), // Blue color for active group icon
                   onPressed: () {},
                 ),
                 IconButton(

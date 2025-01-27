@@ -8,13 +8,15 @@ class UserService {
   Stream<List<User>> fetchUsers(String searchName) {
     return _db
         .collection('users')
-        .orderBy('full_name') // Ensure that you're ordering by the correct field
+        .orderBy(
+            'full_name') // Ensure that you're ordering by the correct field
         .startAt([searchName])
-        .endAt([searchName + '\uf8ff']) // Use '\uf8ff' to match all possible suffixes
+        .endAt([
+          '$searchName\uf8ff'
+        ]) // Use '\uf8ff' to match all possible suffixes
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => User.fromFirestore(doc))
-            .toList());
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => User.fromFirestore(doc)).toList());
   }
 
   /// Retrieves a user by their unique user ID.

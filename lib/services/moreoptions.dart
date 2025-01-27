@@ -5,7 +5,8 @@ class MoreOptionsDialog extends StatelessWidget {
   final VoidCallback onBlock;
   final VoidCallback onReport;
 
-  MoreOptionsDialog({
+  const MoreOptionsDialog({
+    super.key,
     required this.onClearChat,
     required this.onBlock,
     required this.onReport,
@@ -36,8 +37,11 @@ class MoreOptionsDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ListTile(
-                    leading: Icon(Icons.delete, color: Colors.white),  // Changed to delete icon for Clear Chat
-                    title: Text('Clear Chat', style: TextStyle(color: Colors.white)),
+                    leading: Icon(Icons.delete,
+                        color: Colors
+                            .white), // Changed to delete icon for Clear Chat
+                    title: Text('Clear Chat',
+                        style: TextStyle(color: Colors.white)),
                     onTap: () {
                       onClearChat();
                       Navigator.pop(context);
@@ -53,7 +57,8 @@ class MoreOptionsDialog extends StatelessWidget {
                   ),
                   ListTile(
                     leading: Icon(Icons.report, color: Colors.white),
-                    title: Text('Report', style: TextStyle(color: Colors.white)),
+                    title:
+                        Text('Report', style: TextStyle(color: Colors.white)),
                     onTap: () {
                       onReport();
                       Navigator.pop(context);

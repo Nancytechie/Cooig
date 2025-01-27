@@ -1,9 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 //import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cooig_firebase/PDFViewer.dart';
+import 'package:cooig_firebase/pdfviewerurl.dart';
 //import 'package:cooig_firebase/postscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+//import 'package:path/path.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:video_player/video_player.dart';
 //import 'package:carousel_slider/carousel_slider.dart';
@@ -102,12 +105,16 @@ class PostWidget extends StatelessWidget {
 
   List<Map<String, dynamic>> _classifyMedia(List<String> urls) {
     return urls.map((url) {
-      String extension =
-          url.split('?')[0].split('.').last; // Extract the extension
-      return {
-        'url': url,
-        'type': (extension == 'mp4' || extension == 'mp3') ? 'video' : 'image',
-      };
+      String extension = url.split('?')[0].split('.').last.toLowerCase();
+      String type;
+      if (extension == 'mp4' || extension == 'mp3') {
+        type = 'video';
+      } else if (extension == 'pdf') {
+        type = 'pdf';
+      } else {
+        type = 'image';
+      }
+      return {'url': url, 'type': type};
     }).toList();
   }
 
@@ -196,7 +203,44 @@ class PostWidget extends StatelessWidget {
                   );
                 } else if (medi['type'] == 'video') {
                   return VideoPlayerWidget(medi['url']);
+                } else if (medi['type'] == 'pdf') {
+                  String url = medi['url'];
+                  final String fileName = Uri.decodeFull(
+                      url.split('/o/').last.split('?').first.split('%2F').last);
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PDFViewerFromUrl(
+                            pdfUrl: url,
+                            fileName: fileName,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      color: const Color.fromARGB(255, 44, 32, 32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.picture_as_pdf,
+                              size: 40, color: Colors.red),
+                          const SizedBox(height: 8),
+                          Text(
+                            fileName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 }
+
                 return const SizedBox.shrink();
               }).toList(),
             ),
@@ -205,7 +249,46 @@ class PostWidget extends StatelessWidget {
     );
   }
 }
+/*
+else if (medi['type'] == 'pdf') {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PDFViewerScreen(fileUrl: medi['url']),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    color: Colors.white,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.picture_as_pdf, size: 40, color: Colors.red),
+                        const SizedBox(height: 8),
+                        Text(
+                          medi['url'].split('/').last,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 12, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }).toList(),
+          ),
+      ],
+    ),
+  );
+}
 
+
+*/
 /*
 Container(
                 width: MediaQuery.of(context).size.width,
@@ -551,7 +634,7 @@ class _PollWidgetState extends State<PollWidget> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
         ],
       ),
     );

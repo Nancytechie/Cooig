@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class ImageViewScreen extends StatelessWidget {
   final String imageUrl;
 
-  const ImageViewScreen({required this.imageUrl, Key? key}) : super(key: key);
+  const ImageViewScreen({required this.imageUrl, super.key});
 
   // Main function to handle image download
   Future<void> _downloadImage(BuildContext context) async {

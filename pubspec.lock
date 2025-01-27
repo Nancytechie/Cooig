@@ -377,6 +377,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.6"
+  downloads_path_provider_28:
+    dependency: "direct main"
+    description:
+      name: downloads_path_provider_28
+      sha256: fac9327c4eec7ac3cc52cb9bf2c1a18b5c74a1ab92a18c5c150f300a1225d5e8
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.2"
   dropdown_search:
     dependency: "direct main"
     description:
@@ -659,6 +667,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  flutter_pdfview:
+    dependency: "direct main"
+    description:
+      name: flutter_pdfview
+      sha256: "2e3fa359524e9865ec25a64593b65092b4a9974c5871228c1a771300a003d150"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -1277,6 +1293,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  lecle_downloads_path_provider:
+    dependency: "direct main"
+    description:
+      name: lecle_downloads_path_provider
+      sha256: "111f6d6d21e18acddda515eba8fd445658aa14defcbd59513d6d1b02b9ed47a0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2+8"
   line_awesome_flutter:
     dependency: "direct main"
     description:
@@ -2003,7 +2027,7 @@ packages:
     source: hosted
     version: "2.1.4"
   vibration:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: vibration
       sha256: f0af02af2d63132135ae0332a3e54d5de718e214ee94c4f082176ef6ce624a4b

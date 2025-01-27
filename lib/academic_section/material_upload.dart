@@ -9,7 +9,8 @@ class MaterialUpload extends StatefulWidget {
   final String subject;
   final String unitName;
 
-  MaterialUpload({
+  const MaterialUpload({
+    super.key,
     required this.branch,
     required this.year,
     required this.subject,
@@ -133,6 +134,7 @@ class _MaterialUploadState extends State<MaterialUpload> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the Google Drive link';
                   }
+                  return null;
                 },
               ),
               const SizedBox(height: 16),

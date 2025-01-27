@@ -6,7 +6,7 @@ import 'package:image_painter/image_painter.dart';
 class PainterScreen extends StatefulWidget {
   final File imageFile;
 
-  PainterScreen({required this.imageFile});
+  const PainterScreen({super.key, required this.imageFile});
 
   @override
   _PainterScreenState createState() => _PainterScreenState();

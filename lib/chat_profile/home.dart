@@ -12,12 +12,14 @@ class HomePage extends StatefulWidget {
   final String image;
   final String conversationId;
   final String currentUserId; // Add this parameter
-
-  HomePage({
+  final String userid;
+  const HomePage({
+    super.key,
     required this.fullName,
     required this.image,
     required this.conversationId,
-    required this.currentUserId, // Initialize it
+    required this.currentUserId,
+    required this.userid, // Initialize it
   });
 
   @override

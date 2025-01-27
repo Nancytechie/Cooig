@@ -10,7 +10,8 @@ class UnitPage extends StatefulWidget {
   final String subject;
   final String unitName;
 
-  UnitPage({
+  const UnitPage({
+    super.key,
     required this.branch,
     required this.year,
     required this.subject,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SolidColorWallpapers extends StatefulWidget {
   final Function(Color) onColorSelected; // Callback for selected color
 
-  SolidColorWallpapers({required this.onColorSelected});
+  const SolidColorWallpapers({super.key, required this.onColorSelected});
 
   @override
   _SolidColorWallpapersState createState() => _SolidColorWallpapersState();

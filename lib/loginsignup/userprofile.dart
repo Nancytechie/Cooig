@@ -1,5 +1,5 @@
 import 'package:cooig_firebase/background.dart';
-import 'package:cooig_firebase/home.dart';
+import 'package:cooig_firebase/home.dart' hide Container;
 //import 'package:cooig_firebase/lostpage.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';

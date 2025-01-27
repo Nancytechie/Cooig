@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DarkThemeWallpapers extends StatefulWidget {
+  const DarkThemeWallpapers({super.key});
+
   @override
   _DarkThemeWallpapersState createState() => _DarkThemeWallpapersState();
 }
@@ -38,8 +40,8 @@ class _DarkThemeWallpapersState extends State<DarkThemeWallpapers> {
                 // Add your 'Next' button logic here
                 print('Next button pressed');
               },
-              child: Icon(Icons.arrow_forward_ios),
               backgroundColor: Colors.purple,
+              child: Icon(Icons.arrow_forward_ios),
             )
           : null,
     );

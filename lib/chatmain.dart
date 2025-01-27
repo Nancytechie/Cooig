@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cooig_firebase/notice/noticeboard.dart';
 import 'package:cooig_firebase/services/camera.dart';
 import 'package:cooig_firebase/services/imagepreview.dart';
 import 'package:cooig_firebase/services/videopreview.dart';

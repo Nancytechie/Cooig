@@ -11,6 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 // Import your custom background widget
 
 class FoundItemScreen extends StatefulWidget {
+  const FoundItemScreen({super.key});
+
   @override
   _FoundItemScreenState createState() => _FoundItemScreenState();
 }
@@ -58,7 +60,7 @@ class _FoundItemScreenState extends State<FoundItemScreen> {
   }
 
   Future<void> _pickImageFromGallery() async {
-    final List<XFile>? pickedImages = await _picker.pickMultiImage();
+    final List<XFile> pickedImages = await _picker.pickMultiImage();
 
     if (pickedImages != null) {
       List<File> files = pickedImages.map((xFile) => File(xFile.path)).toList();
@@ -305,18 +307,18 @@ class _FoundItemScreenState extends State<FoundItemScreen> {
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: _onPostButtonClick,
-                  child: Text(
-                    'Upload',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                    ),
-                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Upload',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black,
                     ),
                   ),
                 ),

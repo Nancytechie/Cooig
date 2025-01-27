@@ -25,7 +25,7 @@ class Poll {
 class PollWidget extends StatefulWidget {
   final Poll poll;
 
-  PollWidget({required this.poll});
+  const PollWidget({super.key, required this.poll});
 
   @override
   _PollWidgetState createState() => _PollWidgetState();

@@ -1,10 +1,14 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_final_fields
 
 import 'dart:io';
+//import 'dart:io';
+import 'package:cooig_firebase/PDFViewer.dart';
+import 'package:cooig_firebase/audio.dart';
+import 'package:http/http.dart' as http;
 
 //import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooig_firebase/gif.dart';
+//import 'package:cooig_firebase/gif.dart';
 //import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/mapscreen.dart';
 import 'package:cooig_firebase/poll.dart';
@@ -13,6 +17,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:giphy_get/giphy_get.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
@@ -38,6 +43,7 @@ class _PostScreenState extends State<PostScreen> {
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
   double sliderValue = 0.0;
+  GiphyGif? _selectedGif;
 
   String fileNameWithoutExtension(String filePath) {
     var fileName = filePath.split('/').last; // Get the last part of the path
@@ -113,13 +119,34 @@ class _PostScreenState extends State<PostScreen> {
   List<File> _galleryFiles = [];
   List<File> _documentFiles = [];
   List<File> _audioFiles = [];
+  List<GiphyGif> _selectedGifs = [];
   List<VideoPlayerController> _videoControllers = [];
   List<ChewieController> _chewieControllers = [];
   List<File> media = [];
+  List<String> media2 = [];
   // List<Widget> _mediaWidgets = [];
 
   String _generatePostID() {
     return DateTime.now().millisecondsSinceEpoch.toString();
+  }
+
+  Future<File> _downloadGif(String gifUrl) async {
+    final response = await http.get(Uri.parse(gifUrl));
+    if (response.statusCode == 200) {
+      //final storageRef = FirebaseStorage.instance.ref();
+
+      // Create a reference to the location where the file will be stored
+      //final fileRef = storageRef.child('${DateTime.now().millisecondsSinceEpoch}.gif');
+
+      //final tempDir = await getTemporaryDirectory();
+
+      //final filePath = '${gifUrl}.gif';
+      File gifFile = File(gifUrl);
+      await gifFile.writeAsBytes(response.bodyBytes);
+      return gifFile;
+    } else {
+      throw Exception('Failed to download GIF');
+    }
   }
 
   Future<bool> _requestLocationPermission() async {
@@ -222,10 +249,237 @@ class _PostScreenState extends State<PostScreen> {
     if (result != null) {
       setState(() {
         _documentFiles = result.paths.map((path) => File(path!)).toList();
+        media.addAll(_documentFiles);
       });
+
+      // Navigate to the PDF viewer if only one file is selected and it's a PDF
+      if (_documentFiles.length == 1 &&
+          _documentFiles[0].path.endsWith('.pdf')) {
+        Navigator.push(
+          context as BuildContext,
+          MaterialPageRoute(
+            builder: (context) => PDFViewerScreen(file: _documentFiles[0]),
+          ),
+        );
+      }
     }
   }
 
+/*
+  Future<void> _pickGif(BuildContext context) async {
+    try {
+      debugPrint("GIF button clicked");
+      List<GiphyGif> selectedGifs = [];
+      bool addingGifs = true;
+
+      while (addingGifs) {
+        GiphyGif? gif = await GiphyGet.getGif(
+          context: context,
+          apiKey: 'n2TYHzIqKZMO5Gz1LFROxFLjbxFiKF90',
+          lang: GiphyLanguage.english,
+          modal: true,
+        );
+
+        if (gif != null) {
+          selectedGifs.add(gif); // Add selected GIF to the list
+        } else {
+          addingGifs = false; // Stop adding if no GIF is selected
+        }
+      }
+
+      if (!mounted) return; // Ensure widget is still mounted
+
+      if (selectedGifs.isNotEmpty) {
+        List<File> gifFiles = [];
+        //List<String> gifUrls = [];
+
+        for (var gif in selectedGifs) {
+          String? gifUrl = gif.images?.original?.url;
+          if (gifUrl != null) {
+            // Download the GIF and save as a File
+            File gifFile = await _downloadGif(gifUrl);
+            gifFiles.add(gifFile);
+
+            // Upload the GIF file to Firebase
+          }
+        }
+
+        setState(() {
+          media.addAll(gifFiles); // Add local GIF files to media list
+          //media2.addAll(gifUrls); // Add uploaded URLs to media2 list
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('${selectedGifs.length} GIF(s) added to media!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No GIFs selected')),
+        );
+      }
+    } catch (error) {
+      debugPrint("Error selecting GIF: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
+  }
+  */
+  Future<void> _pickGif(BuildContext context) async {
+    try {
+      debugPrint("GIF button clicked");
+
+      // Allow selection of only one GIF
+      GiphyGif? selectedGif = await GiphyGet.getGif(
+        context: context,
+        apiKey: 'n2TYHzIqKZMO5Gz1LFROxFLjbxFiKF90',
+        lang: GiphyLanguage.english,
+        modal: true,
+      );
+
+      if (!mounted) return; // Ensure widget is still mounted
+
+      if (selectedGif != null) {
+        String? gifUrl = selectedGif.images?.original?.url;
+
+        if (gifUrl != null) {
+          // Optionally download and upload GIF to Firebase (if needed)
+          File gifFile = await _downloadGif(gifUrl);
+
+          setState(() {
+            media.add(gifFile); // Add local GIF file to media list
+            // Or directly store the URL if Firebase upload is not needed
+            // media2.add(gifUrl);
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('GIF added to media!')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to retrieve GIF URL')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No GIF selected')),
+        );
+      }
+    } catch (error) {
+      debugPrint("Error selecting GIF: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
+  }
+
+  /*
+Future<void> _pickGif(BuildContext context) async {
+  try {
+    debugPrint("GIF button clicked");
+    List<GiphyGif> selectedGifs = [];
+    bool addingGifs = true;
+
+    while (addingGifs) {
+      GiphyGif? gif = await GiphyGet.getGif(
+        context: context,
+        apiKey: 'n2TYHzIqKZMO5Gz1LFROxFLjbxFiKF90',
+        lang: GiphyLanguage.english,
+        modal: true,
+      );
+
+      if (gif != null) {
+        selectedGifs.add(gif); // Add selected GIF to the list
+      } else {
+        addingGifs = false; // Stop adding if no GIF is selected
+      }
+    }
+
+    if (!mounted) return; // Ensure widget is still mounted
+
+    if (selectedGifs.isNotEmpty) {
+      List<File> gifFiles = [];
+
+      for (var gif in selectedGifs) {
+        String? gifUrl = gif.images?.original?.url;
+        if (gifUrl != null) {
+          File gifFile = await _downloadGif(gifUrl);
+          gifFiles.add(gifFile); // Add the downloaded GIF file to the list
+        }
+      }
+
+      setState(() {
+        media.addAll(gifFiles); // Add GIF files to the media list
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('${selectedGifs.length} GIF(s) added to media!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No GIFs selected')),
+      );
+    }
+  } catch (error) {
+    debugPrint("Error selecting GIF: $error");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $error')),
+    );
+  }
+}
+*/
+
+/*
+  Future<void> _pickGif(BuildContext context) async {
+  try {
+    debugPrint("GIF button clicked");
+    List<GiphyGif> selectedGifs = [];
+    bool addingGifs = true;
+
+    while (addingGifs) {
+      GiphyGif? gif = await GiphyGet.getGif(
+        context: context,
+        apiKey: 'n2TYHzIqKZMO5Gz1LFROxFLjbxFiKF90',
+        lang: GiphyLanguage.english,
+        modal: true,
+      );
+
+      if (gif != null) {
+        selectedGifs.add(gif);
+      } else {
+        addingGifs = false;
+      }
+    }
+
+    if (!mounted) return;
+
+    if (selectedGifs.isNotEmpty) {
+      setState(() {
+        for (var gif in selectedGifs) {
+          media.add(gif.images!.original!.url); // Add GIF URL
+          //gif!.images!.original!.url
+          //_selectedGif!.images!.original!.url
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${selectedGifs.length} GIF(s) selected!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No GIFs selected')),
+      );
+    }
+  } catch (error) {
+    debugPrint("Error selecting GIF: $error");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $error')),
+    );
+  }
+}
+*/
   Future<void> _pickaudioFiles() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.audio,
@@ -258,7 +512,10 @@ class _PostScreenState extends State<PostScreen> {
         String downloadUrl = await _uploadFile(file, widget.userId);
         mediaUrls.add(downloadUrl); // Collect the download URLs
       }
-
+      /*for (String i in media2) {
+        //String downloadUrl = await _uploadFile(i, widget.userId);
+        mediaUrls.add(i);
+      }*/
       // Save the post data to Firestore
       await FirebaseFirestore.instance
           .collection('posts_upload')
@@ -275,10 +532,14 @@ class _PostScreenState extends State<PostScreen> {
       // Clear media and reset state after successful upload
       setState(() {
         media.clear();
+        media2.clear();
+        _selectedGif = null;
+        _selectedGifs.clear();
         _cameraImages.clear();
         _galleryFiles.clear();
         _audioFiles.clear();
         _postController.clear();
+        _documentFiles.clear();
       });
 
       Fluttertoast.showToast(msg: "Post uploaded successfully");
@@ -527,64 +788,95 @@ class _PostScreenState extends State<PostScreen> {
                     )
                   : Container(),
               /*
-              _galleryFiles.isNotEmpty
-                  ? SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: _galleryFiles.map((file) {
-                          if (file.path.endsWith('.mp4')) {
-                            int index = _galleryFiles.indexOf(file);
-                            if (index < _chewieControllers.length) {
-                              return Container(
-                                padding: const EdgeInsets.all(5),
-                                child: AspectRatio(
-                                  aspectRatio: aspectRatio,
-                                  child: Chewie(
-                                    controller: _chewieControllers[index],
-                                  ),
-                                ),
-                              );
-                            }
-                          } else if (file.path.endsWith('.jpg') ||
-                              file.path.endsWith('.png')) {
-                            return Container(
-                              padding: const EdgeInsets.all(5),
-                              child: AspectRatio(
-                                aspectRatio: aspectRatio,
-                                child: Image.file(
-                                  file,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            );
-                          }
-                          return Container(); // Handle other file types or skip
-                        }).toList(),
+              _selectedGifs.isNotEmpty
+                  ? Wrap(
+                      children: _selectedGifs.map((gif) {
+                        return Container(
+                          padding: const EdgeInsets.all(5),
+                          child: AspectRatio(
+                            aspectRatio: aspectRatio,
+                            child: Image.network(
+                              gif.images?.original?.url ?? '',
+                              width: screenWidth,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  : Container(),*/
+              _selectedGif != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.network(
+                        _selectedGif!.images!.original!.url,
+                        width: screenWidth,
+                        fit: BoxFit.contain,
                       ),
                     )
                   : Container(),
               _documentFiles.isNotEmpty
                   ? Wrap(
                       children: _documentFiles.map((file) {
-                        return Container(
-                          padding: const EdgeInsets.all(5),
-                          child: file.path.endsWith('.pdf') ||
-                                  file.path.endsWith('.docx')
-                              ? const Icon(Icons.picture_as_pdf,
-                                  size: 20, color: Colors.red)
-                              : file.path.endsWith('.mp4')
-                                  ? const Icon(Icons.videocam,
-                                      size: 100, color: Colors.grey)
-                                  : Image.file(
-                                      file,
-                                      width: 100,
-                                      height: 100,
-                                      fit: BoxFit.cover,
-                                    ),
+                        return GestureDetector(
+                          onTap: () {
+                            if (file.path.endsWith('.pdf')) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PDFViewerScreen(file: file),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Cannot preview non-PDF files!')),
+                              );
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            width: 120,
+                            height: 150,
+                            child: file.path.endsWith('.pdf')
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.picture_as_pdf,
+                                          size: 40, color: Colors.red),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        file.path.split('/').last,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  )
+                                : const Icon(Icons.description,
+                                    size: 40,
+                                    color:
+                                        Colors.blue), // Placeholder for non-PDF
+                          ),
                         );
                       }).toList(),
                     )
-                  : Container(),*/
+                  : Container(),
               _audioFiles.isNotEmpty
                   ? Wrap(
                       children: _audioFiles.map((file) {
@@ -674,14 +966,11 @@ class _PostScreenState extends State<PostScreen> {
                                 )),
                       );
                     }),
-                    _buildOptionIcon(Icons.mic, 'Voice', () {}),
-                    _buildOptionIcon(Icons.gif, 'Gif', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const GifScreen()),
-                      );
+                    _buildOptionIcon(Icons.mic, 'Voice', () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MicScreen()));
                     }),
+                    _buildOptionIcon(Icons.gif, 'Gif', () => _pickGif(context)),
                   ],
                 ),
               );

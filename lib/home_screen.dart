@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooig_firebase/home.dart';
+import 'package:cooig_firebase/home.dart' hide Container, SizedBox;
 import 'package:flutter/material.dart';
 import 'package:cooig_firebase/models/user.dart';
 
@@ -7,7 +7,7 @@ import 'package:cooig_firebase/models/user.dart';
 class HomeScreen extends StatefulWidget {
   final String currentUserId;
 
-  HomeScreen({super.key, required this.currentUserId});
+  const HomeScreen({super.key, required this.currentUserId});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -163,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen>
     return FutureBuilder<DocumentSnapshot>(
       future: FirebaseFirestore.instance
           .collection('conversations')
-          .doc(widget.currentUserId + "_" + user.id)
+          .doc("${widget.currentUserId}_${user.id}")
           .get(),
       builder: (context, snapshot) {
         Color backgroundColor = Colors.black; // Default background color

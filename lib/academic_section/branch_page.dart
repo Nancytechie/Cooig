@@ -121,8 +121,8 @@ class SectionHeader extends StatelessWidget {
   const SectionHeader({
     required this.title,
     required this.description,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -159,8 +159,8 @@ class AnimatedRoundedRectButton extends StatefulWidget {
   const AnimatedRoundedRectButton({
     required this.label,
     required this.onPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _AnimatedRoundedRectButtonState createState() =>
@@ -225,7 +225,7 @@ class _AnimatedRoundedRectButtonState extends State<AnimatedRoundedRectButton> {
 class BranchMaterialPage extends StatelessWidget {
   final String branch;
 
-  const BranchMaterialPage({required this.branch, Key? key}) : super(key: key);
+  const BranchMaterialPage({required this.branch, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -314,7 +314,7 @@ class BranchMaterialPage extends StatelessWidget {
                     children: [
                       for (var semester in semestersPerYear[yearIndex])
                         AnimatedRoundedRectButton(
-                          label: 'Sem ${semester}', // Shortened text
+                          label: 'Sem $semester', // Shortened text
 
                           onPressed: () {
                             // Navigate to respective semester page
@@ -354,8 +354,8 @@ class SemesterPage extends StatelessWidget {
     required this.branch,
     required this.year,
     required this.semester,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

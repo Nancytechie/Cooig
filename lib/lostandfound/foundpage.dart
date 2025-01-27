@@ -10,6 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 // import 'package:share/share.dart';
 
 class Foundpage extends StatefulWidget {
+  const Foundpage({super.key});
+
   @override
   _FoundpageState createState() => _FoundpageState();
 }

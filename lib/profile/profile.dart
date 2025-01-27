@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
+import 'package:cooig_firebase/loginsignup/login.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
 import 'package:cooig_firebase/profile/societydetails.dart';
 import 'package:cooig_firebase/upload.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,9 +37,9 @@ class _ProfilePageState extends State<ProfilePage>
   File? _profilepic;
   String? bannerImageUrl;
   String? profilepic;
-  TextEditingController _usernameController = TextEditingController();
-  TextEditingController _bioController = TextEditingController();
-  bool _isEditing = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final bool _isEditing = false;
   TabController? _tabController;
 //profile
   String? username;
@@ -45,7 +47,8 @@ class _ProfilePageState extends State<ProfilePage>
   String? branch;
   String? year;
   int _bondsCount = 0;
-  int _postsCount = 0; // Replace with actual post count variable if available
+  final int _postsCount =
+      0; // Replace with actual post count variable if available
   bool _isBonded = false;
 
   Future<void> _toggleBondStatus() async {
@@ -179,8 +182,8 @@ class _ProfilePageState extends State<ProfilePage>
           _bioController.text = bio!;
 
           // Image URLs
-          bannerImageUrl = userData?['bannerImageUrl'] ?? null;
-          profilepic = userData?['profilepic'] ?? null;
+          bannerImageUrl = userData?['bannerImageUrl'];
+          profilepic = userData?['profilepic'];
         });
       } else {
         // Handle case where the document does not exist
@@ -372,6 +375,13 @@ class _ProfilePageState extends State<ProfilePage>
             children: [
               ElevatedButton(
                 onPressed: _toggleBondStatus,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0XFF9752C5),
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
                 child: Row(
                   children: [
                     Icon(
@@ -385,17 +395,17 @@ class _ProfilePageState extends State<ProfilePage>
                     ),
                   ],
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0XFF9752C5),
-                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
               ),
               SizedBox(width: 20),
               ElevatedButton(
                 onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
                 child: Row(
                   children: [
                     Icon(Icons.message, color: Colors.black),
@@ -403,13 +413,6 @@ class _ProfilePageState extends State<ProfilePage>
                     Text('Messages',
                         style: GoogleFonts.poppins(color: Colors.black)),
                   ],
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
                 ),
               ),
             ],
@@ -617,7 +620,14 @@ class NavigationDrawer extends StatelessWidget {
               leading: const Icon(Iconsax.logout, color: Colors.white),
               title:
                   const Text("Log out", style: TextStyle(color: Colors.white)),
-              onTap: () {},
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Login()),
+                  (route) => false, // Remove all previous routes
+                );
+              },
             ),
           ],
         ),

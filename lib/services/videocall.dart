@@ -6,7 +6,8 @@ class VideoCallScreen extends StatefulWidget {
   final String userId;
   final String userName;
 
-  VideoCallScreen({required this.userId, required this.userName});
+  const VideoCallScreen(
+      {super.key, required this.userId, required this.userName});
 
   @override
   _VideoCallScreenState createState() => _VideoCallScreenState();

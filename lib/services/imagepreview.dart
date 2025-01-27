@@ -10,7 +10,8 @@ import 'paintscreen.dart';
 class ImagePreviewScreen extends StatefulWidget {
   final List<XFile> imageFiles;
 
-  ImagePreviewScreen({required this.imageFiles, required String imageUrl});
+  const ImagePreviewScreen(
+      {super.key, required this.imageFiles, required String imageUrl});
 
   @override
   _ImagePreviewScreenState createState() => _ImagePreviewScreenState();

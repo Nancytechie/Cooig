@@ -6,7 +6,7 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 class PollScreen extends StatefulWidget {
   final String userId; // Replace with your method to get the userId
 
-  const PollScreen({Key? key, required this.userId}) : super(key: key);
+  const PollScreen({super.key, required this.userId});
 
   @override
   _PollScreenState createState() => _PollScreenState();
@@ -95,7 +95,7 @@ class PollWidget extends StatefulWidget {
   final String? selectedOption;
   final void Function(String option) onOptionSelected;
   const PollWidget({
-    Key? key,
+    super.key,
     required this.pollId,
     required this.userName,
     required this.userImage,
@@ -105,7 +105,7 @@ class PollWidget extends StatefulWidget {
     required this.isTextOption,
     required this.selectedOption,
     required this.onOptionSelected,
-  }) : super(key: key);
+  });
 
   @override
   _PollWidgetState createState() => _PollWidgetState();
@@ -267,7 +267,7 @@ class _PollWidgetState extends State<PollWidget> {
                       ],
                     ),
                   );
-                }).toList(),
+                }),
               ],
             ),
           );

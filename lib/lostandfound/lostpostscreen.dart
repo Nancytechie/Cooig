@@ -11,6 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart'; // For basename function
 
 class PostScreen extends StatefulWidget {
+  const PostScreen({super.key});
+
   @override
   _PostScreenState createState() => _PostScreenState();
 }
@@ -261,19 +263,19 @@ class _PostScreenState extends State<PostScreen> {
                         SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: _onPostButtonClick,
-                          child: Text(
-                            'Upload',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                            ),
-                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(
                                 horizontal: 24, vertical: 10),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Upload',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
                             ),
                           ),
                         ),

@@ -10,8 +10,8 @@ class MessageService {
   // Creates or retrieves a conversation ID based on two user IDs.
   Future<String> getOrCreateConversation(String userId1, String userId2) async {
     final conversationId = userId1.compareTo(userId2) < 0
-        ? '$userId1\_$userId2'
-        : '$userId2\_$userId1';
+        ? '${userId1}_$userId2'
+        : '${userId2}_$userId1';
     final docRef = _db.collection('conversations').doc(conversationId);
 
     final doc = await docRef.get();
