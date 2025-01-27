@@ -5,6 +5,7 @@ import 'package:cooig_firebase/academic_section/branch_page.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/chatmain.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
+<<<<<<< HEAD
 import 'package:cooig_firebase/notifications.dart';
 import 'package:cooig_firebase/post.dart';
 import 'package:cooig_firebase/clips.dart'; // Import the ClipsScreen
@@ -442,13 +443,18 @@ import 'package:cooig_firebase/academic_section/branch_page.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/chatmain.dart';
 //import 'package:cooig_firebase/profile/editprofile.dart';
+=======
+>>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
 import 'package:cooig_firebase/notifications.dart';
 import 'package:cooig_firebase/post.dart';
 //import 'package:cooig_firebase/clips.dart'; // Import the ClipsScreen
 import 'package:cooig_firebase/search.dart';
+<<<<<<< HEAD
 
 //import 'package:cooig_firebase/upload.dart';
 
+=======
+>>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
 import 'package:cooig_firebase/upload.dart';
 // ignore: unnecessary_import
 import 'package:flutter/cupertino.dart';
@@ -457,6 +463,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:camera/camera.dart'; // Import camera package
 
@@ -472,6 +479,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   // final List<ChewieController> _chewieControllers = [];
   late Future<DocumentSnapshot> _userDataFuture;
+  final PanelController _panelController = PanelController();
 
   @override
   void initState() {
@@ -629,6 +637,7 @@ class _HomepageState extends State<Homepage> {
                                 fontWeight: FontWeight.w400,
                                 height: 1.1,
                               ),
+<<<<<<< HEAD
                             ),
                             ],
                           );
@@ -637,6 +646,8 @@ class _HomepageState extends State<Homepage> {
                               snapshot.data!.data() as Map<String, dynamic>;
                           String? imageUrl = data['profilepic'] as String?;
                         }
+=======
+>>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
                             ),
                           ],
                           ),
@@ -647,6 +658,7 @@ class _HomepageState extends State<Homepage> {
                         var data =snapshot.data!.data() as Map<String, dynamic>;
                         String? imageUrl = data['image'] as String?;
 
+<<<<<<< HEAD
                       }
                         return Row(
                           children=[
@@ -721,6 +733,81 @@ class _HomepageState extends State<Homepage> {
             //           icon: const Icon(Icons.add),
             //         ),
             //       ),
+=======
+                                return Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10.0),
+                                      child: CircleAvatar(
+                                        radius: 25,
+                                        backgroundImage: NetworkImage(imageUrl ??
+                                            'https://via.placeholder.com/150'),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    const Text(
+                                      "What's on your head?",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontFamily: 'Arial',
+                                        fontWeight: FontWeight.w400,
+                                        height: 1.1,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    // const Padding(
+                    //   padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    //   child: Text(
+                    //     "Clips",
+                    //     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 10.0),
+                    // SingleChildScrollView(
+                    //   scrollDirection: Axis.horizontal,
+                    //   child: Row(
+                    //     children: [
+                    //       // Inside the HomePage build method
+                    //       Container(
+                    //         height: 70.0,
+                    //         width: 56.0,
+                    //         alignment: Alignment.center,
+                    //         margin: const EdgeInsets.only(left: 24.0),
+                    //         decoration: const BoxDecoration(
+                    //           shape: BoxShape.circle,
+                    //           color: Colors.grey,
+                    //           boxShadow: [
+                    //             BoxShadow(
+                    //               blurRadius: 12.0,
+                    //               offset: Offset(0, 4),
+                    //               color: Color.fromARGB(255, 225, 0, 172),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //         child: IconButton(
+                    //           onPressed: () {
+                    //             // Navigate to ClipsScreen when add button is clicked
+                    //             Navigator.push(
+                    //               context,
+                    //               MaterialPageRoute(
+                    //                 builder: (context) => const ClipsScreen(
+                    //                   cameraLensDirection: CameraLensDirection.front,
+                    //                 ),
+                    //               ),
+                    //             );
+                    //           },
+                    //           icon: const Icon(Icons.add),
+                    //         ),
+                    //       ),
+>>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
 
             //       ...List.generate(
             //         20,
@@ -757,6 +844,7 @@ class _HomepageState extends State<Homepage> {
                 borderRadius:
                     BorderRadius.circular(20), // Adjust the value as needed
               ),
+<<<<<<< HEAD
               const SizedBox(height: 20),
               /*
               Container(
@@ -766,6 +854,9 @@ class _HomepageState extends State<Homepage> {
                     horizontal: 20.0, vertical: 10.0),
                 color: const Color.fromARGB(255, 26, 25, 25),
                 child: FutureBuilder<DocumentSnapshot>(
+=======
+              child: FutureBuilder<DocumentSnapshot>(
+>>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
                   future: _userDataFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -780,150 +871,168 @@ class _HomepageState extends State<Homepage> {
                       String? profileImageUrl = data['image'] as String?;
                       String? userName = data['full_name'] as String?;
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // User Profile and Name
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // User Profile and Name
 
-                          const SizedBox(height: 10),
+                                  const SizedBox(height: 10),
 
-                          // Posts or Media Content
-                          Expanded(
-                            child: StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection(widget.userId)
-                                  .where('userID', isEqualTo: widget.userId)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return Center(
-                                      child: Text('Error: ${snapshot.error}'));
-                                } else if (!snapshot.hasData ||
-                                    snapshot.data!.docs.isEmpty) {
-                                  return const Center(
-                                      child: Text('No Posts found'));
-                                }
+                                  // Posts or Media Content
+                                  Expanded(
+                                    child: StreamBuilder<QuerySnapshot>(
+                                      stream: FirebaseFirestore.instance
+                                          .collection(widget.userId)
+                                          .where('userID',
+                                              isEqualTo: widget.userId)
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        } else if (snapshot.hasError) {
+                                          return Center(
+                                              child: Text(
+                                                  'Error: ${snapshot.error}'));
+                                        } else if (!snapshot.hasData ||
+                                            snapshot.data!.docs.isEmpty) {
+                                          return const Center(
+                                              child: Text('No Posts found'));
+                                        }
 
-                                // Create a local list to hold media
-                                List<Map<String, dynamic>> listOfMedia = [];
+                                        // Create a local list to hold media
+                                        List<Map<String, dynamic>> listOfMedia =
+                                            [];
 // Iterate through the documents
-                                for (var doc in snapshot.data!.docs) {
-                                  var urls = doc['urls'] as List;
-                                  for (var url in urls) {
-                                    String extension = url
-                                        .split('?')[0]
-                                        .split('.')
-                                        .last; // Extract the extension
-                                    listOfMedia.add({
-                                      'url': url,
-                                      'type': (extension == 'mp4' ||
-                                              extension == 'mp3')
-                                          ? 'video'
-                                          : 'image',
-                                    });
-                                  }
-                                }
+                                        for (var doc in snapshot.data!.docs) {
+                                          var urls = doc['urls'] as List;
+                                          for (var url in urls) {
+                                            String extension = url
+                                                .split('?')[0]
+                                                .split('.')
+                                                .last; // Extract the extension
+                                            listOfMedia.add({
+                                              'url': url,
+                                              'type': (extension == 'mp4' ||
+                                                      extension == 'mp3')
+                                                  ? 'video'
+                                                  : 'image',
+                                            });
+                                          }
+                                        }
 
-                                Widget buildMediaUI(
-                                    List<Map<String, dynamic>> mediaList) {
-                                  return GridView.builder(
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount:
-                                          3, // Number of items per row
-                                      crossAxisSpacing: 10,
-                                      mainAxisSpacing: 10,
-                                    ),
-                                    itemCount: mediaList.length,
-                                    itemBuilder: (context, index) {
-                                      var media = mediaList[index];
-                                      return Material(
-                                        elevation:
-                                            5, // Add elevation for a modern card-like appearance
-                                        borderRadius: BorderRadius.circular(15),
-                                        clipBehavior: Clip
-                                            .antiAlias, // Ensure content respects rounded edges
-                                        child: Stack(
-                                          children: [
-                                            // Media content
-                                            media['type'] == 'image'
-                                                ? Image.network(
-                                                    media['url'],
-                                                    fit: BoxFit.cover,
-                                                    width: double.infinity,
-                                                    height: double.infinity,
-                                                  )
-                                                : Container(
-                                                    color: Colors.black26,
-                                                    child: const Center(
-                                                      child: Icon(
-                                                        Icons.play_circle_fill,
-                                                        size: 50,
-                                                        color: Colors.white,
+                                        Widget buildMediaUI(
+                                            List<Map<String, dynamic>>
+                                                mediaList) {
+                                          return GridView.builder(
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount:
+                                                  3, // Number of items per row
+                                              crossAxisSpacing: 10,
+                                              mainAxisSpacing: 10,
+                                            ),
+                                            itemCount: mediaList.length,
+                                            itemBuilder: (context, index) {
+                                              var media = mediaList[index];
+                                              return Material(
+                                                elevation:
+                                                    5, // Add elevation for a modern card-like appearance
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                clipBehavior: Clip
+                                                    .antiAlias, // Ensure content respects rounded edges
+                                                child: Stack(
+                                                  children: [
+                                                    // Media content
+                                                    media['type'] == 'image'
+                                                        ? Image.network(
+                                                            media['url'],
+                                                            fit: BoxFit.cover,
+                                                            width:
+                                                                double.infinity,
+                                                            height:
+                                                                double.infinity,
+                                                          )
+                                                        : Container(
+                                                            color:
+                                                                Colors.black26,
+                                                            child: const Center(
+                                                              child: Icon(
+                                                                Icons
+                                                                    .play_circle_fill,
+                                                                size: 50,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                    // Overlay for rounded edges
+                                                    Positioned.fill(
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(15),
+                                                          border: Border.all(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: 3),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                            // Overlay for rounded edges
-                                            Positioned.fill(
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: Border.all(
-                                                      color: Colors.white,
-                                                      width: 3),
+                                                  ],
                                                 ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                }
+                                              );
+                                            },
+                                          );
+                                        }
 
-                                return Swiper(
-                                  itemCount: listOfMedia.length,
-                                  itemBuilder: (context, index) {
-                                    var media = listOfMedia[index];
-                                    return Material(
-                                      elevation: 5,
-                                      borderRadius: BorderRadius.circular(15),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: media['type'] == 'video'
-                                          ? Chewie(
-                                              controller: ChewieController(
-                                                videoPlayerController:
-                                                    VideoPlayerController
-                                                        .network(media['url']),
-                                                aspectRatio: 16 / 9,
-                                                autoPlay: false,
-                                                looping: false,
-                                              ),
-                                            )
-                                          : ClipRRect(
+                                        return Swiper(
+                                          itemCount: listOfMedia.length,
+                                          itemBuilder: (context, index) {
+                                            var media = listOfMedia[index];
+                                            return Material(
+                                              elevation: 5,
                                               borderRadius:
                                                   BorderRadius.circular(15),
-                                              child: Image.network(
-                                                media['url'],
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                    );
-                                  },
-                                  pagination: const SwiperPagination(),
-                                  control: const SwiperControl(),
-                                );
-                              },
-                            ),
-                          ),
-                          const SizedBox(height: 8),
+                                              clipBehavior: Clip.antiAlias,
+                                              child: media['type'] == 'video'
+                                                  ? Chewie(
+                                                      controller:
+                                                          ChewieController(
+                                                        videoPlayerController:
+                                                            VideoPlayerController
+                                                                .network(media[
+                                                                    'url']),
+                                                        aspectRatio: 16 / 9,
+                                                        autoPlay: false,
+                                                        looping: false,
+                                                      ),
+                                                    )
+                                                  : ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      child: Image.network(
+                                                        media['url'],
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                            );
+                                          },
+                                          pagination: const SwiperPagination(),
+                                          control: const SwiperControl(),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
 
-                          // User Profile and Icons (Avatar + Username + Save + Calendar + Share)
+                                  // User Profile and Icons (Avatar + Username + Save + Calendar + Share)
 
                           Row(
                             mainAxisSize: MainAxisSize.min,
@@ -967,6 +1076,7 @@ class _HomepageState extends State<Homepage> {
                         ],
                       );
                     }
+<<<<<<< HEAD
                   },
                 ),
               ),
@@ -978,6 +1088,8 @@ class _HomepageState extends State<Homepage> {
         ),
       ),
     );
+=======
+>>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
                   }),
             )
           ]),

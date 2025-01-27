@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/loginsignup/login.dart';
-import 'package:cooig_firebase/profile/editprofile.dart';
-import 'package:cooig_firebase/society/society_login.dart';
+
+
+import 'package:cooig_firebase/society/societyprofile/editsocietyprofile.dart';
+
 import 'package:cooig_firebase/upload.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,18 +17,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // ignore: depend_on_referenced_packages
-class ProfilePage extends StatefulWidget {
+class Societyprofile extends StatefulWidget {
   final dynamic userid;
 
-  const ProfilePage({super.key, required this.userid});
+  const Societyprofile({super.key, required this.userid});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<Societyprofile> createState() => _SocietyprofileState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
+class _SocietyprofileState extends State<Societyprofile>
     with SingleTickerProviderStateMixin {
   // final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -37,77 +39,41 @@ class _ProfilePageState extends State<ProfilePage>
   File? _profilepic;
   String? bannerImageUrl;
   String? profilepic;
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _bioController = TextEditingController();
-  final bool _isEditing = false;
+  TextEditingController _societyNameController = TextEditingController();
+  TextEditingController _aboutController = TextEditingController();
+  final _LinkController = TextEditingController();
+
+  bool _isEditing = false;
   TabController? _tabController;
 //profile
-  String? username;
-  String? bio;
-  String? branch;
-  String? year;
-  int _bondsCount = 0;
-  final int _postsCount =
-      0; // Replace with actual post count variable if available
-  bool _isBonded = false;
-
-  Future<void> _toggleBondStatus() async {
-    if (_isBonded) {
-      // Show confirmation dialog to unbond
-      bool confirmUnbond = await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Unbond"),
-            content: Text("Are you sure you want to unbond?"),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text("Unbond"),
-              ),
-            ],
-          );
-        },
-      );
-      if (!confirmUnbond) return;
-
-      // Unbond action
+  String? societyName;
+  String? about;
+  String? category;
+  String? establishedYear;
+  String? status;
+  String? link;
+  Future<void> _openLink(BuildContext context, String url) async {
+    debugPrint('Opening URL: $url'); // Log the URL for debugging
+    if (url.isNotEmpty && Uri.tryParse(url)?.hasScheme == true) {
       try {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(widget.userid)
-            .update({
-          'bonds': _bondsCount - 1,
-          'isBonded': false,
-        });
-        setState(() {
-          _bondsCount--;
-          _isBonded = false;
-        });
+        final Uri uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          debugPrint('Could not launch URL: $url'); // Log the error
+          throw 'Could not open the link';
+        }
       } catch (e) {
-        print('Failed to unbond: $e');
+        debugPrint('Error launching URL: $e'); // Log the exception
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to open link: $e')),
+        );
       }
     } else {
-      // Bond action
-      try {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(widget.userid)
-            .update({
-          'bonds': _bondsCount + 1,
-          'isBonded': true,
-        });
-        setState(() {
-          _bondsCount++;
-          _isBonded = true;
-        });
-      } catch (e) {
-        print('Failed to bond: $e');
-      }
+      debugPrint('Invalid URL provided: $url'); // Log invalid URLs
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid URL')),
+      );
     }
   }
 
@@ -171,31 +137,31 @@ class _ProfilePageState extends State<ProfilePage>
 
         setState(() {
           // Fetch and set the required fields with fallbacks
-          username = userData?['username'] ?? "Username";
-          bio = userData?['bio'] ?? "Bio goes here";
-          branch = userData?['branch'] ?? "Branch";
-          year = userData?['year'] ?? "Year";
-          _bondsCount = userData?['bonds'] ?? 0;
+          societyName = userData?['societyName'] ?? "Society Name";
+          about = userData?['about'] ?? "About goes here";
+          category = userData?['category'] ?? "Category";
+          establishedYear = userData?['establishedYear'] ?? "Year";
+          status = userData?['status'] ?? "Non-Recruiting";
+          link = userData?['Link'] ?? "";
 
           // Text controllers for editable fields
-          _usernameController.text = username!;
-          _bioController.text = bio!;
+          _societyNameController.text = societyName!;
+          _aboutController.text = about!;
 
           // Image URLs
-          bannerImageUrl = userData?['bannerImageUrl'];
-          profilepic = userData?['profilepic'];
+          bannerImageUrl = userData?['bannerImageUrl'] ?? null;
+          profilepic = userData?['profilepic'] ?? null;
         });
       } else {
         // Handle case where the document does not exist
         setState(() {
-          username = "Username";
-          bio = "Bio goes here";
-          branch = "Branch";
-          year = "Year";
-          _bondsCount = 0;
+          societyName = "Society Name";
+          about = "About goes here";
+          category = "Category";
+          establishedYear = "Year";
 
-          _usernameController.text = username!;
-          _bioController.text = bio!;
+          _societyNameController.text = societyName!;
+          _aboutController.text = about!;
 
           bannerImageUrl = null;
           profilepic = null;
@@ -205,14 +171,13 @@ class _ProfilePageState extends State<ProfilePage>
       // Handle errors
       print("Error fetching user data: $e");
       setState(() {
-        username = "Username";
-        bio = "Bio goes here";
-        branch = "Branch";
-        year = "Year";
-        _bondsCount = 0;
+        societyName = "Society Name";
+        about = "About goes here";
+        category = "Category";
+        establishedYear = "Year";
 
-        _usernameController.text = username!;
-        _bioController.text = bio!;
+        _societyNameController.text = societyName!;
+        _aboutController.text = about!;
 
         bannerImageUrl = null;
         profilepic = null;
@@ -220,19 +185,6 @@ class _ProfilePageState extends State<ProfilePage>
     }
   }
 
-/*
-  // Navigate to the Edit Profile Page
-  void _navigateToEditProfile() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditProfilePage(
-          userid: widget.userid,
-        ),
-      ),
-    );
-  }
-*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -278,43 +230,42 @@ class _ProfilePageState extends State<ProfilePage>
                 ),
               ),
               Positioned(
-                bottom: -60,
+                bottom: -50,
                 left: 14,
-                child: _buildCircularBox(branch ?? 'Branch'),
+                child: _buildCircularBox(category ?? 'category'),
               ),
               Positioned(
-                bottom: -60,
+                bottom: -50,
                 right: 14,
-                child: _buildCircularBox(year ?? 'Year'),
+                child: _buildCircularBox(establishedYear ?? 'establishedYear'),
               ),
-              /*Positioned(
-                top: 10,
-                right: 10,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, color: Colors.white),
-                      SizedBox(width: 5),
-                      Text('Edit', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-              ),*/
             ],
           ),
 
           SizedBox(height: 60),
 
-          // Username Display
+          // societyName Display
           Center(
-            child: Text(
-              username ?? 'Username',
-              style: GoogleFonts.lexend(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize
+                  .min, // Ensures the Row takes up only as much space as needed
+              children: [
+                Text(
+                  societyName ?? 'Society Name',
+                  style: GoogleFonts.lexend(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                    width: 2), // Add spacing between the text and the icon
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                  size: 24,
+                ),
+              ],
             ),
           ),
 
@@ -325,87 +276,49 @@ class _ProfilePageState extends State<ProfilePage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
-                children: [
-                  Text(
-                    _postsCount.toString(),
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    'Posts',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: 40),
-              Column(
-                children: [
-                  Text(
-                    _bondsCount.toString(),
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    'Bonds',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-                ],
+                children: [],
               ),
             ],
           ),
-
-          SizedBox(height: 15),
 
           // Bond Action Button
           SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // The Join button
               ElevatedButton(
-                onPressed: _toggleBondStatus,
+                onPressed: status == 'Recruiting'
+                    ? () {
+                        _openLink(context, link!);
+                      }
+                    : null, // Disable the button if not recruiting
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.group_add, // Icon for joining
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      'Join', // Text on the button
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0XFF9752C5),
+                  backgroundColor: status == 'Recruiting'
+                      ? Colors.blue // Blue for recruiting
+                      : Colors.grey, // Grey for not recruiting
                   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: Row(
-                  children: [
-                    Icon(
-                      _isBonded ? Icons.check : Icons.favorite,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: 5),
-                    Text(
-                      _isBonded ? 'Bonded' : 'Bond',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
               ),
               SizedBox(width: 20),
               ElevatedButton(
                 onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
                 child: Row(
                   children: [
                     Icon(Icons.message, color: Colors.black),
@@ -414,14 +327,21 @@ class _ProfilePageState extends State<ProfilePage>
                         style: GoogleFonts.poppins(color: Colors.black)),
                   ],
                 ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
               ),
             ],
           ),
           SizedBox(height: 15),
 
-          // Bio Display
+          // about Display
           Text(
-            bio ?? 'Bio goes here :)',
+            about ?? 'about goes here :)',
             style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[300]),
           ),
 
@@ -459,11 +379,11 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
-  // Helper function to display circular boxes (branch/year)
+  // Helper function to display circular boxes (category/establishedYear)
   Widget _buildCircularBox(String text) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xff50555C),
+        color: Color.fromARGB(255, 112, 24, 171),
         borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
@@ -541,12 +461,12 @@ class NavigationDrawer extends StatelessWidget {
                       } else {
                         var data =
                             snapshot.data!.data() as Map<String, dynamic>;
-                        String? email = data['course_name'] as String?;
-                        String? name = data['full_name'] as String?;
+                        String? email = data['category'] as String?;
+                        String? name = data['societyName'] as String?;
                         String? imageUrl = data['profilepic'] as String?;
 
                         return UserAccountsDrawerHeader(
-                          accountEmail: Text(email ?? "No Course Available"),
+                          accountEmail: Text(email ?? "No category Available"),
                           accountName: Text(name ?? "No Name Available"),
                           currentAccountPicture: buildProfilePicture(
                             imageUrl ?? 'https://via.placeholder.com/150',
@@ -564,13 +484,13 @@ class NavigationDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Iconsax.user_edit, color: Colors.white),
-              title: const Text("Edit Profile",
+              title: const Text("Edit Society Profile",
                   style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditProfilePage(
+                    builder: (context) => EditSocietyprofile(
                       userid: userId,
                     ),
                   ),
@@ -578,20 +498,10 @@ class NavigationDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading:
-                  const Icon(CupertinoIcons.group_solid, color: Colors.white),
-              title: const Text(
-                "Society login",
-                style: TextStyle(color: Colors.white),
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SocietyLogin(),
-                  ),
-                );
-              },
+              leading: const Icon(Icons.group_add, color: Colors.white),
+              title: const Text("Recruitment",
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {},
             ),
             ListTile(
               leading: const Icon(Iconsax.security_safe, color: Colors.white),
@@ -616,19 +526,23 @@ class NavigationDrawer extends StatelessWidget {
                   const Text("Settings", style: TextStyle(color: Colors.white)),
               onTap: () {},
             ),
-            
+            ListTile(
+              leading: const Icon(Icons.swap_calls, color: Colors.white),
+              title: const Text("Switch to main account",
+                  style: TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Login(),
+                    ));
+              },
+            ),
             ListTile(
               leading: const Icon(Iconsax.logout, color: Colors.white),
               title:
                   const Text("Log out", style: TextStyle(color: Colors.white)),
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),
-                  (route) => false, // Remove all previous routes
-                );
-              },
+              onTap: () {},
             ),
           ],
         ),
