@@ -1,11 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/lostandfound/foundpage.dart';
-<<<<<<< HEAD
 import 'package:cooig_firebase/home.dart' hide Container, SizedBox;
-=======
-import 'package:cooig_firebase/home.dart';
-
->>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
 import 'package:cooig_firebase/notice/noticeboard.dart';
 import 'package:cooig_firebase/profile/profile.dart';
 import 'package:cooig_firebase/society/societyprofile/societyprofile.dart';

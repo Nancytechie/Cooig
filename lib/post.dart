@@ -4,6 +4,7 @@ import 'dart:io';
 //import 'dart:io';
 import 'package:cooig_firebase/PDFViewer.dart';
 import 'package:cooig_firebase/audio.dart';
+import 'package:cooig_firebase/home.dart';
 import 'package:http/http.dart' as http;
 
 //import 'package:carousel_slider/carousel_slider.dart';
@@ -692,7 +693,7 @@ Future<void> _pickGif(BuildContext context) async {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => PostPage(userid: widget.userId)),
+                      builder: (context) => Homepage(userId: widget.userId)),
                 );
               }
               //Navigator.pop(context);

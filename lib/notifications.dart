@@ -171,7 +171,6 @@ class NotificationCard extends StatelessWidget {
     );
   }
 }
-<<<<<<< HEAD
 
 class RadialGradientBackground extends StatelessWidget {
   final List<Color> colors;
@@ -201,5 +200,3 @@ class RadialGradientBackground extends StatelessWidget {
     );
   }
 }
-=======
->>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab

@@ -11,7 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart'; // For basename function
 
 class PostScreen extends StatefulWidget {
-  const PostScreen({super.key});
+  //const PostScreen(userid, {super.key, required userId});
 
   @override
   _PostScreenState createState() => _PostScreenState();

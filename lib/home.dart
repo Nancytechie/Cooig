@@ -1,11 +1,12 @@
 import 'package:card_swiper/card_swiper.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/academic_section/branch_page.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/chatmain.dart';
+import 'package:cooig_firebase/pdfviewerurl.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
-<<<<<<< HEAD
 import 'package:cooig_firebase/notifications.dart';
 import 'package:cooig_firebase/post.dart';
 import 'package:cooig_firebase/clips.dart'; // Import the ClipsScreen
@@ -17,17 +18,36 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:camera/camera.dart'; // Import camera package
 
-class Homepage extends StatefulWidget {
-  final String userId;
+import 'package:carousel_slider/carousel_slider.dart';
+//import 'package:chewie/chewie.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/academic_section/branch_page.dart';
+import 'package:cooig_firebase/bar.dart';
+import 'package:cooig_firebase/chatmain.dart';
+//import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
+import 'package:cooig_firebase/notifications.dart';
+//import 'package:cooig_firebase/PDFViewer.dart';
+import 'package:cooig_firebase/pdfviewerurl.dart';
+import 'package:cooig_firebase/search.dart';
+//import 'package:cooig_firebase/postscreen.dart';
+import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
+//import 'package:path/path.dart';
+import 'package:cooig_firebase/post.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:video_player/video_player.dart';
+//import 'package:carousel_slider/carousel_slider.dart';
 
-  const Homepage({super.key, required this.userId});
+class Homepage extends StatefulWidget {
+  dynamic userId;
+
+  Homepage({super.key, required this.userId});
 
   @override
-  _HomepageState createState() => _HomepageState();
+  State<Homepage> createState() => _HomePageState();
 }
 
-class _HomepageState extends State<Homepage> {
-  final List<ChewieController> _chewieControllers = [];
+class _HomePageState extends State<Homepage> {
   late Future<DocumentSnapshot> _userDataFuture;
 
   @override
@@ -38,32 +58,25 @@ class _HomepageState extends State<Homepage> {
   }
 
   @override
-  void dispose() {
-    // Dispose all ChewieControllers to free up resources
-    for (var controller in _chewieControllers) {
-      controller.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         centerTitle: false,
         title: Row(
           children: [
             IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BranchPage()),
-                  );
-                },
-                icon: const Icon(
-                  Icons.school,
-                  color: Colors.white,
-                )),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BranchPage()),
+                );
+              },
+              icon: const Icon(
+                Icons.school,
+                color: Colors.white,
+              ),
+            ),
             const SizedBox(width: 1),
             IconButton(
               onPressed: () {
@@ -81,18 +94,18 @@ class _HomepageState extends State<Homepage> {
             ),
           ],
         ),
-        backgroundColor: Colors.black,
         elevation: 0,
         actions: [
           IconButton(
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Notifications(
-                      userId: widget.userId,
-                    ),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Notifications(
+                    userId: widget.userId,
+                  ),
+                ),
+              );
             },
             icon: const Badge(
               backgroundColor: Color(0xFF635A8F),
@@ -106,9 +119,10 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => mainChat(
-                          currentUserId: widget.userId,
-                        )),
+                  builder: (context) => mainChat(
+                    currentUserId: widget.userId,
+                  ),
+                ),
               );
             },
             icon: const Badge(
@@ -121,979 +135,546 @@ class _HomepageState extends State<Homepage> {
         ],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      // Pass userId to the NavigationDrawer
       bottomNavigationBar: Nav(userId: widget.userId),
       body: SingleChildScrollView(
-        child: IntrinsicHeight(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: InkWell(
-                  splashColor: Colors.blue.withOpacity(0.3),
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              PostScreen(userId: widget.userId)),
-                    );
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 8.0),
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    width: 250,
-                    height: 100,
-                    decoration: ShapeDecoration(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                    child: FutureBuilder<DocumentSnapshot>(
-                      future: _userDataFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        } else if (snapshot.hasError ||
-                            !snapshot.hasData ||
-                            !snapshot.data!.exists) {
-                          return const Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 5.0),
-                                child: CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: NetworkImage(
-                                      'https://via.placeholder.com/150'),
-                                ),
-                              ),
-                              SizedBox(width: 16),
-                              Text(
-                                "What's on your head?",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontFamily: 'Arial',
-                                  fontWeight: FontWeight.w400,
-                                  height: 1.1,
-                                ),
-                              ),
-                            ],
-                          );
-                        } else {
-                          var data =
-                              snapshot.data!.data() as Map<String, dynamic>;
-                          String? imageUrl = data['image'] as String?;
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildUserPostInput(widget.userId),
+            const SizedBox(height: 16),
+            _buildPostStream(),
+          ],
+        ),
+      ),
+    );
+  }
 
-                          return Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10.0),
-                                child: CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: NetworkImage(imageUrl ??
-                                      'https://via.placeholder.com/150'),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              const Text(
-                                "What's on your head?",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontFamily: 'Arial',
-                                  fontWeight: FontWeight.w400,
-                                  height: 1.1,
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                child: Text(
-                  "Clips",
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 10.0),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    // Inside the HomePage build method
-                    Container(
-                      height: 70.0,
-                      width: 56.0,
-                      alignment: Alignment.center,
-                      margin: const EdgeInsets.only(left: 24.0),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey,
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 12.0,
-                            offset: Offset(0, 4),
-                            color: Color.fromARGB(255, 225, 0, 172),
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        onPressed: () {
-                          // Navigate to ClipsScreen when add button is clicked
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ClipsScreen(
-                                cameraLensDirection: CameraLensDirection.front,
-                              ),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.add),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 300,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 10.0),
-                color: const Color.fromARGB(255, 26, 25, 25),
-                child: FutureBuilder<DocumentSnapshot>(
-                  future: _userDataFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError ||
-                        !snapshot.hasData ||
-                        !snapshot.data!.exists) {
-                      return const Center(
-                          child: Text('Error fetching user data'));
-                    } else {
-                      var data = snapshot.data!.data() as Map<String, dynamic>;
-                      String? profileImageUrl = data['image'] as String?;
-                      String? userName = data['full_name'] as String?;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // User Profile and Name
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                backgroundImage: profileImageUrl != null &&
-                                        profileImageUrl.isNotEmpty
-                                    ? NetworkImage(profileImageUrl)
-                                    : const AssetImage(
-                                            'assets/default_avatar.png')
-                                        as ImageProvider,
-                                radius: 25,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                userName ?? 'Anonymous',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  // Handle settings action
-                                },
-                                icon: const Icon(
-                                  Icons.more_horiz,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Posts or Media Content
-                          Expanded(
-                            child: StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection(widget.userId)
-                                  .where('userID', isEqualTo: widget.userId)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return Center(
-                                      child: Text('Error: ${snapshot.error}'));
-                                } else if (!snapshot.hasData ||
-                                    snapshot.data!.docs.isEmpty) {
-                                  return const Center(
-                                      child: Text('No Posts found'));
-                                }
-
-                                // Create a local list to hold media
-                                List<Map<String, dynamic>> listOfMedia = [];
-                                // Iterate through the documents
-                                for (var doc in snapshot.data!.docs) {
-                                  var urls = doc['urls'] as List;
-                                  for (var url in urls) {
-                                    String extension = url
-                                        .split('?')[0]
-                                        .split('.')
-                                        .last; // Extract the extension
-                                    listOfMedia.add({
-                                      'url': url,
-                                      'type': (extension == 'mp4' ||
-                                              extension == 'mp3')
-                                          ? 'video'
-                                          : 'image',
-                                    });
-                                  }
-                                }
-
-                                return Swiper(
-                                  itemCount: listOfMedia.length,
-                                  itemBuilder: (context, index) {
-                                    var media = listOfMedia[index];
-                                    if (media['type'] == 'video') {
-                                      return Chewie(
-                                        controller: ChewieController(
-                                          videoPlayerController:
-                                              VideoPlayerController.network(
-                                                  media['url']),
-                                          aspectRatio: 16 / 9,
-                                          autoPlay: false,
-                                          looping: false,
-                                        ),
-                                      );
-                                    } else {
-                                      return Image.network(media['url'],
-                                          fit: BoxFit.cover);
-                                    }
-                                  },
-                                  pagination: const SwiperPagination(),
-                                  control: const SwiperControl(),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  },
-                ),
-              ),
-            ],
+  Widget _buildUserPostInput(userId) {
+    return Center(
+      child: InkWell(
+        splashColor: Colors.blue.withOpacity(0.3),
+        highlightColor: Colors.transparent,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostScreen(userId: userId),
+            ),
+          );
+        },
+        child: Container(
+          margin: const EdgeInsets.only(top: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          width: 250,
+          height: 100,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: FutureBuilder<DocumentSnapshot>(
+            future: _userDataFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (!snapshot.hasData || !snapshot.data!.exists) {
+                return _buildPlaceholderInput();
+              } else {
+                var data = snapshot.data!.data() as Map<String, dynamic>;
+                String? imageUrl = data['image'] as String?;
+                return _buildUserInputRow(imageUrl);
+              }
+            },
           ),
         ),
       ),
     );
   }
+
+  Widget _buildPlaceholderInput() {
+    return const Row(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 5.0),
+          child: CircleAvatar(
+            radius: 20,
+            backgroundImage: NetworkImage('https://via.placeholder.com/150'),
+          ),
+        ),
+        SizedBox(width: 16),
+        Text(
+          "What's on your head?",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 14,
+            fontFamily: 'Arial',
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserInputRow(String? imageUrl) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: CircleAvatar(
+            radius: 20,
+            backgroundImage:
+                NetworkImage(imageUrl ?? 'https://via.placeholder.com/150'),
+          ),
+        ),
+        const SizedBox(width: 12),
+        const Text(
+          "What's on your head?",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 14,
+            fontFamily: 'Arial',
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPostStream() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('posts_upload')
+          .orderBy('timestamp', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!mounted) return const SizedBox.shrink();
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final posts = snapshot.data!.docs;
+
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            final post = posts[index].data() as Map<String, dynamic>;
+            return FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(post['userID'])
+                  .get(),
+              builder: (context, userSnapshot) {
+                if (!userSnapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final user = userSnapshot.data!.data() as Map<String, dynamic>;
+                final userName = user['full_name'] ?? 'Unknown';
+                final userImage = user['profilepic'] ?? '';
+
+                return PostWidget(
+                  userName: userName,
+                  userImage: userImage,
+                  text: post['text'] ?? '',
+                  mediaUrls: post['media'] != null
+                      ? List<String>.from(post['media'])
+                      : [],
+                  timestamp: post['timestamp'],
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 }
 
+class PostWidget extends StatelessWidget {
+  final String userName;
+  final String userImage;
+  final String text;
+  final List<String> mediaUrls;
+  final Timestamp timestamp;
 
+  const PostWidget({
+    super.key,
+    required this.userName,
+    required this.userImage,
+    required this.text,
+    required this.mediaUrls,
+    required this.timestamp,
+  });
 
+  String _formatTimestamp(Timestamp timestamp) {
+    final dateTime = timestamp.toDate();
+    return "${dateTime.day}/${dateTime.month}/${dateTime.year} at ${dateTime.hour}:${dateTime.minute}";
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-//import 'package:card_swiper/card_swiper.dart';
-//import 'package:chewie/chewie.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooig_firebase/academic_section/branch_page.dart';
-import 'package:cooig_firebase/bar.dart';
-import 'package:cooig_firebase/chatmain.dart';
-//import 'package:cooig_firebase/profile/editprofile.dart';
-=======
->>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
-import 'package:cooig_firebase/notifications.dart';
-import 'package:cooig_firebase/post.dart';
-//import 'package:cooig_firebase/clips.dart'; // Import the ClipsScreen
-import 'package:cooig_firebase/search.dart';
-<<<<<<< HEAD
-
-//import 'package:cooig_firebase/upload.dart';
-
-=======
->>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
-import 'package:cooig_firebase/upload.dart';
-// ignore: unnecessary_import
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:flutter/material.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:video_player/video_player.dart';
-import 'package:camera/camera.dart'; // Import camera package
-
-class Homepage extends StatefulWidget {
-  final String userId;
-
-  Homepage({super.key, required this.userId});
+  List<Map<String, dynamic>> _classifyMedia(List<String> urls) {
+    return urls.map((url) {
+      String extension = url.split('?')[0].split('.').last.toLowerCase();
+      String type;
+      if (extension == 'mp4' || extension == 'mp3') {
+        type = 'video';
+      } else if (extension == 'pdf') {
+        type = 'pdf';
+      } else {
+        type = 'image';
+      }
+      return {'url': url, 'type': type};
+    }).toList();
+  }
 
   @override
-  _HomepageState createState() => _HomepageState();
+  Widget build(BuildContext context) {
+    List<Map<String, dynamic>> media = _classifyMedia(mediaUrls);
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: userImage.isNotEmpty
+                    ? NetworkImage(userImage)
+                    : const AssetImage('assets/default_avatar.png')
+                        as ImageProvider,
+                radius: 20,
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    userName,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    _formatTimestamp(timestamp),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Iterate through the documents
+
+          if (media.isNotEmpty)
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 200,
+                enlargeCenterPage: true,
+                enableInfiniteScroll: false,
+                aspectRatio: 16 / 9,
+              ),
+              items: media.map((medi) {
+                if (medi['type'] == 'image') {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Image.network(
+                      medi['url'],
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
+                  );
+                } else if (medi['type'] == 'video') {
+                  return VideoPlayerWidget(medi['url']);
+                } else if (medi['type'] == 'pdf') {
+                  String url = medi['url'];
+                  final String fileName = Uri.decodeFull(
+                      url.split('/o/').last.split('?').first.split('%2F').last);
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PDFViewerFromUrl(
+                            pdfUrl: url,
+                            fileName: fileName,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      color: const Color.fromARGB(255, 44, 32, 32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.picture_as_pdf,
+                              size: 40, color: Colors.red),
+                          const SizedBox(height: 8),
+                          Text(
+                            fileName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                return const SizedBox.shrink();
+              }).toList(),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
-class _HomepageState extends State<Homepage> {
-  // final List<ChewieController> _chewieControllers = [];
-  late Future<DocumentSnapshot> _userDataFuture;
-  final PanelController _panelController = PanelController();
+class VideoPlayerWidget extends StatefulWidget {
+  final String videoUrl;
+
+  const VideoPlayerWidget(this.videoUrl, {super.key});
+
+  @override
+  _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
+}
+
+class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+  late VideoPlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    _userDataFuture =
-        FirebaseFirestore.instance.collection('users').doc(widget.userId).get();
+    _controller = VideoPlayerController.network(widget.videoUrl)
+      ..initialize().then((_) {
+        setState(() {});
+      })
+      ..setLooping(true);
   }
 
-/*
   @override
   void dispose() {
-    // Dispose all ChewieControllers to free up resources
-    for (var controller in _chewieControllers) {
-      controller.dispose();
-    }
+    _controller.dispose();
     super.dispose();
   }
-*/
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          centerTitle: false,
-          title: Row(
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => BranchPage()),
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.school,
+    return _controller.value.isInitialized
+        ? GestureDetector(
+            onTap: () {
+              if (_controller.value.isPlaying) {
+                _controller.pause();
+              } else {
+                _controller.play();
+              }
+              setState(() {});
+            },
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                ),
+                if (!_controller.value.isPlaying)
+                  const Icon(
+                    Icons.play_circle_fill,
                     color: Colors.white,
-                  )),
-              const SizedBox(width: 1),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const MySearchPage()),
-                  );
-                },
-                icon: const Icon(Icons.search, color: Colors.white),
-              ),
-              const SizedBox(width: 50),
-              Text(
-                'Cooig',
-                style: GoogleFonts.libreBodoni(
-                  textStyle: TextStyle(
-                    color: Color(0XFF9752C5),
-                    fontSize: 30,
+                    size: 50,
                   ),
+              ],
+            ),
+          )
+        : const Center(child: CircularProgressIndicator());
+  }
+}
+
+class PollWidget extends StatefulWidget {
+  final String userName;
+  final String userImage;
+  final String question;
+  final List<String> options;
+  final List<String> imageUrls;
+  final bool isTextOption;
+
+  const PollWidget({
+    super.key,
+    required this.userName,
+    required this.userImage,
+    required this.question,
+    required this.options,
+    required this.imageUrls,
+    required this.isTextOption,
+  });
+
+  @override
+  _PollWidgetState createState() => _PollWidgetState();
+}
+
+class _PollWidgetState extends State<PollWidget> {
+  String? selectedOption;
+  Map<String, int> votes = {}; // To store votes per option
+  int totalVotes = 0; // To store total votes
+
+  void _handleVote(String option) {
+    setState(() {
+      if (selectedOption == null) {
+        selectedOption = option;
+        votes[option] = (votes[option] ?? 0) + 1;
+        totalVotes += 1;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: widget.userImage.isNotEmpty
+                    ? NetworkImage(widget.userImage)
+                    : AssetImage('assets/default_avatar.png') as ImageProvider,
+                radius: 20,
+              ),
+              SizedBox(width: 10),
+              Text(
+                widget.userName,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+              Spacer(),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Iconsax.settings,
+                  color: Colors.white,
                 ),
               ),
             ],
           ),
-          backgroundColor: Colors.black,
-          elevation: 0,
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Notifications(
-                        userId: widget.userId,
-                      ),
-                    ));
-              },
-              icon: const Badge(
-                backgroundColor: Color(0xFF635A8F),
-                textColor: Colors.white,
-                label: Text('5'),
-                child: Icon(Icons.notifications, color: Colors.white),
-              ),
+          SizedBox(height: 10),
+          Text(
+            widget.question,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
             ),
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => mainChat(
-                            currentUserId: widget.userId,
-                          )),
-                );
-              },
-              icon: const Badge(
-                backgroundColor: Color(0xFF635A8F),
-                textColor: Colors.white,
-                label: Text('5'),
-                child:
-                    Icon(Icons.messenger_outline_rounded, color: Colors.white),
-              ),
-            ),
-          ],
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
-        // Pass userId to the NavigationDrawer
-        bottomNavigationBar: Nav(userId: widget.userId),
-        body: SingleChildScrollView(
-            child: IntrinsicHeight(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Center(
-              child: InkWell(
-                splashColor: Colors.blue.withOpacity(0.3),
-                highlightColor: Colors.transparent,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            PostScreen(userId: widget.userId)),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(top: 35.0),
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  width: 320,
-                  height: 90,
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                  ),
-                  child: FutureBuilder<DocumentSnapshot>(
-                    future: _userDataFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError ||
-                          !snapshot.hasData ||
-                          !snapshot.data!.exists) {
-                        return const Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 5.0),
-                              child: CircleAvatar(
-                                radius: 30,
-                                backgroundImage: NetworkImage(
-                                    'https://via.placeholder.com/150'),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Text(
-                              "What's on your head?",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontFamily: 'Arial',
-                                fontWeight: FontWeight.w400,
-                                height: 1.1,
-                              ),
-<<<<<<< HEAD
-                            ),
-                            ],
-                          );
-                        } else {
-                          var data =
-                              snapshot.data!.data() as Map<String, dynamic>;
-                          String? imageUrl = data['profilepic'] as String?;
-                        }
-=======
->>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
-                            ),
-                          ],
-                          ),
-                          ),
-                        );
-                      } 
-                      else {
-                        var data =snapshot.data!.data() as Map<String, dynamic>;
-                        String? imageUrl = data['image'] as String?;
+          ),
+          SizedBox(height: 10),
+          if (widget.isTextOption)
+            ...widget.options.map((option) {
+              double percentage =
+                  totalVotes > 0 ? (votes[option] ?? 0) / totalVotes : 0.0;
 
-<<<<<<< HEAD
-                      }
-                        return Row(
-                          children=[
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
-                              child: CircleAvatar(
-                                radius: 25,
-                                backgroundImage: NetworkImage(imageUrl ??
-                                    'https://via.placeholder.com/150'),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              "What's on your head?",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontFamily: 'Arial',
-                                fontWeight: FontWeight.w400,
-                                height: 1.1,
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ),
-            // const Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            //   child: Text(
-            //     "Clips",
-            //     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-            //   ),
-            // ),
-            // const SizedBox(height: 10.0),
-            // SingleChildScrollView(
-            //   scrollDirection: Axis.horizontal,
-            //   child: Row(
-            //     children: [
-            //       // Inside the HomePage build method
-            //       Container(
-            //         height: 70.0,
-            //         width: 56.0,
-            //         alignment: Alignment.center,
-            //         margin: const EdgeInsets.only(left: 24.0),
-            //         decoration: const BoxDecoration(
-            //           shape: BoxShape.circle,
-            //           color: Colors.grey,
-            //           boxShadow: [
-            //             BoxShadow(
-            //               blurRadius: 12.0,
-            //               offset: Offset(0, 4),
-            //               color: Color.fromARGB(255, 225, 0, 172),
-            //             ),
-            //           ],
-            //         ),
-            //         child: IconButton(
-            //           onPressed: () {
-            //             // Navigate to ClipsScreen when add button is clicked
-            //             Navigator.push(
-            //               context,
-            //               MaterialPageRoute(
-            //                 builder: (context) => const ClipsScreen(
-            //                   cameraLensDirection: CameraLensDirection.front,
-            //                 ),
-            //               ),
-            //             );
-            //           },
-            //           icon: const Icon(Icons.add),
-            //         ),
-            //       ),
-=======
-                                return Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10.0),
-                                      child: CircleAvatar(
-                                        radius: 25,
-                                        backgroundImage: NetworkImage(imageUrl ??
-                                            'https://via.placeholder.com/150'),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    const Text(
-                                      "What's on your head?",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontFamily: 'Arial',
-                                        fontWeight: FontWeight.w400,
-                                        height: 1.1,
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }
-                            },
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ElevatedButton(
+                      onPressed: selectedOption == null
+                          ? () => _handleVote(option)
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        elevation: 5,
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          side: BorderSide(color: Colors.white, width: 2),
+                        ),
+                        minimumSize: Size(400, 0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 25,
+                          vertical: 15,
+                        ),
+                      ),
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    if (selectedOption != null) ...[
+                      SizedBox(height: 10),
+                      LinearPercentIndicator(
+                        width: MediaQuery.of(context).size.width - 60,
+                        lineHeight: 24.0,
+                        percent: percentage,
+                        backgroundColor: Colors.grey,
+                        progressColor: Colors.purple,
+                        center: Text(
+                          "${(percentage * 100).toStringAsFixed(1)}%",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
-                    // const Padding(
-                    //   padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                    //   child: Text(
-                    //     "Clips",
-                    //     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 10.0),
-                    // SingleChildScrollView(
-                    //   scrollDirection: Axis.horizontal,
-                    //   child: Row(
-                    //     children: [
-                    //       // Inside the HomePage build method
-                    //       Container(
-                    //         height: 70.0,
-                    //         width: 56.0,
-                    //         alignment: Alignment.center,
-                    //         margin: const EdgeInsets.only(left: 24.0),
-                    //         decoration: const BoxDecoration(
-                    //           shape: BoxShape.circle,
-                    //           color: Colors.grey,
-                    //           boxShadow: [
-                    //             BoxShadow(
-                    //               blurRadius: 12.0,
-                    //               offset: Offset(0, 4),
-                    //               color: Color.fromARGB(255, 225, 0, 172),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //         child: IconButton(
-                    //           onPressed: () {
-                    //             // Navigate to ClipsScreen when add button is clicked
-                    //             Navigator.push(
-                    //               context,
-                    //               MaterialPageRoute(
-                    //                 builder: (context) => const ClipsScreen(
-                    //                   cameraLensDirection: CameraLensDirection.front,
-                    //                 ),
-                    //               ),
-                    //             );
-                    //           },
-                    //           icon: const Icon(Icons.add),
-                    //         ),
-                    //       ),
->>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
-
-            //       ...List.generate(
-            //         20,
-            //         (index) => Container(
-            //           height: 56.0,
-            //           width: 56.0,
-            //           margin: EdgeInsets.only(
-            //             left: 30.0,
-            //             right: index == 19 ? 30.0 : 0.0,
-            //           ),
-            //           alignment: Alignment.center,
-            //           decoration: BoxDecoration(
-            //             shape: BoxShape.circle,
-            //             border: Border.all(
-            //                 width: 2.0, color: Colors.purpleAccent),
-            //             image: const DecorationImage(
-            //               image:
-            //                   NetworkImage('https://via.placeholder.com/150'),
-            //               fit: BoxFit.cover,
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            const SizedBox(height = 50,),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 300,
-              padding:const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.13),
-                borderRadius:
-                    BorderRadius.circular(20), // Adjust the value as needed
-              ),
-<<<<<<< HEAD
-              const SizedBox(height: 20),
-              /*
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 300,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 10.0),
-                color: const Color.fromARGB(255, 26, 25, 25),
-                child: FutureBuilder<DocumentSnapshot>(
-=======
-              child: FutureBuilder<DocumentSnapshot>(
->>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
-                  future: _userDataFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError ||
-                        !snapshot.hasData ||
-                        !snapshot.data!.exists) {
-                      return const Center(
-                          child: Text('Error fetching user data'));
-                    } else {
-                      var data = snapshot.data!.data() as Map<String, dynamic>;
-                      String? profileImageUrl = data['image'] as String?;
-                      String? userName = data['full_name'] as String?;
-
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // User Profile and Name
-
-                                  const SizedBox(height: 10),
-
-                                  // Posts or Media Content
-                                  Expanded(
-                                    child: StreamBuilder<QuerySnapshot>(
-                                      stream: FirebaseFirestore.instance
-                                          .collection(widget.userId)
-                                          .where('userID',
-                                              isEqualTo: widget.userId)
-                                          .snapshots(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        } else if (snapshot.hasError) {
-                                          return Center(
-                                              child: Text(
-                                                  'Error: ${snapshot.error}'));
-                                        } else if (!snapshot.hasData ||
-                                            snapshot.data!.docs.isEmpty) {
-                                          return const Center(
-                                              child: Text('No Posts found'));
-                                        }
-
-                                        // Create a local list to hold media
-                                        List<Map<String, dynamic>> listOfMedia =
-                                            [];
-// Iterate through the documents
-                                        for (var doc in snapshot.data!.docs) {
-                                          var urls = doc['urls'] as List;
-                                          for (var url in urls) {
-                                            String extension = url
-                                                .split('?')[0]
-                                                .split('.')
-                                                .last; // Extract the extension
-                                            listOfMedia.add({
-                                              'url': url,
-                                              'type': (extension == 'mp4' ||
-                                                      extension == 'mp3')
-                                                  ? 'video'
-                                                  : 'image',
-                                            });
-                                          }
-                                        }
-
-                                        Widget buildMediaUI(
-                                            List<Map<String, dynamic>>
-                                                mediaList) {
-                                          return GridView.builder(
-                                            gridDelegate:
-                                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                              crossAxisCount:
-                                                  3, // Number of items per row
-                                              crossAxisSpacing: 10,
-                                              mainAxisSpacing: 10,
-                                            ),
-                                            itemCount: mediaList.length,
-                                            itemBuilder: (context, index) {
-                                              var media = mediaList[index];
-                                              return Material(
-                                                elevation:
-                                                    5, // Add elevation for a modern card-like appearance
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                clipBehavior: Clip
-                                                    .antiAlias, // Ensure content respects rounded edges
-                                                child: Stack(
-                                                  children: [
-                                                    // Media content
-                                                    media['type'] == 'image'
-                                                        ? Image.network(
-                                                            media['url'],
-                                                            fit: BoxFit.cover,
-                                                            width:
-                                                                double.infinity,
-                                                            height:
-                                                                double.infinity,
-                                                          )
-                                                        : Container(
-                                                            color:
-                                                                Colors.black26,
-                                                            child: const Center(
-                                                              child: Icon(
-                                                                Icons
-                                                                    .play_circle_fill,
-                                                                size: 50,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                    // Overlay for rounded edges
-                                                    Positioned.fill(
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                          border: Border.all(
-                                                              color:
-                                                                  Colors.white,
-                                                              width: 3),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        }
-
-                                        return Swiper(
-                                          itemCount: listOfMedia.length,
-                                          itemBuilder: (context, index) {
-                                            var media = listOfMedia[index];
-                                            return Material(
-                                              elevation: 5,
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              clipBehavior: Clip.antiAlias,
-                                              child: media['type'] == 'video'
-                                                  ? Chewie(
-                                                      controller:
-                                                          ChewieController(
-                                                        videoPlayerController:
-                                                            VideoPlayerController
-                                                                .network(media[
-                                                                    'url']),
-                                                        aspectRatio: 16 / 9,
-                                                        autoPlay: false,
-                                                        looping: false,
-                                                      ),
-                                                    )
-                                                  : ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
-                                                      child: Image.network(
-                                                        media['url'],
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                            );
-                                          },
-                                          pagination: const SwiperPagination(),
-                                          control: const SwiperControl(),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-
-                                  // User Profile and Icons (Avatar + Username + Save + Calendar + Share)
-
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              CircleAvatar(
-                                backgroundImage: profileImageUrl != null &&
-                                        profileImageUrl.isNotEmpty
-                                    ? NetworkImage(profileImageUrl)
-                                    : const AssetImage(
-                                            'assets/default_avatar.png')
-                                        as ImageProvider,
-                                radius: 22,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                userName ?? 'Anonymous',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                  icon: const Icon(
-                                      Icons.favorite_border_outlined,
-                                      color: Colors.white),
-                                  onPressed: () {}),
-                              IconButton(
-                                icon: const Icon(Icons.chat_bubble_outline,
-                                    color: Colors.white),
-                                onPressed: () {},
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.near_me,
-                                    color: Colors.white),
-                                onPressed: () {},
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    }
-<<<<<<< HEAD
-                  },
+                    ],
+                  ],
                 ),
-              ),
-              */
-            ),
-            
-            ],
-          ),
-        ),
+              );
+            }),
+        ],
       ),
     );
-=======
->>>>>>> a982cea19f75b9990b78d42e66071ff3e69abeab
-                  }),
-            )
-          ]),
-        )));
   }
 }
-*/
