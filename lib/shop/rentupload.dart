@@ -102,6 +102,7 @@ class _RentuploadState extends State<Rentupload> {
         'profilepic': userData['profilepic'] ??
             '', // Replace with the actual username from your authentication
         'timestamp': FieldValue.serverTimestamp(),
+        'postedByUserId':widget.userId,
       });
 
       Fluttertoast.showToast(msg: "Post uploaded successfully");

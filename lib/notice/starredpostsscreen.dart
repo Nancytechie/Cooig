@@ -30,30 +30,6 @@ class _StarredPostsScreenState extends State<StarredPostsScreen> {
     }
   }
 
-  void _showOptionsMenu(BuildContext context, String noticeId) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('Delete'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _deleteNotice(noticeId);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   final Stream<QuerySnapshot> _starredPostsStream = FirebaseFirestore.instance
       .collection('noticeposts')
       .where('isStarred', isEqualTo: true)
@@ -150,7 +126,7 @@ class _StarredPostsScreenState extends State<StarredPostsScreen> {
                               icon: const Icon(Icons.more_horiz,
                                   color: Colors.white),
                               onPressed: () {
-                                _showOptionsMenu(context, item['id']);
+                                // _showOptionsMenu(context, item['id']);
                               },
                             ),
                           ],
@@ -249,10 +225,6 @@ class _StarredPostsScreenState extends State<StarredPostsScreen> {
         ),
       ),
     );
-  }
-
-  void _deleteNotice(String noticeId) {
-    FirebaseFirestore.instance.collection('noticeposts').doc(noticeId).delete();
   }
 
   void _shareNotice(String heading, String imageUrl) {

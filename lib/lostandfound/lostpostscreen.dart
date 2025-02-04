@@ -49,6 +49,7 @@ class _PostScreenState extends State<PostScreen> {
         'description': _descriptionController.text,
         'username': userData['full_name'] ?? userData['societyName']?? 'Unknown',
         'profilepic': userData['profilepic'] ?? '', 
+         'postedByUserId':widget.userId,
       });
     } catch (e) {
       print('Error uploading file: $e');

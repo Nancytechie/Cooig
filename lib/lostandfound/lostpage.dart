@@ -49,6 +49,7 @@ class _LostpageState extends State<Lostpage> {
         final data = doc.data() as Map<String, dynamic>;
         return {
           'id': doc.id,
+           'postedByUserId': data['postedByUserId'],
           'image': data['image'] ?? '',
           'userProfileImage': data['profilepic'] ?? '',
           'username': data['username'] ?? 'Unknown User',
@@ -313,7 +314,8 @@ class _LostpageState extends State<Lostpage> {
                                     icon: Icon(Icons.more_vert,
                                         color: Colors.white),
                                     onPressed: () {
-                                      _showMoreOptions(item['id']);
+                                      _showOptionsMenu(context, item['id'],
+                                            item['postedByUserId']);
                                     },
                                   ),
                                 ),
@@ -418,30 +420,27 @@ class _LostpageState extends State<Lostpage> {
     );
   }
 
-  void _showMoreOptions(String postId) {
+    void _showOptionsMenu(
+      BuildContext context, String noticeId, String postedByUserId) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          color: Colors.black,
-          child: Wrap(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
-                title: Text('Delete', style: TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.pop(context); // Close the modal
-                  _confirmDeletePost(
-                      postId); // Show a confirmation dialog before deletion
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.cancel, color: Colors.white),
-                title: Text('Cancel', style: TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.pop(context); // Close the modal
-                },
-              ),
+              if (postedByUserId ==
+                  widget
+                      .userId) // Only show delete option if the current user is the poster
+                ListTile(
+                  leading: const Icon(Icons.delete, color: Colors.red),
+                  title: const Text('Delete'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _deletePost(noticeId);
+                  },
+                ),
             ],
           ),
         );

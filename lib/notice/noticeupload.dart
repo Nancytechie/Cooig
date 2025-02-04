@@ -120,7 +120,8 @@ class _NoticeUploadPageState extends State<NoticeUploadPage> {
         'profilepic': userData['profilepic'] ?? '',
         'timestamp':
             FieldValue.serverTimestamp(), // Server timestamp for creation time
-        "isStarred": false
+        "isStarred": false,
+        'postedByUserId':widget.userId,
       });
 
       Fluttertoast.showToast(msg: "Notice uploaded successfully");

@@ -105,6 +105,7 @@ class _SellItemScreenState extends State<SellItemScreen> {
             userData['full_name'] ?? userData['societyName'] ?? 'Unknown',
         'profilepic': userData['profilepic'] ?? '',
         'timestamp': FieldValue.serverTimestamp(),
+        'postedByUserId':widget.userId,
       });
 
       Fluttertoast.showToast(msg: "Post uploaded successfully");

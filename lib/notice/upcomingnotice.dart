@@ -141,7 +141,8 @@ class _upcomingNoticeState extends State<upcomingNotice> {
     }
   }
 
-  void _showOptionsMenu(BuildContext context, String noticeId) {
+   void _showOptionsMenu(
+      BuildContext context, String noticeId, String postedByUserId) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -150,14 +151,17 @@ class _upcomingNoticeState extends State<upcomingNotice> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('Delete'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _deleteNotice(noticeId);
-                },
-              ),
+              if (postedByUserId ==
+                  widget
+                      .userId) // Only show delete option if the current user is the poster
+                ListTile(
+                  leading: const Icon(Icons.delete, color: Colors.red),
+                  title: const Text('Delete'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _deleteNotice(noticeId);
+                  },
+                ),
             ],
           ),
         );
@@ -390,7 +394,8 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                                       icon: const Icon(Icons.more_horiz,
                                           color: Colors.white),
                                       onPressed: () {
-                                        _showOptionsMenu(context, item['id']);
+                                         _showOptionsMenu(context, item['id'],
+                                            item['postedByUserId']);
                                       },
                                     ),
                                   ),

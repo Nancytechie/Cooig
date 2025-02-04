@@ -46,6 +46,7 @@ class _FoundpageState extends State<Foundpage> {
 
         return {
           'id': doc.id, // Add the document ID for deletion purposes
+          'postedByUserId': data['postedByUserId'],
           'images': (data['images'] as List<dynamic>?)?.isNotEmpty == true
               ? List<String>.from(data['images'] as List<dynamic>)
               : [
@@ -94,23 +95,27 @@ class _FoundpageState extends State<Foundpage> {
     }
   }
 
-  void _showOptionsMenu(BuildContext context, String postId) {
+  void _showOptionsMenu(
+      BuildContext context, String noticeId, String postedByUserId) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: Icon(Icons.delete, color: Colors.red),
-                title: Text('Delete'),
-                onTap: () {
-                  Navigator.pop(context); // Close the options menu
-                  _deletePost(postId);
-                },
-              ),
+              if (postedByUserId ==
+                  widget
+                      .userId) // Only show delete option if the current user is the poster
+                ListTile(
+                  leading: const Icon(Icons.delete, color: Colors.red),
+                  title: const Text('Delete'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _deletePost(noticeId);
+                  },
+                ),
             ],
           ),
         );
@@ -335,7 +340,8 @@ class _FoundpageState extends State<Foundpage> {
                                         icon: Icon(Icons.more_vert,
                                             color: Colors.white),
                                         onPressed: () {
-                                          _showOptionsMenu(context, item['id']);
+                                          _showOptionsMenu(context, item['id'],
+                                              item['postedByUserId']);
                                         },
                                       ),
                                     ),

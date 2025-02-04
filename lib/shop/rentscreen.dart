@@ -7,6 +7,7 @@ import 'package:cooig_firebase/appbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:path/path.dart';
 
 class rentscreen extends StatefulWidget {
   final dynamic userId;
@@ -226,12 +227,38 @@ class _rentscreenState extends State<rentscreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              doc['itemName'],
-                                              style: const TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  doc['itemName'],
+                                                  style: const TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black),
+                                                ),
+                                                SizedBox(
+                                                  width: 100,
+                                                ),
+                                                PopupMenuButton<String>(
+                                                  onSelected: (value) {
+                                                    if (value == 'delete') {
+                                                      _deletePost(doc.id);
+                                                    }
+                                                  },
+                                                  itemBuilder: (context) {
+                                                    // Only show delete option if the post belongs to the current user
+                                                    return [
+                                                      if (doc['postedByUserId'] ==
+                                                          widget.userId)
+                                                        const PopupMenuItem(
+                                                          value: 'delete',
+                                                          child: Text('Delete'),
+                                                        ),
+                                                    ];
+                                                  },
+                                                ),
+                                              ],
                                             ),
                                             const SizedBox(height: 5),
                                             Text(
@@ -334,7 +361,7 @@ class _rentscreenState extends State<rentscreen> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            _showFilterDialog();
+            // _showFilterDialog();
           },
           backgroundColor: const Color(0XFF9752C5),
           child: const Icon(Icons.filter_list),
@@ -363,63 +390,79 @@ class _rentscreenState extends State<rentscreen> {
     return query;
   }
 
-  void _showFilterDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Filter'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField<String>(
-                value: selectedCategory,
-                items: ['All', 'Electronics', 'Clothing', 'Books', 'Other']
-                    .map((category) => DropdownMenuItem<String>(
-                          value: category,
-                          child: Text(category),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedCategory = value!;
-                  });
-                },
-              ),
-              TextButton(
-                onPressed: () async {
-                  final pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2020),
-                    lastDate: DateTime(2030),
-                  );
-                  setState(() {
-                    selectedDate = pickedDate;
-                  });
-                },
-                child: Text(selectedDate == null
-                    ? 'Select Date'
-                    : selectedDate!.toString()),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Apply'),
-            ),
-          ],
-        );
-      },
-    );
+//   void _showFilterDialog() {
+//     showDialog(
+//       context: context,
+//       builder: (context) {
+//         return AlertDialog(
+//           title: const Text('Filter'),
+//           content: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               DropdownButtonFormField<String>(
+//                 value: selectedCategory,
+//                 items: ['All', 'Electronics', 'Clothing', 'Books', 'Other']
+//                     .map((category) => DropdownMenuItem<String>(
+//                           value: category,
+//                           child: Text(category),
+//                         ))
+//                     .toList(),
+//                 onChanged: (value) {
+//                   setState(() {
+//                     selectedCategory = value!;
+//                   });
+//                 },
+//               ),
+//               TextButton(
+//                 onPressed: () async {
+//                   final pickedDate = await showDatePicker(
+//                     context: context,
+//                     initialDate: DateTime.now(),
+//                     firstDate: DateTime(2020),
+//                     lastDate: DateTime(2030),
+//                   );
+//                   setState(() {
+//                     selectedDate = pickedDate;
+//                   });
+//                 },
+//                 child: Text(selectedDate == null
+//                     ? 'Select Date'
+//                     : selectedDate!.toString()),
+//               ),
+//             ],
+//           ),
+//           actions: [
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.of(context).pop();
+//               },
+//               child: const Text('Cancel'),
+//             ),
+//             TextButton(
+//               onPressed: () {
+//                 Navigator.of(context).pop();
+//               },
+//               child: const Text('Apply'),
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// }
+  Future<void> _deletePost(String postId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('rentposts')
+          .doc(postId)
+          .delete();
+      ScaffoldMessenger.of(Context as BuildContext).showSnackBar(
+        const SnackBar(content: Text('Post deleted successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+        SnackBar(content: Text('Error deleting post: $e')),
+      );
+    }
   }
 }

@@ -101,6 +101,7 @@ class _NoticeboardState extends State<Noticeboard> {
 
         return {
           'id': doc.id,
+          'postedByUserId': data['postedByUserId'],
           'imageUrl': data['imageUrl'] as String? ??
               'https://example.com/default_profile.png',
           'heading': data['heading'] as String? ?? 'No Heading',
@@ -443,7 +444,7 @@ class _NoticeboardState extends State<Noticeboard> {
                                           color: Colors.white),
                                       onPressed: () {
                                         _showOptionsMenu(context, item['id'],
-                                            item['postedBy']);
+                                            item['postedByUserId']);
                                       },
                                     ),
                                   ),
