@@ -141,6 +141,7 @@ dependencies:
   vibration: ^2.0.1
   downloads_path_provider_28: ^0.1.2
   lecle_downloads_path_provider: ^0.0.2+8
+  badges: ^3.1.2
 
 
 

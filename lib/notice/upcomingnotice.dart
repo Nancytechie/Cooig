@@ -4,9 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/notice/noticeboard.dart';
 import 'package:cooig_firebase/notice/noticedetailscreen.dart';
 import 'package:cooig_firebase/notice/noticeupload.dart';
-//import 'package:cooig/lostpage.dart';
-//import 'package:cooig/noticeupload.dart';
-//import 'package:cooig/shopscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/background.dart';
@@ -19,9 +16,9 @@ import 'package:intl/intl.dart';
 
 // ignore: camel_case_types
 class upcomingNotice extends StatefulWidget {
-  final dynamic userid;
+  final dynamic userId;
 
-  const upcomingNotice({super.key, required this.userid});
+  const upcomingNotice({super.key, required this.userId});
 
   @override
   _upcomingNoticeState createState() => _upcomingNoticeState();
@@ -45,7 +42,7 @@ class _upcomingNoticeState extends State<upcomingNotice> {
       // Fetch the user's role from Firestore using their ID
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users') // Replace with your users collection name
-          .doc(widget.userid) // User ID passed to the widget
+          .doc(widget.userId) // User ID passed to the widget
           .get();
 
       if (userDoc.exists) {
@@ -104,7 +101,9 @@ class _upcomingNoticeState extends State<upcomingNotice> {
           'time': data['time'] as String? ?? 'No Time',
           'location': data['location'] as String? ?? 'No Location',
           'postedDate': data['timestamp'] as Timestamp?, // Posting date field
-          'postedBy': data['postedBy'] as String? ?? 'Unknown',
+          'postedBy': data['username'] as String? ?? 'Unknown',
+
+          'profilepic': data['profilepic'] ?? '',
         };
       }).toList();
     } catch (e) {
@@ -231,7 +230,7 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Noticeboard(
-                                      userid: widget.userid,
+                                      userId: widget.userId,
                                     )),
                           );
                         },
@@ -264,7 +263,7 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => upcomingNotice(
-                                      userid: widget.userid,
+                                      userId: widget.userId,
                                     )),
                           );
                         },
@@ -290,8 +289,9 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const NoticeUploadPage()),
+                                  builder: (context) => NoticeUploadPage(
+                                        userId: widget.userId,
+                                      )),
                             );
                           },
                           icon: const Icon(Icons.add, color: Colors.white),
@@ -443,9 +443,8 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                                 children: [
                                   CircleAvatar(
                                     radius: 16,
-                                    backgroundImage: item['profileImage'] !=
-                                            null
-                                        ? NetworkImage(item['profileImage']!)
+                                    backgroundImage: item['profilepic'] != null
+                                        ? NetworkImage(item['profilepic']!)
                                         : const AssetImage(
                                             'assets/default_avatar.png'),
                                   ),

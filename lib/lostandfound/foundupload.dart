@@ -11,7 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 // Import your custom background widget
 
 class FoundItemScreen extends StatefulWidget {
-  const FoundItemScreen({super.key});
+  final String userId;
+  const FoundItemScreen({super.key,required this.userId});
 
   @override
   _FoundItemScreenState createState() => _FoundItemScreenState();
@@ -44,6 +45,11 @@ class _FoundItemScreenState extends State<FoundItemScreen> {
         final downloadURL = await snapshot.ref.getDownloadURL();
         downloadURLs.add(downloadURL);
       }
+       final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .get();
+    final userData = userDoc.data() as Map<String, dynamic>;
 
       await FirebaseFirestore.instance.collection('foundposts').add({
         'userID': userID,
@@ -53,6 +59,8 @@ class _FoundItemScreenState extends State<FoundItemScreen> {
         'location': _location,
         'title': _titleController.text,
         'description': _descriptionController.text,
+        'username': userData['full_name'] ?? userData['societyName']?? 'Unknown',
+        'profilepic': userData['profilepic'] ?? '', 
       });
     } catch (e) {
       print('Error uploading file: $e');
@@ -102,7 +110,7 @@ class _FoundItemScreenState extends State<FoundItemScreen> {
 
     String postID = _generatePostID();
     await _uploadFile(
-        media, 'kD3X6HBv8eP6nA3WasHjE0RMHnH3'); // Replace with actual userID
+        media, widget.userId); // Replace with actual userID
 
     setState(() {
       media.clear();

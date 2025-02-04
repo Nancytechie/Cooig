@@ -44,33 +44,6 @@ class _rentscreenState extends State<rentscreen> {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            SizedBox(
-              height: 40, // Adjust this height as per your design
-              child: Center(
-                child: AnimatedTextKit(
-                  animatedTexts: [
-                    FadeAnimatedText(
-                      'Rent where?',
-                      textStyle: GoogleFonts.ebGaramond(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 158, 162, 163),
-                      ),
-                    ),
-                    FadeAnimatedText(
-                      'Rent here!',
-                      textStyle: GoogleFonts.ebGaramond(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 158, 162, 163),
-                      ),
-                    ),
-                  ],
-                  repeatForever: true,
-                  isRepeatingAnimation: true,
-                ),
-              ),
-            ),
             Padding(
               padding: const EdgeInsets.only(
                   left: 40.0, right: 40.0, top: 20.0, bottom: 20.0),
@@ -168,8 +141,9 @@ class _rentscreenState extends State<rentscreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const Rentupload()), // Ensure this route exists
+                                builder: (context) => Rentupload(
+                                      userId: widget.userId,
+                                    )), // Ensure this route exists
                           );
                         },
                         icon: const Icon(Icons.camera_alt, color: Colors.white),
@@ -332,7 +306,7 @@ class _rentscreenState extends State<rentscreen> {
                                     CircleAvatar(
                                       radius: 15,
                                       backgroundImage: NetworkImage(
-                                        doc['imageUrl'] as String? ??
+                                        doc['profilepic'] as String? ??
                                             '', // Replace with dynamic profile image URL
                                       ),
                                     ),
@@ -342,7 +316,7 @@ class _rentscreenState extends State<rentscreen> {
                                       style: const TextStyle(
                                           fontSize: 12,
                                           color: Color.fromARGB(
-                                              255, 250, 248, 248)),
+                                              255, 127, 124, 124)),
                                     ),
                                   ],
                                 ),

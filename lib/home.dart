@@ -261,18 +261,29 @@ class _HomePageState extends State<Homepage> {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: posts.length,
           itemBuilder: (context, index) {
-            final post = posts[index].data() as Map<String, dynamic>;
+            final post = posts[index].data()
+                as Map<String, dynamic>?; // Add null check here
+            if (post == null) {
+              return const SizedBox.shrink(); // Skip this post if it's null
+            }
+
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
                   .collection('users')
                   .doc(post['userID'])
                   .get(),
               builder: (context, userSnapshot) {
-                if (!userSnapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+                  return const SizedBox
+                      .shrink(); // Skip if user data doesn't exist
                 }
 
-                final user = userSnapshot.data!.data() as Map<String, dynamic>;
+                final user = userSnapshot.data!.data()
+                    as Map<String, dynamic>?; // Add null check here
+                if (user == null) {
+                  return const SizedBox.shrink(); // Skip if user data is null
+                }
+
                 final userName = user['full_name'] ?? 'Unknown';
                 final userImage = user['profilepic'] ?? '';
 

@@ -16,9 +16,9 @@ import 'package:intl/intl.dart';
 //import 'package:cooig_firebase/foundpage.dart';
 
 class Noticeboard extends StatefulWidget {
-  final dynamic userid;
+  final dynamic userId;
 
-  const Noticeboard({super.key, required this.userid});
+  const Noticeboard({super.key, required this.userId});
 
   @override
   _NoticeboardState createState() => _NoticeboardState();
@@ -31,23 +31,25 @@ class _NoticeboardState extends State<Noticeboard> {
   bool isSocietyRole = false;
   // Get the current user ID from Firebase Authentication
   // final String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-  get userId async => widget.userid;
+  get userId async => widget.userId;
   @override
   void initState() {
     super.initState();
     _noticesFuture = _fetchNotices();
     _checkUserRole();
   }
-Future<void> _checkUserRole() async {
+
+  Future<void> _checkUserRole() async {
     try {
       // Fetch the user's role from Firestore using their ID
       DocumentSnapshot userDoc = await FirebaseFirestore.instance
           .collection('users') // Replace with your users collection name
-          .doc(widget.userid) // User ID passed to the widget
+          .doc(widget.userId) // User ID passed to the widget
           .get();
 
       if (userDoc.exists) {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
         setState(() {
           isSocietyRole = userData['role'] == 'Society'; // Check the role
         });
@@ -106,9 +108,10 @@ Future<void> _checkUserRole() async {
           'time': data['time'] as String? ?? 'No Time',
           'location': data['location'] as String? ?? 'No Location',
           'postedDate': data['timestamp'] as Timestamp?, // Posting date field
-          'postedBy': data['postedBy'] as String? ?? 'Unknown',
+          'postedBy': data['username'] as String? ?? 'Unknown me ',
           'details': data['details'] as String,
           'starredBy': data['starredBy'] as List<dynamic>? ?? [],
+          'profilepic': data['profilepic'] ?? '',
         };
       }).toList();
     } catch (e) {
@@ -161,7 +164,8 @@ Future<void> _checkUserRole() async {
     }
   }
 
-  void _showOptionsMenu(BuildContext context, String noticeId) {
+  void _showOptionsMenu(
+      BuildContext context, String noticeId, String postedByUserId) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -170,14 +174,17 @@ Future<void> _checkUserRole() async {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('Delete'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _deleteNotice(noticeId);
-                },
-              ),
+              if (postedByUserId ==
+                  widget
+                      .userId) // Only show delete option if the current user is the poster
+                ListTile(
+                  leading: const Icon(Icons.delete, color: Colors.red),
+                  title: const Text('Delete'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _deleteNotice(noticeId);
+                  },
+                ),
             ],
           ),
         );
@@ -233,7 +240,7 @@ Future<void> _checkUserRole() async {
           ],
         ),
         backgroundColor: Colors.transparent,
-        bottomNavigationBar: Nav(userId: widget.userid),
+        bottomNavigationBar: Nav(userId: widget.userId),
         body: Column(
           children: [
             Padding(
@@ -275,7 +282,7 @@ Future<void> _checkUserRole() async {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Noticeboard(
-                                      userid: widget.userid,
+                                      userId: widget.userId,
                                     )),
                           );
                         },
@@ -308,7 +315,7 @@ Future<void> _checkUserRole() async {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => upcomingNotice(
-                                      userid: widget.userid,
+                                      userId: widget.userId,
                                     )),
                           );
                         },
@@ -334,15 +341,15 @@ Future<void> _checkUserRole() async {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const NoticeUploadPage()),
+                                  builder: (context) => NoticeUploadPage(
+                                        userId: widget.userId,
+                                      )),
                             );
                           },
                           icon: const Icon(Icons.add, color: Colors.white),
                           label: const Text(
                             'Notice',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 16),
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                           style: TextButton.styleFrom(
                             backgroundColor: const Color(0XFF9752C5),
@@ -435,7 +442,8 @@ Future<void> _checkUserRole() async {
                                       icon: const Icon(Icons.more_horiz,
                                           color: Colors.white),
                                       onPressed: () {
-                                        _showOptionsMenu(context, item['id']);
+                                        _showOptionsMenu(context, item['id'],
+                                            item['postedBy']);
                                       },
                                     ),
                                   ),
@@ -488,9 +496,8 @@ Future<void> _checkUserRole() async {
                                 children: [
                                   CircleAvatar(
                                     radius: 16,
-                                    backgroundImage: item['profileImage'] !=
-                                            null
-                                        ? NetworkImage(item['profileImage']!)
+                                    backgroundImage: item['profilepic'] != null
+                                        ? NetworkImage(item['profilepic']!)
                                         : const AssetImage(
                                             'assets/default_avatar.png'),
                                   ),

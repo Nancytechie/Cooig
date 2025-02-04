@@ -11,7 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 // import 'package:share/
 class Lostpage extends StatefulWidget {
-  const Lostpage({super.key});
+  final String userId;
+  const Lostpage({super.key, required this.userId});
 
   @override
   _LostpageState createState() => _LostpageState();
@@ -49,11 +50,17 @@ class _LostpageState extends State<Lostpage> {
         return {
           'id': doc.id,
           'image': data['image'] ?? '',
-          'userProfileImage': data['userProfileImage'] ?? '',
+          'userProfileImage': data['profilepic'] ?? '',
           'username': data['username'] ?? 'Unknown User',
           'title': data['title'] ?? 'No Title',
           'description': data['description'] ?? 'No Description',
-          'dateTime': data['dateTime'] ?? 'No Date',
+          'dateTime': data['dateTime'] != null
+              ? (data['dateTime'] as Timestamp)
+                  .toDate()
+                  .toLocal()
+                  .toString()
+                  .split(' ')[0] // Extract only the date part
+              : 'No Date',
           'location': data['location'] ?? 'No Location',
         };
       }).toList();
@@ -171,7 +178,10 @@ class _LostpageState extends State<Lostpage> {
                           });
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Lostpage()),
+                            MaterialPageRoute(
+                                builder: (context) => Lostpage(
+                                      userId: widget.userId,
+                                    )),
                           );
                         },
                         child: Text(
@@ -201,7 +211,9 @@ class _LostpageState extends State<Lostpage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Foundpage()),
+                                builder: (context) => Foundpage(
+                                      userId: widget.userId,
+                                    )),
                           );
                         },
                         child: Text(
@@ -225,7 +237,9 @@ class _LostpageState extends State<Lostpage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PostScreen()),
+                                builder: (context) => PostScreen(
+                                      userId: widget.userId,
+                                    )),
                           );
                         },
                         icon: Icon(Icons.camera_alt, color: Colors.white),
@@ -273,7 +287,7 @@ class _LostpageState extends State<Lostpage> {
                         margin:
                             EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Column(

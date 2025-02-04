@@ -11,7 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart'; // For basename function
 
 class PostScreen extends StatefulWidget {
-  //const PostScreen(userid, {super.key, required userId});
+  final String userId;
+  const PostScreen({super.key, required this.userId});
 
   @override
   _PostScreenState createState() => _PostScreenState();
@@ -32,6 +33,11 @@ class _PostScreenState extends State<PostScreen> {
           .child('lostpost/$userID/${basename(file.path)}'); // Updated path
       await fileRef.putFile(file);
       final downloadURL = await fileRef.getDownloadURL();
+       final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .get();
+    final userData = userDoc.data() as Map<String, dynamic>;
 
       await FirebaseFirestore.instance.collection('lostpost').add({
         // Updated collection
@@ -41,6 +47,8 @@ class _PostScreenState extends State<PostScreen> {
         'location': _location,
         'title': _titleController.text,
         'description': _descriptionController.text,
+        'username': userData['full_name'] ?? userData['societyName']?? 'Unknown',
+        'profilepic': userData['profilepic'] ?? '', 
       });
     } catch (e) {
       print('Error uploading file: $e');
@@ -104,9 +112,8 @@ class _PostScreenState extends State<PostScreen> {
       return;
     }
 
-    String userID =
-        'kD3X6HBv8eP6nA3WasHjE0RMHnH3'; // Replace with actual userID
-    await _uploadFile(_image!, userID);
+
+    await _uploadFile(_image!, widget.userId);
 
     setState(() {
       _image = null; // Clear the selected image

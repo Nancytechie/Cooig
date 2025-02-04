@@ -3,13 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 // For image cropping
 import 'package:image_picker/image_picker.dart'; // For picking images
 import 'package:cooig_firebase/background.dart';
 import 'package:path/path.dart';
 
 class Rentupload extends StatefulWidget {
-  const Rentupload({super.key});
+  final String userId;
+  const Rentupload({super.key, required this.userId});
 
   @override
   _RentuploadState createState() => _RentuploadState();
@@ -82,6 +84,11 @@ class _RentuploadState extends State<Rentupload> {
 
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .get();
+      final userData = userDoc.data() as Map<String, dynamic>;
 
       await FirebaseFirestore.instance.collection('rentposts').add({
         'itemName': _itemNameController.text,
@@ -91,7 +98,9 @@ class _RentuploadState extends State<Rentupload> {
         'imageUrl': downloadUrl,
         'contactDetails': _contactDetailsController.text,
         'username':
-            'User123', // Replace with the actual username from your authentication
+            userData['full_name'] ?? userData['societyName'] ?? 'Unknown',
+        'profilepic': userData['profilepic'] ??
+            '', // Replace with the actual username from your authentication
         'timestamp': FieldValue.serverTimestamp(),
       });
 
@@ -118,11 +127,13 @@ class _RentuploadState extends State<Rentupload> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.black,
-          title: const Text(
-            'Rent Items',
-            style: TextStyle(
-              color: Color.fromARGB(255, 254, 253, 255),
-              fontSize: 26,
+          title: Text(
+            'Rent Item Details',
+            style: GoogleFonts.ebGaramond(
+              textStyle: TextStyle(
+                color: Color.fromARGB(255, 254, 253, 255),
+                fontSize: 30,
+              ),
             ),
           ),
           leading: IconButton(
@@ -140,51 +151,13 @@ class _RentuploadState extends State<Rentupload> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  "Item Details",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 171, 98, 220),
-                    fontSize: 25,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF252525),
-                      borderRadius: BorderRadius.circular(20.0),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0xFFCACACA),
-                          blurRadius: 9.24,
-                          offset: Offset(2.77, 2.77),
-                        ),
-                        BoxShadow(
-                          color: Color(0xFFC9C9C9),
-                          blurRadius: 9.24,
-                          offset: Offset(-2.77, -2.77),
-                        ),
-                      ],
-                    ),
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            'Image of Item',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
                         _image != null
                             ? Column(
                                 children: [
@@ -214,21 +187,21 @@ class _RentuploadState extends State<Rentupload> {
                                 ),
                               ),
                         Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: _buildTextField(
                             controller: _itemNameController,
                             label: 'Item Name',
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: _buildTextField(
                             controller: _categoryController,
                             label: 'Category',
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: _buildTextField(
                             controller: _priceController,
                             label: 'Price',
@@ -237,7 +210,7 @@ class _RentuploadState extends State<Rentupload> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: _buildTextField(
                             controller: _detailsController,
                             label: 'Details of Item',
@@ -245,7 +218,7 @@ class _RentuploadState extends State<Rentupload> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: _buildTextField(
                             controller: _contactDetailsController,
                             label: 'Contact Details',
@@ -268,9 +241,7 @@ class _RentuploadState extends State<Rentupload> {
                       ],
                     ),
                   ),
-                ),
-              ],
-            ),
+                ]),
           ),
         ),
       ),

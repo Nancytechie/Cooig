@@ -10,7 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 // import 'package:share/share.dart';
 
 class Foundpage extends StatefulWidget {
-  const Foundpage({super.key});
+  final String userId;
+  const Foundpage({super.key, required this.userId});
 
   @override
   _FoundpageState createState() => _FoundpageState();
@@ -50,7 +51,7 @@ class _FoundpageState extends State<Foundpage> {
               : [
                   'https://example.com/image_unavailable.png'
                 ], // URL of the "image unavailable" placeholder
-          'userProfileImage': data['userProfileImage'] as String? ??
+          'userProfileImage': data['profilepic'] as String? ??
               'https://example.com/default_profile.png',
           'username': data['username'] as String? ?? 'Unknown User',
           'title': data['title'] as String? ?? 'No Title',
@@ -205,8 +206,9 @@ class _FoundpageState extends State<Foundpage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        Lostpage()), // Ensure this route exists
+                                    builder: (context) => Lostpage(
+                                          userId: widget.userId,
+                                        )), // Ensure this route exists
                               );
                             },
                             child: Text(
@@ -237,7 +239,8 @@ class _FoundpageState extends State<Foundpage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Foundpage()),
+                                    builder: (context) =>
+                                        Foundpage(userId: widget.userId)),
                               );
                             },
                             child: Text(
@@ -261,8 +264,9 @@ class _FoundpageState extends State<Foundpage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        FoundItemScreen()), // Ensure this route exists
+                                    builder: (context) => FoundItemScreen(
+                                        userId: widget
+                                            .userId)), // Ensure this route exists
                               );
                             },
                             icon: Icon(Icons.camera_alt, color: Colors.white),
@@ -305,7 +309,7 @@ class _FoundpageState extends State<Foundpage> {
                             margin: EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 16),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(
                                   30), // Circular border radius
                             ),

@@ -10,7 +10,8 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 
 class NoticeUploadPage extends StatefulWidget {
-  const NoticeUploadPage({super.key});
+  final String userId;
+  const NoticeUploadPage({super.key, required this.userId});
 
   @override
   _NoticeUploadPageState createState() => _NoticeUploadPageState();
@@ -98,6 +99,12 @@ class _NoticeUploadPageState extends State<NoticeUploadPage> {
           _selectedTime!.format(context); // Format the time as a string
     }
 
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .get();
+    final userData = userDoc.data() as Map<String, dynamic>;
+
     // Upload notice details to Firestore, include fullDateTime and timeString if available
     try {
       await FirebaseFirestore.instance.collection('noticeposts').add({
@@ -109,6 +116,8 @@ class _NoticeUploadPageState extends State<NoticeUploadPage> {
             : null,
         'time': timeString, // Store the time as a string
         'imageUrl': imageUrl,
+        'username': userData['societyName'] ?? 'Unknown',
+        'profilepic': userData['profilepic'] ?? '',
         'timestamp':
             FieldValue.serverTimestamp(), // Server timestamp for creation time
         "isStarred": false
