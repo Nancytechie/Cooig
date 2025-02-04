@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:cooig_firebase/chat_profile/home.dart';
 import 'package:cooig_firebase/chat_profile/solid_color_wallpapers.dart';
 import 'package:cooig_firebase/forward.dart';
@@ -20,11 +20,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:flutter_sound/public/util/flutter_sound_helper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/services.dart';
+import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -890,7 +892,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
     if (conversationId == null || documentUrl.isEmpty) return;
 
     // Download the document for the receiver
-    await _downloadDocumentForReceiver(fileName, documentUrl);
+    await _downloadDocument(documentUrl, fileName);
 
     Message message = Message(
       fromId: widget.currentUserId,
@@ -910,7 +912,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   }
 
 // local storage of phone not accessed permission handler to access storage
-  Future<void> _downloadDocumentForReceiver(
+  /* Future<void> _downloadDocumentForReceiver(
       String fileName, String documentUrl) async {
     try {
       // Get the path to save the document
@@ -936,7 +938,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
       print("Error downloading document: $e");
     }
   }
-
+*/
 // favourites not getting stored in favourites
   void _updateMessageFavoriteStatus(Message message, bool newStatus) async {
     try {
@@ -1711,7 +1713,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                               await File(localDocumentPath).exists();
                           if (!fileExists) {
                             await _downloadDocument(
-                                widget.message.msg, localDocumentPath);
+                                localDocumentPath, widget.message.msg);
                           }
                           final result = await OpenFile.open(localDocumentPath);
                           if (result.message != 'File not found') {
@@ -1793,6 +1795,52 @@ Future<String> _getLocalDocumentPath(String documentUrl) async {
 
 //permissions for storage
 // Method to download the document from Firebase Storage
+Future<void> _downloadDocument(String firebaseUrl, String fileName) async {
+  try {
+    // Fetch the PDF from the provided URL
+
+    final response = await http.get(Uri.parse(firebaseUrl));
+
+    if (response.statusCode == 200) {
+      // Get the Downloads directory
+      final directory = await DownloadsPath.downloadsDirectory();
+
+      if (directory != null) {
+        // Construct the full file path in the Downloads directory
+        final filePath = '${directory.path}/$fileName';
+
+        // Write the downloaded file bytes to the specified path
+        final file = File(filePath);
+        await file.writeAsBytes(response.bodyBytes);
+        Fluttertoast.showToast(
+          msg: 'PDF saved successfully to Downloads: $filePath',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Downloads directory is not accessible.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+      }
+    } else {
+      Fluttertoast.showToast(
+        msg: 'Failed to download PDF . Try Again ',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+  } catch (e) {
+    Fluttertoast.showToast(
+      msg: 'Failed to download PDF . Try Again ',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+    );
+  }
+}
+
+/*
 Future<void> _downloadDocument(String documentUrl, String localPath) async {
   try {
     var response = await Dio().download(documentUrl, localPath);
@@ -1806,7 +1854,7 @@ Future<void> _downloadDocument(String documentUrl, String localPath) async {
     print("Error downloading document: $e");
   }
 }
-
+*/
 class AnimatedDot extends StatefulWidget {
   const AnimatedDot({super.key});
 

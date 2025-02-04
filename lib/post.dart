@@ -6,7 +6,8 @@ import 'package:cooig_firebase/PDFViewer.dart';
 import 'package:cooig_firebase/audio.dart';
 import 'package:cooig_firebase/home.dart';
 import 'package:http/http.dart' as http;
-
+//import 'package:http/http.dart' as http;
+import 'package:lecle_downloads_path_provider/lecle_downloads_path_provider.dart';
 //import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:cooig_firebase/gif.dart';
@@ -20,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:giphy_get/giphy_get.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
@@ -131,22 +133,81 @@ class _PostScreenState extends State<PostScreen> {
     return DateTime.now().millisecondsSinceEpoch.toString();
   }
 
-  Future<File> _downloadGif(String gifUrl) async {
-    final response = await http.get(Uri.parse(gifUrl));
-    if (response.statusCode == 200) {
-      //final storageRef = FirebaseStorage.instance.ref();
+  Future<String> _uploadGifToFirebase(String gifUrl, String userId) async {
+    try {
+      // Download GIF from URL
+      final response = await http.get(Uri.parse(gifUrl));
+      if (response.statusCode == 200) {
+        // Create a unique filename
+        String fileName =
+            'gifs/$userId/${DateTime.now().millisecondsSinceEpoch}.gif';
 
-      // Create a reference to the location where the file will be stored
-      //final fileRef = storageRef.child('${DateTime.now().millisecondsSinceEpoch}.gif');
+        // Upload to Firebase Storage
+        Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
+        UploadTask uploadTask = storageRef.putData(
+            response.bodyBytes, SettableMetadata(contentType: 'image/gif'));
 
-      //final tempDir = await getTemporaryDirectory();
+        // Get the download URL
+        TaskSnapshot snapshot = await uploadTask;
+        String downloadUrl = await snapshot.ref.getDownloadURL();
 
-      //final filePath = '${gifUrl}.gif';
-      File gifFile = File(gifUrl);
-      await gifFile.writeAsBytes(response.bodyBytes);
-      return gifFile;
-    } else {
-      throw Exception('Failed to download GIF');
+        print("GIF uploaded: $downloadUrl");
+        return downloadUrl;
+      } else {
+        throw Exception("Failed to download GIF");
+      }
+    } catch (e) {
+      print("Error uploading GIF: $e");
+      return "";
+    }
+  }
+
+/*
+  Future<String> _uploadGifToFirebase(String gifUrl, String userId) async {
+    try {
+      // Get temporary directory
+      final tempDir = await DownloadsPath.downloadsDirectory();
+      final tempFile = File('${tempDir?.path}/$gifUrl.gif');
+
+      // Download GIF from URL
+      final response = await http.get(Uri.parse(gifUrl));
+      await tempFile.writeAsBytes(response.bodyBytes);
+
+      // Upload to Firebase Storage
+      String storagePath =
+          'uploads/$userId/gifs/${DateTime.now().millisecondsSinceEpoch}.gif';
+      UploadTask uploadTask =
+          FirebaseStorage.instance.ref(storagePath).putFile(tempFile);
+      TaskSnapshot taskSnapshot = await uploadTask;
+
+      // Get Firebase URL
+      String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print("Error uploading GIF: $e");
+      throw e;
+    }
+  }
+*/
+  Future<File> _downloadGif(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final tempDir =
+            await DownloadsPath.downloadsDirectory(); // Use safe directory
+        final filePath =
+            '${tempDir!.path}/selected_gif_${DateTime.now().millisecondsSinceEpoch}.gif';
+
+        final file = File(filePath);
+        await file.writeAsBytes(response.bodyBytes);
+
+        return file;
+      } else {
+        throw Exception('Failed to download GIF');
+      }
+    } catch (e) {
+      throw Exception('Error downloading GIF: $e');
     }
   }
 
@@ -331,6 +392,52 @@ class _PostScreenState extends State<PostScreen> {
     try {
       debugPrint("GIF button clicked");
 
+      // Open Giphy GIF picker
+      GiphyGif? selectedGif = await GiphyGet.getGif(
+        context: context,
+        apiKey: 'n2TYHzIqKZMO5Gz1LFROxFLjbxFiKF90',
+        lang: GiphyLanguage.english,
+        modal: true,
+      );
+
+      if (!mounted) return; // Ensure widget is still active
+
+      if (selectedGif != null) {
+        setState(() {
+          _selectedGif = selectedGif; // Display selected GIF immediately
+        });
+
+        String? gifUrl = selectedGif.images?.original?.url;
+
+        if (gifUrl != null) {
+          // Download and store GIF as a file
+          //File gifFile = await _downloadGif(gifUrl);
+          print("The GIF Url : $gifUrl");
+          setState(() {
+            media2.add(gifUrl); // Add downloaded file to media list
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('GIF added to media!')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No GIF selected')),
+        );
+      }
+    } catch (error) {
+      debugPrint("Error selecting GIF: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
+    }
+  }
+/*
+  Future<void> _pickGif(BuildContext context) async {
+    try {
+      debugPrint("GIF button clicked");
+
       // Allow selection of only one GIF
       GiphyGif? selectedGif = await GiphyGet.getGif(
         context: context,
@@ -374,7 +481,7 @@ class _PostScreenState extends State<PostScreen> {
       );
     }
   }
-
+*/
   /*
 Future<void> _pickGif(BuildContext context) async {
   try {
@@ -512,6 +619,11 @@ Future<void> _pickGif(BuildContext context) async {
       for (var file in media) {
         String downloadUrl = await _uploadFile(file, widget.userId);
         mediaUrls.add(downloadUrl); // Collect the download URLs
+      }
+      for (String gifUrl in media2) {
+        String gifFirebaseUrl =
+            await _uploadGifToFirebase(gifUrl, widget.userId);
+        mediaUrls.add(gifFirebaseUrl);
       }
       /*for (String i in media2) {
         //String downloadUrl = await _uploadFile(i, widget.userId);
@@ -810,9 +922,16 @@ Future<void> _pickGif(BuildContext context) async {
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.network(
-                        _selectedGif!.images!.original!.url,
+                        _selectedGif!.images!.original!.url!,
                         width: screenWidth,
                         fit: BoxFit.contain,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(child: CircularProgressIndicator());
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(child: Text('Failed to load GIF'));
+                        },
                       ),
                     )
                   : Container(),
