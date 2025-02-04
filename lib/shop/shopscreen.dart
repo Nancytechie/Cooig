@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/shop/rentscreen.dart';
 import 'package:cooig_firebase/shop/sellitemupload.dart';
 
@@ -367,6 +368,7 @@ class _ShopscreenState extends State<Shopscreen> {
           backgroundColor: const Color(0XFF9752C5),
           child: const Icon(Icons.filter_list),
         ),
+          bottomNavigationBar: Nav(userId: widget.userId),
       ),
     );
   }

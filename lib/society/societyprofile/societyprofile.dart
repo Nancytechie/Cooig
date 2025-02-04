@@ -4,10 +4,10 @@ import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/loginsignup/login.dart';
 
-
 import 'package:cooig_firebase/society/societyprofile/editsocietyprofile.dart';
 
 import 'package:cooig_firebase/upload.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -90,39 +90,7 @@ class _SocietyprofileState extends State<Societyprofile>
     super.dispose();
   }
 
-  // Fetch user data from Firestore
-  Future<void> _uploadImageToFirebase(File image, bool isBanner) async {
-    try {
-      final String fileName =
-          '${widget.userid}_${isBanner ? 'banner' : 'profile'}.jpg';
-      final ref = _storage.ref().child('user_images').child(fileName);
-
-      // Upload image to Firebase Storage
-      UploadTask uploadTask = ref.putFile(image);
-      TaskSnapshot snapshot = await uploadTask;
-
-      // Get the download URL
-      String downloadUrl = await snapshot.ref.getDownloadURL();
-
-      // Update Firestore with the new URL
-      await _firestore.collection('users').doc(widget.userid).update({
-        isBanner ? 'bannerImageUrl' : 'profilepic': downloadUrl,
-      });
-
-      // Update state to reflect changes
-      setState(() {
-        if (isBanner) {
-          bannerImageUrl = downloadUrl;
-        } else {
-          profilepic = downloadUrl;
-        }
-      });
-
-      print("Image uploaded and URL updated successfully.");
-    } catch (e) {
-      print("Error uploading image: $e");
-    }
-  }
+  
 
   Future<void> _fetchUserData() async {
     try {
@@ -187,6 +155,8 @@ class _SocietyprofileState extends State<Societyprofile>
 
   @override
   Widget build(BuildContext context) {
+    final String? currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final bool isCurrentUser = currentUserId == widget.userid;
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Cooig',
@@ -195,7 +165,7 @@ class _SocietyprofileState extends State<Societyprofile>
       ),
       backgroundColor: Colors.black,
       bottomNavigationBar: Nav(userId: widget.userid),
-      drawer: NavigationDrawer(userId: widget.userid),
+      drawer: isCurrentUser ? NavigationDrawer(userId: widget.userid) : null,
       body: Column(
         children: [
           // Banner and Profile Image Sections
@@ -204,7 +174,6 @@ class _SocietyprofileState extends State<Societyprofile>
             alignment: Alignment.center,
             children: [
               GestureDetector(
-                onTap: () => _pickImage(true),
                 child: Container(
                   width: double.infinity,
                   height: 120,
@@ -217,7 +186,6 @@ class _SocietyprofileState extends State<Societyprofile>
               Positioned(
                 bottom: -50,
                 child: GestureDetector(
-                  onTap: () => _pickImage(false),
                   child: CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.white,
@@ -286,36 +254,95 @@ class _SocietyprofileState extends State<Societyprofile>
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // The Join button
-              ElevatedButton(
-                onPressed: status == 'Recruiting'
-                    ? () {
-                        _openLink(context, link!);
-                      }
-                    : null, // Disable the button if not recruiting
-                child: Row(
+              if (isCurrentUser)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.group_add, // Icon for joining
-                      color: Colors.white,
+                    ElevatedButton(
+                      onPressed: () {
+                        // Implement share profile link functionality
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0XFF9752C5),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.share, color: Colors.white),
+                          SizedBox(width: 5),
+                          Text(
+                            'Share Profile',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
                     ),
-                    SizedBox(width: 5),
-                    Text(
-                      'Join', // Text on the button
-                      style: TextStyle(color: Colors.white),
+                    SizedBox(width: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditSocietyprofile(
+                              userid: widget.userid,
+                            ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: Colors.black),
+                          SizedBox(width: 5),
+                          Text('Edit Profile',
+                              style: GoogleFonts.poppins(color: Colors.black)),
+                        ],
+                      ),
                     ),
                   ],
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: status == 'Recruiting'
-                      ? Colors.blue // Blue for recruiting
-                      : Colors.grey, // Grey for not recruiting
-                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                )
+              else
+                // The Join button
+                ElevatedButton(
+                  onPressed: status == 'Recruiting'
+                      ? () {
+                          _openLink(context, link!);
+                        }
+                      : null, // Disable the button if not recruiting
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.group_add, // Icon for joining
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        'Join', // Text on the button
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: status == 'Recruiting'
+                        ? Colors.blue // Blue for recruiting
+                        : Colors.grey, // Grey for not recruiting
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                 ),
-              ),
               SizedBox(width: 20),
               ElevatedButton(
                 onPressed: () {},
@@ -395,28 +422,6 @@ class _SocietyprofileState extends State<Societyprofile>
   }
 
   // Image picker function
-  Future<void> _pickImage(bool isBanner) async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedImage =
-        await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      setState(() {
-        if (isBanner) {
-          _bannerImage = File(pickedImage.path);
-        } else {
-          _profilepic = File(pickedImage.path);
-        }
-      });
-
-      // Upload the selected image to Firebase
-      if (isBanner) {
-        _uploadImageToFirebase(_bannerImage!, true);
-      } else {
-        _uploadImageToFirebase(_profilepic!, false);
-      }
-    }
-  }
 }
 
 class NavigationDrawer extends StatelessWidget {

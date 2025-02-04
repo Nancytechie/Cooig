@@ -60,7 +60,6 @@ class _NavState extends State<Nav> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -70,18 +69,19 @@ class _NavState extends State<Nav> {
   Future<void> _fetchUnseenPostCounts() async {
     // Fetch unseen post counts for each page
     _unseenHomePosts = await _getUnseenPostCount('posts_upload');
-    _unseenShopPosts = await _getUnseenPostCount('sellposts'); // Replace with your collection name
+    _unseenShopPosts = await _getUnseenPostCount(
+        'sellposts'); // Replace with your collection name
     _unseenNoticePosts = await _getUnseenPostCount('noticeposts');
-    _unseenFoundPosts = await _getUnseenPostCount('lostpost'); // Replace with your collection name
+    _unseenFoundPosts = await _getUnseenPostCount(
+        'lostpost'); // Replace with your collection name
 
     setState(() {}); // Update the UI
   }
 
   Future<int> _getUnseenPostCount(String collectionName) async {
     // Fetch all posts from the collection
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection(collectionName)
-        .get();
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection(collectionName).get();
 
     // Fetch the list of seen post IDs from local storage or Firestore
     List<String> seenPostIds = await _getSeenPostIds(collectionName);
@@ -123,7 +123,8 @@ class _NavState extends State<Nav> {
         _unseenHomePosts = 0;
         break;
       case 1:
-        await _markPostsAsSeen('shop_posts'); // Replace with your collection name
+        await _markPostsAsSeen(
+            'shop_posts'); // Replace with your collection name
         _unseenShopPosts = 0;
         break;
       case 2:
@@ -141,7 +142,7 @@ class _NavState extends State<Nav> {
     });
 
     // Navigate to the selected page
-   String userRole = await getUserRole();
+    String userRole = await getUserRole();
     switch (_selectedIndex) {
       case 0:
         Navigator.push(
@@ -167,7 +168,8 @@ class _NavState extends State<Nav> {
       case 3:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Lostpage(userId: widget.userId)),
+          MaterialPageRoute(
+              builder: (context) => Lostpage(userId: widget.userId)),
         );
         break;
       case 4:
@@ -190,9 +192,8 @@ class _NavState extends State<Nav> {
 
   Future<void> _markPostsAsSeen(String collectionName) async {
     // Fetch all post IDs from the collection
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection(collectionName)
-        .get();
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection(collectionName).get();
 
     // Save the list of seen post IDs to local storage or Firestore
     List<String> seenPostIds = snapshot.docs.map((doc) => doc.id).toList();

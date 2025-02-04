@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/bar.dart';
 //import 'package:cooig/bottomnavbar.dart';
 import 'package:cooig_firebase/notice/noticeboard.dart';
 import 'package:cooig_firebase/notice/noticedetailscreen.dart';
@@ -141,7 +142,7 @@ class _upcomingNoticeState extends State<upcomingNotice> {
     }
   }
 
-   void _showOptionsMenu(
+  void _showOptionsMenu(
       BuildContext context, String noticeId, String postedByUserId) {
     showModalBottomSheet(
       context: context,
@@ -394,7 +395,7 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                                       icon: const Icon(Icons.more_horiz,
                                           color: Colors.white),
                                       onPressed: () {
-                                         _showOptionsMenu(context, item['id'],
+                                        _showOptionsMenu(context, item['id'],
                                             item['postedByUserId']);
                                       },
                                     ),
@@ -521,6 +522,7 @@ class _upcomingNoticeState extends State<upcomingNotice> {
             ),
           ],
         ),
+        bottomNavigationBar: Nav(userId: widget.userId),
       ),
     );
   }
