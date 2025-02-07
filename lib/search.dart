@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/profile/profile.dart';
 import 'package:flutter/material.dart';
 
-//import 'package:cloud_firestore/cloud_firestore.dart';
 class MySearchPage extends StatefulWidget {
   const MySearchPage({super.key});
 
@@ -101,7 +101,7 @@ class _MySearchPageState extends State<MySearchPage> {
               .startAt([searchName]).endAt(["$searchName\uf8ff"]).snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              //return const Text('Something went wrong');
+              // Show error message
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -136,8 +136,17 @@ class _MySearchPageState extends State<MySearchPage> {
                       data['full_name'],
                       style: const TextStyle(color: Colors.white),
                     ),
-                    //subtitle: Text(data['course_name']),
-                    onTap: () {},
+                    // Navigate to ProfilePage on tap
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePage(
+                            userid: data.id, // Pass the user ID to ProfilePage
+                          ),
+                        ),
+                      );
+                    },
                   );
                 });
           }),

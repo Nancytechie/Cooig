@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:cooig_firebase/appbar.dart';
 
 import 'package:cooig_firebase/background.dart';
+import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/lostandfound/foundpage.dart';
 import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class _LostpageState extends State<Lostpage> {
         final data = doc.data() as Map<String, dynamic>;
         return {
           'id': doc.id,
-           'postedByUserId': data['postedByUserId'],
+          'postedByUserId': data['postedByUserId'],
           'image': data['image'] ?? '',
           'userProfileImage': data['profilepic'] ?? '',
           'username': data['username'] ?? 'Unknown User',
@@ -315,7 +316,7 @@ class _LostpageState extends State<Lostpage> {
                                         color: Colors.white),
                                     onPressed: () {
                                       _showOptionsMenu(context, item['id'],
-                                            item['postedByUserId']);
+                                          item['postedByUserId']);
                                     },
                                   ),
                                 ),
@@ -416,11 +417,12 @@ class _LostpageState extends State<Lostpage> {
             ),
           ],
         ),
+        bottomNavigationBar: Nav(userId: widget.userId),
       ),
     );
   }
 
-    void _showOptionsMenu(
+  void _showOptionsMenu(
       BuildContext context, String noticeId, String postedByUserId) {
     showModalBottomSheet(
       context: context,

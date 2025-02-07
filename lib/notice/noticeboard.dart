@@ -572,8 +572,14 @@ class _NoticeboardState extends State<Noticeboard> {
               ),
             ),
           ],
+        
         ),
+        
+        
       ),
+      
+      
     );
+    
   }
 }

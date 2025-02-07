@@ -1,13 +1,12 @@
 import 'dart:io';
-
-import 'package:cooig_firebase/appbar.dart';
-import 'package:cooig_firebase/bar.dart';
-import 'package:cooig_firebase/loginsignup/login.dart';
-import 'package:cooig_firebase/profile/editprofile.dart';
-import 'package:cooig_firebase/society/society_login.dart';
-import 'package:cooig_firebase/upload.dart';
+import 'package:cooig_firebase/appbar.dart'; // Replace with your actual import
+import 'package:cooig_firebase/bar.dart'; // Replace with your actual import
+import 'package:cooig_firebase/loginsignup/login.dart'; // Replace with your actual import
+import 'package:cooig_firebase/profile/editprofile.dart'; // Replace with your actual import
+import 'package:cooig_firebase/society/society_login.dart'; // Replace with your actual import
+import 'package:cooig_firebase/society/societyprofile/editsocietyprofile.dart';
+import 'package:cooig_firebase/upload.dart'; // Replace with your actual import
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +16,6 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
 
-// ignore: depend_on_referenced_packages
 class ProfilePage extends StatefulWidget {
   final dynamic userid;
 
@@ -29,7 +27,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
@@ -41,19 +38,87 @@ class _ProfilePageState extends State<ProfilePage>
   final TextEditingController _bioController = TextEditingController();
   final bool _isEditing = false;
   TabController? _tabController;
-//profile
+
+  // Profile data
   String? username;
   String? bio;
   String? branch;
   String? year;
   int _bondsCount = 0;
-  final int _postsCount =
-      0; // Replace with actual post count variable if available
+  final int _postsCount = 0; // Replace with actual post count if available
   bool _isBonded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _fetchUserData();
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(widget.userid).get();
+
+      if (userDoc.exists) {
+        Map<String, dynamic>? userData =
+            userDoc.data() as Map<String, dynamic>?;
+
+        setState(() {
+          username = userData?['username'] ?? "Username";
+          bio = userData?['bio'] ?? "Bio goes here";
+          branch = userData?['branch'] ?? "Branch";
+          year = userData?['year'] ?? "Year";
+          _bondsCount = userData?['bonds'] ?? 0;
+          _isBonded = userData?['isBonded'] ?? false;
+
+          _usernameController.text = username!;
+          _bioController.text = bio!;
+
+          bannerImageUrl = userData?['bannerImageUrl'];
+          profilepic = userData?['profilepic'];
+        });
+      } else {
+        setState(() {
+          username = "Username";
+          bio = "Bio goes here";
+          branch = "Branch";
+          year = "Year";
+          _bondsCount = 0;
+
+          _usernameController.text = username!;
+          _bioController.text = bio!;
+
+          bannerImageUrl = null;
+          profilepic = null;
+        });
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+      setState(() {
+        username = "Username";
+        bio = "Bio goes here";
+        branch = "Branch";
+        year = "Year";
+        _bondsCount = 0;
+
+        _usernameController.text = username!;
+        _bioController.text = bio!;
+
+        bannerImageUrl = null;
+        profilepic = null;
+      });
+    }
+  }
 
   Future<void> _toggleBondStatus() async {
     if (_isBonded) {
-      // Show confirmation dialog to unbond
       bool confirmUnbond = await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -75,12 +140,8 @@ class _ProfilePageState extends State<ProfilePage>
       );
       if (!confirmUnbond) return;
 
-      // Unbond action
       try {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(widget.userid)
-            .update({
+        await _firestore.collection('users').doc(widget.userid).update({
           'bonds': _bondsCount - 1,
           'isBonded': false,
         });
@@ -92,12 +153,8 @@ class _ProfilePageState extends State<ProfilePage>
         print('Failed to unbond: $e');
       }
     } else {
-      // Bond action
       try {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(widget.userid)
-            .update({
+        await _firestore.collection('users').doc(widget.userid).update({
           'bonds': _bondsCount + 1,
           'isBonded': true,
         });
@@ -112,138 +169,18 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-    _fetchUserData();
-  }
-
-  @override
-  void dispose() {
-    _tabController?.dispose();
-    super.dispose();
-  }
-
-  // Fetch user data from Firestore
-  Future<void> _uploadImageToFirebase(File image, bool isBanner) async {
-    try {
-      final String fileName =
-          '${widget.userid}_${isBanner ? 'banner' : 'profile'}.jpg';
-      final ref = _storage.ref().child('user_images').child(fileName);
-
-      // Upload image to Firebase Storage
-      UploadTask uploadTask = ref.putFile(image);
-      TaskSnapshot snapshot = await uploadTask;
-
-      // Get the download URL
-      String downloadUrl = await snapshot.ref.getDownloadURL();
-
-      // Update Firestore with the new URL
-      await _firestore.collection('users').doc(widget.userid).update({
-        isBanner ? 'bannerImageUrl' : 'profilepic': downloadUrl,
-      });
-
-      // Update state to reflect changes
-      setState(() {
-        if (isBanner) {
-          bannerImageUrl = downloadUrl;
-        } else {
-          profilepic = downloadUrl;
-        }
-      });
-
-      print("Image uploaded and URL updated successfully.");
-    } catch (e) {
-      print("Error uploading image: $e");
-    }
-  }
-
-  Future<void> _fetchUserData() async {
-    try {
-      // Fetch user document from Firestore
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(widget.userid).get();
-
-      if (userDoc.exists) {
-        // Safely access user data
-        Map<String, dynamic>? userData =
-            userDoc.data() as Map<String, dynamic>?;
-
-        setState(() {
-          // Fetch and set the required fields with fallbacks
-          username = userData?['username'] ?? "Username";
-          bio = userData?['bio'] ?? "Bio goes here";
-          branch = userData?['branch'] ?? "Branch";
-          year = userData?['year'] ?? "Year";
-          _bondsCount = userData?['bonds'] ?? 0;
-
-          // Text controllers for editable fields
-          _usernameController.text = username!;
-          _bioController.text = bio!;
-
-          // Image URLs
-          bannerImageUrl = userData?['bannerImageUrl'];
-          profilepic = userData?['profilepic'];
-        });
-      } else {
-        // Handle case where the document does not exist
-        setState(() {
-          username = "Username";
-          bio = "Bio goes here";
-          branch = "Branch";
-          year = "Year";
-          _bondsCount = 0;
-
-          _usernameController.text = username!;
-          _bioController.text = bio!;
-
-          bannerImageUrl = null;
-          profilepic = null;
-        });
-      }
-    } catch (e) {
-      // Handle errors
-      print("Error fetching user data: $e");
-      setState(() {
-        username = "Username";
-        bio = "Bio goes here";
-        branch = "Branch";
-        year = "Year";
-        _bondsCount = 0;
-
-        _usernameController.text = username!;
-        _bioController.text = bio!;
-
-        bannerImageUrl = null;
-        profilepic = null;
-      });
-    }
-  }
-
-/*
-  // Navigate to the Edit Profile Page
-  void _navigateToEditProfile() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditProfilePage(
-          userid: widget.userid,
-        ),
-      ),
-    );
-  }
-*/
-  @override
   Widget build(BuildContext context) {
+    final String? currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    final bool isCurrentUser = currentUserId == widget.userid;
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Cooig',
         textSize: 30.0,
-        //iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: Colors.black,
       bottomNavigationBar: Nav(userId: widget.userid),
-      drawer: NavigationDrawer(userId: widget.userid),
+      drawer: isCurrentUser ? NavigationDrawer(userId: widget.userid) : null,
       body: Column(
         children: [
           // Banner and Profile Image Sections
@@ -252,7 +189,6 @@ class _ProfilePageState extends State<ProfilePage>
             alignment: Alignment.center,
             children: [
               GestureDetector(
-                onTap: () => _pickImage(true),
                 child: Container(
                   width: double.infinity,
                   height: 120,
@@ -265,7 +201,6 @@ class _ProfilePageState extends State<ProfilePage>
               Positioned(
                 bottom: -50,
                 child: GestureDetector(
-                  onTap: () => _pickImage(false),
                   child: CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.white,
@@ -287,20 +222,6 @@ class _ProfilePageState extends State<ProfilePage>
                 right: 14,
                 child: _buildCircularBox(year ?? 'Year'),
               ),
-              /*Positioned(
-                top: 10,
-                right: 10,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Row(
-                    children: [
-                      Icon(Icons.edit, color: Colors.white),
-                      SizedBox(width: 5),
-                      Text('Edit', style: TextStyle(color: Colors.white)),
-                    ],
-                  ),
-                ),
-              ),*/
             ],
           ),
 
@@ -368,55 +289,114 @@ class _ProfilePageState extends State<ProfilePage>
 
           SizedBox(height: 15),
 
-          // Bond Action Button
-          SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: _toggleBondStatus,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0XFF9752C5),
-                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+          // Conditional Buttons
+          if (isCurrentUser)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Implement share profile link functionality
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0XFF9752C5),
+                    padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.share, color: Colors.white),
+                      SizedBox(width: 5),
+                      Text(
+                        'Share Profile',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  children: [
-                    Icon(
-                      _isBonded ? Icons.check : Icons.favorite,
-                      color: Colors.white,
+                SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfilePage(
+                          userid: widget.userid,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    SizedBox(width: 5),
-                    Text(
-                      _isBonded ? 'Bonded' : 'Bond',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 20),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit, color: Colors.black),
+                      SizedBox(width: 5),
+                      Text('Edit Profile',
+                          style: GoogleFonts.poppins(color: Colors.black)),
+                    ],
                   ),
                 ),
-                child: Row(
-                  children: [
-                    Icon(Icons.message, color: Colors.black),
-                    SizedBox(width: 5),
-                    Text('Messages',
-                        style: GoogleFonts.poppins(color: Colors.black)),
-                  ],
+              ],
+            )
+          else
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _toggleBondStatus,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0XFF9752C5),
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _isBonded ? Icons.check : Icons.favorite,
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        _isBonded ? 'Bonded' : 'Bond',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
+                SizedBox(width: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Implement messaging functionality
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.message, color: Colors.black),
+                      SizedBox(width: 5),
+                      Text('Messages',
+                          style: GoogleFonts.poppins(color: Colors.black)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+
           SizedBox(height: 15),
 
           // Bio Display
@@ -426,40 +406,11 @@ class _ProfilePageState extends State<ProfilePage>
           ),
 
           SizedBox(height: 15),
-
-          // Tab Bar
-          // TabBar(
-          //   controller: _tabController,
-          //   tabs: [
-          //     Tab(text: 'Posts'),
-          //     Tab(text: 'Highlights'),
-          //     Tab(text: 'Clips'),
-          //     Tab(text: 'Bookmark'),
-          //   ],
-          //   labelColor: Colors.white,
-          //   unselectedLabelColor: Color.fromARGB(255, 187, 183, 183),
-          //   indicatorColor: Colors.purple[50],
-          //   dividerColor: Colors.black,
-          // ),
-
-          // // Tab Views Content
-          // Expanded(
-          //   child: TabBarView(
-          //     controller: _tabController,
-          //     children: [
-          //       Center(child: Text('Posts Content')),
-          //       Center(child: Text('Highlights Content')),
-          //       Center(child: Text('Clips Content')),
-          //       Center(child: Text('Bookmark Content')),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );
   }
 
-  // Helper function to display circular boxes (branch/year)
   Widget _buildCircularBox(String text) {
     return Container(
       decoration: BoxDecoration(
@@ -472,30 +423,6 @@ class _ProfilePageState extends State<ProfilePage>
         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       ),
     );
-  }
-
-  // Image picker function
-  Future<void> _pickImage(bool isBanner) async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedImage =
-        await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      setState(() {
-        if (isBanner) {
-          _bannerImage = File(pickedImage.path);
-        } else {
-          _profilepic = File(pickedImage.path);
-        }
-      });
-
-      // Upload the selected image to Firebase
-      if (isBanner) {
-        _uploadImageToFirebase(_bannerImage!, true);
-      } else {
-        _uploadImageToFirebase(_profilepic!, false);
-      }
-    }
   }
 }
 
@@ -616,7 +543,6 @@ class NavigationDrawer extends StatelessWidget {
                   const Text("Settings", style: TextStyle(color: Colors.white)),
               onTap: () {},
             ),
-            
             ListTile(
               leading: const Icon(Iconsax.logout, color: Colors.white),
               title:

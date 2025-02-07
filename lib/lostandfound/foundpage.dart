@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/background.dart';
+import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/lostandfound/foundupload.dart';
 import 'package:cooig_firebase/lostandfound/lostpage.dart';
 
@@ -430,6 +431,8 @@ class _FoundpageState extends State<Foundpage> {
                   ),
                 ),
               ],
-            )));
+            ),
+              bottomNavigationBar: Nav(userId: widget.userId),
+            ));
   }
 }
