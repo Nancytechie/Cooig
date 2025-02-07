@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 
-/*
-          */
-
 class NavigationDrawer extends StatelessWidget {
   final String userId;
 

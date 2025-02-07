@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cooig_firebase/background.dart';
+import 'package:cooig_firebase/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -33,11 +34,11 @@ class _PostScreenState extends State<PostScreen> {
           .child('lostpost/$userID/${basename(file.path)}'); // Updated path
       await fileRef.putFile(file);
       final downloadURL = await fileRef.getDownloadURL();
-       final userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.userId)
-        .get();
-    final userData = userDoc.data() as Map<String, dynamic>;
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .get();
+      final userData = userDoc.data() as Map<String, dynamic>;
 
       await FirebaseFirestore.instance.collection('lostpost').add({
         // Updated collection
@@ -47,9 +48,10 @@ class _PostScreenState extends State<PostScreen> {
         'location': _location,
         'title': _titleController.text,
         'description': _descriptionController.text,
-        'username': userData['full_name'] ?? userData['societyName']?? 'Unknown',
-        'profilepic': userData['profilepic'] ?? '', 
-         'postedByUserId':widget.userId,
+        'username':
+            userData['full_name'] ?? userData['societyName'] ?? 'Unknown',
+        'profilepic': userData['profilepic'] ?? '',
+        'postedByUserId': widget.userId,
       });
     } catch (e) {
       print('Error uploading file: $e');
@@ -113,7 +115,6 @@ class _PostScreenState extends State<PostScreen> {
       return;
     }
 
-
     await _uploadFile(_image!, widget.userId);
 
     setState(() {
@@ -157,6 +158,7 @@ class _PostScreenState extends State<PostScreen> {
                 },
               ),
             ),
+            bottomNavigationBar: BottomNavScreen(userId: widget.userId),
             backgroundColor: Colors.transparent,
             body: SafeArea(
               child: SingleChildScrollView(

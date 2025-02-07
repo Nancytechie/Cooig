@@ -7,8 +7,6 @@ class CommentSection extends StatefulWidget {
   // post id logic addition
   final String userId;
   final String? username;
-  
-
 
   const CommentSection({
     Key? key,
@@ -22,7 +20,6 @@ class CommentSection extends StatefulWidget {
 
 class _CommentSectionState extends State<CommentSection> {
   final TextEditingController _commentController = TextEditingController();
-  
 
   // Function to add comment to Firestore
   Future<void> _addComment() async {

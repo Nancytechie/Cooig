@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/navbar.dart';
 import 'package:cooig_firebase/shop/rentscreen.dart';
 import 'package:cooig_firebase/shop/sellitemupload.dart';
 
@@ -43,6 +44,7 @@ class _ShopscreenState extends State<Shopscreen> {
           title: 'Cooig',
           textSize: 30.0,
         ),
+        bottomNavigationBar: BottomNavScreen(userId: widget.userId),
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
