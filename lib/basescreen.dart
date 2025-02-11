@@ -1,6 +1,7 @@
 import 'package:cooig_firebase/academic_section/branch_page.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/chatmain.dart';
+import 'package:cooig_firebase/notifications.dart';
 import 'package:cooig_firebase/search.dart';
 import 'package:flutter/material.dart';
 //import 'nav.dart'; // Ensure Nav is imported
@@ -56,7 +57,14 @@ class BaseScreen extends StatelessWidget {
       elevation: 0,
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Notifications(
+                          userId: userId,
+                        )));
+          },
           icon: const Badge(
             backgroundColor: Color(0xFF635A8F),
             textColor: Colors.white,
