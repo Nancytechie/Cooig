@@ -19,7 +19,7 @@ import 'package:line_icons/line_icons.dart';
 class ProfilePage extends StatefulWidget {
   final dynamic userid;
 
-  const ProfilePage({super.key, required this.userid});
+  const ProfilePage({super.key, required this.userid, required int index});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -179,7 +179,10 @@ class _ProfilePageState extends State<ProfilePage>
         textSize: 30.0,
       ),
       backgroundColor: Colors.black,
-      bottomNavigationBar: Nav(userId: widget.userid),
+      bottomNavigationBar: Nav(
+        userId: widget.userid,
+        index: 4,
+      ),
       drawer: isCurrentUser ? NavigationDrawer(userId: widget.userid) : null,
       body: Column(
         children: [

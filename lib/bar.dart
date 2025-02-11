@@ -1,3 +1,4 @@
+/*
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/lostandfound/foundpage.dart';
 import 'package:cooig_firebase/home.dart' hide Container, SizedBox;
@@ -273,6 +274,465 @@ class _NavState extends State<Nav> {
         unselectedItemColor: Colors.white,
         type: BottomNavigationBarType.fixed,
       ),
+    );
+  }
+}
+*/
+/*
+import 'package:cooig_firebase/home.dart';
+//import 'package:cooig_firebase/lostandfound/lostpage.dart';
+import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
+import 'package:cooig_firebase/notice/noticeboard.dart';
+import 'package:cooig_firebase/profile/profile.dart';
+import 'package:cooig_firebase/shop/shopscreen.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:badges/badges.dart' as badges;
+
+//import 'homepage.dart';
+//import 'shopscreen.dart';
+//import 'noticeboard.dart';
+//import 'lostpage.dart';
+//import 'profile_page.dart';
+//import 'society_profile.dart';
+
+class Nav extends StatefulWidget {
+  final dynamic userId;
+
+  const Nav({super.key, required this.userId});
+
+  @override
+  State<Nav> createState() => _NavState();
+}
+
+class _NavState extends State<Nav> {
+  int _selectedIndex = 0;
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      Homepage(userId: widget.userId),
+      Shopscreen(userId: widget.userId),
+      Noticeboard(userId: widget.userId),
+      PostScreen(userId: widget.userId),
+      ProfilePage(userid: widget.userId),
+    ];
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.purple,
+        unselectedItemColor: Colors.grey,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Iconsax.home,
+                color: _selectedIndex == 0 ? Colors.purple : Colors.grey),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(LineAwesomeIcons.tag_solid,
+                color: _selectedIndex == 1 ? Colors.purple : Colors.grey),
+            label: 'Shop',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(LineAwesomeIcons.bullseye_solid,
+                color: _selectedIndex == 2 ? Colors.purple : Colors.grey),
+            label: 'Notice',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Iconsax.briefcase,
+                color: _selectedIndex == 3 ? Colors.purple : Colors.grey),
+            label: 'Lost & Found',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person,
+                color: _selectedIndex == 4 ? Colors.purple : Colors.grey),
+            label: 'Profile',
+          ),
+        ],
+      ),
+    );
+  }
+}
+*/
+/*
+import 'package:cooig_firebase/basescreen.dart';
+import 'package:cooig_firebase/home.dart';
+import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
+import 'package:cooig_firebase/notice/noticeboard.dart';
+import 'package:cooig_firebase/profile/profile.dart';
+import 'package:cooig_firebase/shop/shopscreen.dart';
+import 'package:flutter/material.dart';
+
+class Nav extends StatefulWidget {
+  final String userId;
+
+  const Nav({Key? key, required this.userId}) : super(key: key);
+
+  @override
+  _NavState createState() => _NavState();
+}
+
+class _NavState extends State<Nav> {
+  int _selectedIndex = 0;
+
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      BaseScreen(body: Homepage(userId: widget.userId), userId: widget.userId),
+      BaseScreen(
+          body: Shopscreen(userId: widget.userId), userId: widget.userId),
+      BaseScreen(
+          body: Noticeboard(userId: widget.userId), userId: widget.userId),
+      BaseScreen(
+          body: PostScreen(userId: widget.userId), userId: widget.userId),
+      BaseScreen(
+          body: ProfilePage(userid: widget.userId), userId: widget.userId),
+    ];
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        // ✅ Prevents unnecessary rebuilding
+        index: _selectedIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.purple,
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Shop'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.notifications), label: 'Notice'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.business), label: 'Lost & Found'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+}
+*/
+/*
+import 'package:cooig_firebase/home.dart';
+import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
+import 'package:cooig_firebase/notice/noticeboard.dart';
+import 'package:cooig_firebase/profile/profile.dart';
+import 'package:cooig_firebase/shop/shopscreen.dart';
+import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class Nav extends StatefulWidget {
+  final String userId;
+
+  Nav({required this.userId});
+
+  @override
+  _NavState createState() => _NavState();
+}
+
+class _NavState extends State<Nav> {
+  int _selectedIndex = 0;
+  int _unseenHomePosts = 0;
+  int _unseenShopPosts = 0;
+  int _unseenNoticePosts = 0;
+  int _unseenFoundPosts = 0;
+
+  final List<Widget> _pages = [
+    Homepage(userId: 'userId'), // Replace with your pages
+    Shopscreen(userId: 'userId'),
+    Noticeboard(userId: 'userId'),
+    PostScreen(userId: 'userId'),
+    ProfilePage(userid: 'userId'), // Replace with your profile page
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUnseenPostCounts();
+  }
+
+  Future<void> _fetchUnseenPostCounts() async {
+    _unseenHomePosts = await _getUnseenPostCount('posts_upload');
+    _unseenShopPosts = await _getUnseenPostCount('sellposts');
+    _unseenNoticePosts = await _getUnseenPostCount('noticeposts');
+    _unseenFoundPosts = await _getUnseenPostCount('lostpost');
+
+    setState(() {});
+  }
+
+  Future<int> _getUnseenPostCount(String collectionName) async {
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection(collectionName).get();
+    List<String> seenPostIds = await _getSeenPostIds(collectionName);
+
+    int unseenCount = 0;
+    for (var doc in snapshot.docs) {
+      if (!seenPostIds.contains(doc.id)) {
+        unseenCount++;
+      }
+    }
+
+    return unseenCount;
+  }
+
+  Future<List<String>> _getSeenPostIds(String collectionName) async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .get();
+    return List<String>.from(userDoc['seen_$collectionName'] ?? []);
+  }
+
+  Future<void> _onItemTapped(int index) async {
+    if (_selectedIndex == index) {
+      return;
+    }
+
+    switch (index) {
+      case 0:
+        await _markPostsAsSeen('posts_upload');
+        _unseenHomePosts = 0;
+        break;
+      case 1:
+        await _markPostsAsSeen('sellposts');
+        _unseenShopPosts = 0;
+        break;
+      case 2:
+        await _markPostsAsSeen('noticeposts');
+        _unseenNoticePosts = 0;
+        break;
+      case 3:
+        await _markPostsAsSeen('lostpost');
+        _unseenFoundPosts = 0;
+        break;
+    }
+
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Future<void> _markPostsAsSeen(String collectionName) async {
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection(collectionName).get();
+    List<String> seenPostIds = snapshot.docs.map((doc) => doc.id).toList();
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .update({
+      'seen_$collectionName': seenPostIds,
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _pages[_selectedIndex], // Display the selected page
+      bottomNavigationBar: Container(
+        color: Colors.black,
+        child: BottomNavigationBar(
+          backgroundColor: Colors.black,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: badges.Badge(
+                badgeContent: Text(
+                  _unseenHomePosts.toString(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                showBadge: _unseenHomePosts > 0,
+                child: Icon(Icons.home),
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: badges.Badge(
+                badgeContent: Text(
+                  _unseenShopPosts.toString(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                showBadge: _unseenShopPosts > 0,
+                child: Icon(Icons.shopping_cart),
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: badges.Badge(
+                badgeContent: Text(
+                  _unseenNoticePosts.toString(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                showBadge: _unseenNoticePosts > 0,
+                child: Icon(Icons.notifications),
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: badges.Badge(
+                badgeContent: Text(
+                  _unseenFoundPosts.toString(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                showBadge: _unseenFoundPosts > 0,
+                child: Icon(Icons.search),
+              ),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: '',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: const Color(0xFF635A8F),
+          onTap: _onItemTapped,
+          unselectedItemColor: Colors.white,
+          type: BottomNavigationBarType.fixed,
+        ),
+      ),
+    );
+  }
+}
+*/
+
+import 'package:cooig_firebase/home.dart';
+import 'package:cooig_firebase/lostandfound/lostpage.dart';
+import 'package:cooig_firebase/notice/noticeboard.dart';
+import 'package:cooig_firebase/profile/profile.dart';
+import 'package:cooig_firebase/shop/shopscreen.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
+import 'package:badges/badges.dart' as badges;
+import 'package:flutter/material.dart';
+
+class Nav extends StatefulWidget {
+  final dynamic userId;
+  final int index; // Added index parameter
+
+  const Nav({super.key, required this.userId, required this.index});
+
+  @override
+  State<Nav> createState() => _NavState();
+}
+
+class _NavState extends State<Nav> {
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.index; // Initialize index from widget
+  }
+
+  void _onItemTapped(int index) {
+    if (_selectedIndex == index) return;
+    setState(() => _selectedIndex = index);
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Homepage(userId: widget.userId, index: 0)),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  Shopscreen(userId: widget.userId, index: 1)),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  Noticeboard(userId: widget.userId, index: 2)),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Lostpage(userId: widget.userId, index: 3)),
+        );
+        break;
+      case 4:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ProfilePage(userid: widget.userId, index: 4)),
+        );
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      backgroundColor: Colors.black,
+      items: [
+        BottomNavigationBarItem(icon: Icon(Iconsax.home), label: ''),
+        BottomNavigationBarItem(
+            icon: Icon(LineAwesomeIcons.tag_solid), label: ''),
+        BottomNavigationBarItem(
+            icon: Icon(LineAwesomeIcons.bullseye_solid), label: ''),
+        BottomNavigationBarItem(
+            icon: Icon(LineAwesomeIcons.briefcase_solid), label: ''),
+        BottomNavigationBarItem(
+            icon: Icon(
+              Iconsax.user,
+              size: 20,
+            ),
+            label: ''),
+      ],
+      currentIndex: _selectedIndex,
+      selectedItemColor: const Color(0xFF635A8F),
+      unselectedItemColor: Colors.white,
+      onTap: _onItemTapped,
+      type: BottomNavigationBarType.fixed,
     );
   }
 }

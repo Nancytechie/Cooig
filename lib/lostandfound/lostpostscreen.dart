@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:cooig_firebase/background.dart';
-import 'package:cooig_firebase/navbar.dart';
+import 'package:cooig_firebase/bar.dart';
+//import 'package:cooig_firebase/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -137,6 +138,7 @@ class _PostScreenState extends State<PostScreen> {
         centerAlignment: Alignment.bottomRight,
         child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               centerTitle: true,
               backgroundColor: Colors.black,
               title: Text(
@@ -158,7 +160,10 @@ class _PostScreenState extends State<PostScreen> {
                 },
               ),
             ),
-            bottomNavigationBar: BottomNavScreen(userId: widget.userId),
+            bottomNavigationBar: Nav(
+              userId: widget.userId,
+              index: 3,
+            ),
             backgroundColor: Colors.transparent,
             body: SafeArea(
               child: SingleChildScrollView(

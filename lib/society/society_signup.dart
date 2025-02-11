@@ -170,7 +170,10 @@ class _SocietySignupState extends State<SocietySignup> {
           // Navigate to Userprofile
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-                builder: (context) => Homepage(userId: user!.uid)),
+                builder: (context) => Homepage(
+                      userId: user!.uid,
+                      index: 0,
+                    )),
           );
           break;
         }

@@ -6,18 +6,6 @@ import 'package:cooig_firebase/shop/shopscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-//import 'home_page.dart';
-//import 'profile_page.dart';
-//import 'settings_page.dart';
-
-//import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart'; // Ensure this package is added in pubspec.yaml
-//import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // For LineAwesomeIcons
-
-import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
-//import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomNavScreen extends StatefulWidget {
   final dynamic userId;
@@ -35,11 +23,23 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   void initState() {
     super.initState();
     _pages = [
-      Homepage(userId: widget.userId),
-      Shopscreen(userId: widget.userId),
-      Noticeboard(userId: widget.userId),
+      Homepage(
+        userId: widget.userId,
+        index: 0,
+      ),
+      Shopscreen(
+        userId: widget.userId,
+        index: 1,
+      ),
+      Noticeboard(
+        userId: widget.userId,
+        index: 2,
+      ),
       PostScreen(userId: widget.userId),
-      ProfilePage(userid: widget.userId),
+      ProfilePage(
+        userid: widget.userId,
+        index: 4,
+      ),
     ];
   }
 

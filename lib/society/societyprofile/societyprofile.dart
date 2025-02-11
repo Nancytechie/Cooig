@@ -90,8 +90,6 @@ class _SocietyprofileState extends State<Societyprofile>
     super.dispose();
   }
 
-  
-
   Future<void> _fetchUserData() async {
     try {
       // Fetch user document from Firestore
@@ -164,7 +162,10 @@ class _SocietyprofileState extends State<Societyprofile>
         //iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: Colors.black,
-      bottomNavigationBar: Nav(userId: widget.userid),
+      bottomNavigationBar: Nav(
+        userId: widget.userid,
+        index: 4,
+      ),
       drawer: isCurrentUser ? NavigationDrawer(userId: widget.userid) : null,
       body: Column(
         children: [

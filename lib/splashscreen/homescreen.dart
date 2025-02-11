@@ -1,4 +1,5 @@
 //import 'package:cooig_firebase/chat_profile/home.dart';
+import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/loginsignup/login.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +65,11 @@ class AuthWrapper extends StatelessWidget {
         }
         if (snapshot.hasData) {
           // User is signed in
-          return Homepage(userId: FirebaseAuth.instance.currentUser!.uid);
+          //return Nav(userId: FirebaseAuth.instance.currentUser!.uid);
+          return Homepage(
+            userId: FirebaseAuth.instance.currentUser!.uid,
+            index: 0,
+          );
         } else {
           // User is signed out
           return Login();

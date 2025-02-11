@@ -18,7 +18,7 @@ import 'package:intl/intl.dart';
 class Noticeboard extends StatefulWidget {
   final dynamic userId;
 
-  const Noticeboard({super.key, required this.userId});
+  const Noticeboard({super.key, required this.userId, required int index});
 
   @override
   _NoticeboardState createState() => _NoticeboardState();
@@ -241,7 +241,10 @@ class _NoticeboardState extends State<Noticeboard> {
           ],
         ),
         backgroundColor: Colors.transparent,
-        bottomNavigationBar: Nav(userId: widget.userId),
+        bottomNavigationBar: Nav(
+          userId: widget.userId,
+          index: 2,
+        ),
         body: Column(
           children: [
             Padding(
@@ -284,6 +287,7 @@ class _NoticeboardState extends State<Noticeboard> {
                             MaterialPageRoute(
                                 builder: (context) => Noticeboard(
                                       userId: widget.userId,
+                                      index: 2,
                                     )),
                           );
                         },
@@ -572,14 +576,8 @@ class _NoticeboardState extends State<Noticeboard> {
               ),
             ),
           ],
-        
         ),
-        
-        
       ),
-      
-      
     );
-    
   }
 }

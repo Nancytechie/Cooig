@@ -84,8 +84,9 @@ class _rentscreenState extends State<rentscreen> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Shopscreen(
-                                    userId: widget
-                                        .userId)), // Ensure this route exists
+                                      userId: widget.userId,
+                                      index: 1,
+                                    )), // Ensure this route exists
                           );
                         },
                         child: Text(

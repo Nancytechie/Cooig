@@ -78,14 +78,14 @@ class _PostPageState extends State<PostPage> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Notifications(
-                    userId: widget.userId,
-                  ),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => Notifications(
+              //       userId: widget.userId,
+              //     ),
+              //   ),
+              // );
             },
             icon: const Badge(
               backgroundColor: Color(0xFF635A8F),
@@ -115,7 +115,7 @@ class _PostPageState extends State<PostPage> {
         ],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      bottomNavigationBar: Nav(userId: widget.userId),
+      //bottomNavigationBar: Nav(userId: widget.userId),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

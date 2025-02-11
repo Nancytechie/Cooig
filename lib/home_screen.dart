@@ -43,8 +43,10 @@ class _HomeScreenState extends State<HomeScreen>
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          Homepage(userId: widget.currentUserId)),
+                      builder: (context) => Homepage(
+                            userId: widget.currentUserId,
+                            index: 0,
+                          )),
                 );
               },
             ),

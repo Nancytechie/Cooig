@@ -62,8 +62,10 @@ class _LoginState extends State<Login> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  Homepage(userId: userid)), // Replace with your desired page
+              builder: (context) => Homepage(
+                    userId: userid,
+                    index: 0,
+                  )), // Replace with your desired page
         );
       } else {
         Fluttertoast.showToast(

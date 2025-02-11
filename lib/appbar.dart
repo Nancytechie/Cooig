@@ -19,7 +19,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      centerTitle: true, // Center the title
+      centerTitle: true,
+      // Center the title
+      automaticallyImplyLeading: false,
       title: Text(
         title,
         style: GoogleFonts.libreBodoni(

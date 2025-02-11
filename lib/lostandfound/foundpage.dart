@@ -131,308 +131,311 @@ class _FoundpageState extends State<Foundpage> {
         radius: 0.0,
         centerAlignment: Alignment.bottomCenter,
         child: Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              backgroundColor: Colors.black,
-              title: Text(
-                'Cooig',
-                style: GoogleFonts.libreBodoni(
-                  textStyle: TextStyle(
-                    color: Color(0XFF9752C5),
-                    fontSize: 26,
-                  ),
+          appBar: AppBar(
+            centerTitle: true,
+            backgroundColor: Colors.black,
+            title: Text(
+              'Cooig',
+              style: GoogleFonts.libreBodoni(
+                textStyle: TextStyle(
+                  color: Color(0XFF9752C5),
+                  fontSize: 26,
                 ),
               ),
             ),
-            backgroundColor: Colors.transparent,
-            body: Column(
-              children: [
-                SizedBox(
-                  height: 40, // Adjust this height as per your design
-                  child: Center(
-                    child: AnimatedTextKit(
-                      animatedTexts: [
-                        FadeAnimatedText(
-                          'Found where?',
-                          textStyle: GoogleFonts.ebGaramond(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 158, 162, 163),
+          ),
+          backgroundColor: Colors.transparent,
+          body: Column(
+            children: [
+              SizedBox(
+                height: 40, // Adjust this height as per your design
+                child: Center(
+                  child: AnimatedTextKit(
+                    animatedTexts: [
+                      FadeAnimatedText(
+                        'Found where?',
+                        textStyle: GoogleFonts.ebGaramond(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 158, 162, 163),
+                        ),
+                      ),
+                      FadeAnimatedText(
+                        'Write here!',
+                        textStyle: GoogleFonts.ebGaramond(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 158, 162, 163),
+                        ),
+                      ),
+                    ],
+                    repeatForever: true,
+                    isRepeatingAnimation: true,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 40.0, right: 40.0, top: 20.0, bottom: 20.0),
+                child: TextField(
+                  style: TextStyle(color: Colors.white),
+                  decoration: const InputDecoration(
+                    labelText: 'Search',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
+                      borderRadius: BorderRadius.horizontal(
+                        left: Radius.circular(27),
+                        right: Radius.circular(27),
+                      ),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      query = value;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              isFoundSelected = false;
+                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Lostpage(
+                                        userId: widget.userId,
+                                        index: 2,
+                                      )), // Ensure this route exists
+                            );
+                          },
+                          child: Text(
+                            'Lost',
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 181, 166, 166),
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold,
+                              decoration: !isFoundSelected
+                                  ? TextDecoration.underline
+                                  : TextDecoration.none,
+                              decorationColor:
+                                  Color.fromARGB(255, 179, 73, 211),
+                            ),
                           ),
                         ),
-                        FadeAnimatedText(
-                          'Write here!',
-                          textStyle: GoogleFonts.ebGaramond(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 158, 162, 163),
+                        VerticalDivider(
+                          width: 20,
+                          color: Colors.white,
+                          thickness: 1,
+                        ),
+                        SizedBox(width: 20),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              isFoundSelected = true;
+                            });
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      Foundpage(userId: widget.userId)),
+                            );
+                          },
+                          child: Text(
+                            'Found',
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 181, 166, 166),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              decoration: isFoundSelected
+                                  ? TextDecoration.underline
+                                  : TextDecoration.none,
+                            ),
                           ),
                         ),
                       ],
-                      repeatForever: true,
-                      isRepeatingAnimation: true,
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 40.0, right: 40.0, top: 20.0, bottom: 20.0),
-                  child: TextField(
-                    style: TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      labelText: 'Search',
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
-                        borderRadius: BorderRadius.horizontal(
-                          left: Radius.circular(27),
-                          right: Radius.circular(27),
+                    Row(
+                      children: [
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FoundItemScreen(
+                                      userId: widget
+                                          .userId)), // Ensure this route exists
+                            );
+                          },
+                          icon: Icon(Icons.camera_alt, color: Colors.white),
+                          label: Text(
+                            'Upload',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Color(0XFF9752C5),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 8),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        query = value;
-                      });
-                    },
-                  ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                isFoundSelected = false;
-                              });
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Lostpage(
-                                          userId: widget.userId,
-                                        )), // Ensure this route exists
-                              );
-                            },
-                            child: Text(
-                              'Lost',
-                              style: TextStyle(
-                                color: const Color.fromARGB(255, 181, 166, 166),
-                                fontSize: 21,
-                                fontWeight: FontWeight.bold,
-                                decoration: !isFoundSelected
-                                    ? TextDecoration.underline
-                                    : TextDecoration.none,
-                                decorationColor:
-                                    Color.fromARGB(255, 179, 73, 211),
-                              ),
-                            ),
-                          ),
-                          VerticalDivider(
-                            width: 20,
-                            color: Colors.white,
-                            thickness: 1,
-                          ),
-                          SizedBox(width: 20),
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                isFoundSelected = true;
-                              });
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        Foundpage(userId: widget.userId)),
-                              );
-                            },
-                            child: Text(
-                              'Found',
-                              style: TextStyle(
-                                color: const Color.fromARGB(255, 181, 166, 166),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                decoration: isFoundSelected
-                                    ? TextDecoration.underline
-                                    : TextDecoration.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          TextButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => FoundItemScreen(
-                                        userId: widget
-                                            .userId)), // Ensure this route exists
-                              );
-                            },
-                            icon: Icon(Icons.camera_alt, color: Colors.white),
-                            label: Text(
-                              'Upload',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                            style: TextButton.styleFrom(
-                              backgroundColor: Color(0XFF9752C5),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 8),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: FutureBuilder<List<Map<String, dynamic>>>(
-                    future: _foundItemsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(child: Text('No items found.'));
-                      }
+              ),
+              Expanded(
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _foundItemsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No items found.'));
+                    }
 
-                      final items = snapshot.data!;
+                    final items = snapshot.data!;
 
-                      return ListView.builder(
-                        itemCount: items.length,
-                        itemBuilder: (context, index) {
-                          final item = items[index];
+                    return ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
 
-                          return Container(
-                            margin: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(
-                                  30), // Circular border radius
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(30)),
-                                      child: Image.network(
-                                        item['images'][0],
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: 150,
-                                      ),
+                        return Container(
+                          margin:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(
+                                30), // Circular border radius
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(30)),
+                                    child: Image.network(
+                                      item['images'][0],
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: 150,
                                     ),
-                                    Positioned(
-                                      right: 0,
-                                      top: 0,
-                                      child: IconButton(
-                                        icon: Icon(Icons.more_vert,
-                                            color: Colors.white),
-                                        onPressed: () {
-                                          _showOptionsMenu(context, item['id'],
-                                              item['postedByUserId']);
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                            item['userProfileImage']),
-                                        radius: 20, // Circular profile image
-                                      ),
-                                      SizedBox(width: 8),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              item['username'] as String? ??
-                                                  'Unknown User',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                            Text(
-                                              item['title'] as String? ??
-                                                  'No Title',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text(
-                                              item['description'] as String? ??
-                                                  'No Description',
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            Text(
-                                              'Date when Found: ${item['date'] as String? ?? 'No Date'}',
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            Text(
-                                              'Location where Found: ${item['location'] as String? ?? 'No Location'}',
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
                                   ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.chat_bubble_outline,
+                                  Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: IconButton(
+                                      icon: Icon(Icons.more_vert,
                                           color: Colors.white),
                                       onPressed: () {
-                                        // Navigate to comments screen
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(builder: (context) => CommentsScreen(postId: item['id'])),
-                                        // );
+                                        _showOptionsMenu(context, item['id'],
+                                            item['postedByUserId']);
                                       },
                                     ),
-                                    IconButton(
-                                      icon: Icon(Icons.near_me,
-                                          color: Colors.white),
-                                      onPressed: () {},
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          item['userProfileImage']),
+                                      radius: 20, // Circular profile image
+                                    ),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item['username'] as String? ??
+                                                'Unknown User',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          Text(
+                                            item['title'] as String? ??
+                                                'No Title',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            item['description'] as String? ??
+                                                'No Description',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          Text(
+                                            'Date when Found: ${item['date'] as String? ?? 'No Date'}',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          Text(
+                                            'Location where Found: ${item['location'] as String? ?? 'No Location'}',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.chat_bubble_outline,
+                                        color: Colors.white),
+                                    onPressed: () {
+                                      // Navigate to comments screen
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(builder: (context) => CommentsScreen(postId: item['id'])),
+                                      // );
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.near_me,
+                                        color: Colors.white),
+                                    onPressed: () {},
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
-              ],
-            ),
-              bottomNavigationBar: Nav(userId: widget.userId),
-            ));
+              ),
+            ],
+          ),
+          bottomNavigationBar: Nav(
+            userId: widget.userId,
+            index: 3,
+          ),
+        ));
   }
 }

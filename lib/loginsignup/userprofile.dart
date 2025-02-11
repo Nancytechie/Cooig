@@ -103,8 +103,10 @@ class _UserprofileState extends State<Userprofile> {
       // Navigate to the homepage
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) =>
-              Homepage(userId: widget.userid), // Replace with your home page
+          builder: (context) => Homepage(
+            userId: widget.userid,
+            index: 0,
+          ), // Replace with your home page
         ),
       );
     } catch (e) {

@@ -13,7 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 // import 'package:share/
 class Lostpage extends StatefulWidget {
   final String userId;
-  const Lostpage({super.key, required this.userId});
+  const Lostpage({super.key, required this.userId, required int index});
 
   @override
   _LostpageState createState() => _LostpageState();
@@ -183,6 +183,7 @@ class _LostpageState extends State<Lostpage> {
                             MaterialPageRoute(
                                 builder: (context) => Lostpage(
                                       userId: widget.userId,
+                                      index: 3,
                                     )),
                           );
                         },
@@ -417,7 +418,10 @@ class _LostpageState extends State<Lostpage> {
             ),
           ],
         ),
-        bottomNavigationBar: Nav(userId: widget.userId),
+        bottomNavigationBar: Nav(
+          userId: widget.userId,
+          index: 3,
+        ),
       ),
     );
   }

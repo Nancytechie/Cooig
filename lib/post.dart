@@ -563,7 +563,10 @@ class _PostScreenState extends State<PostScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Homepage(userId: widget.userId)),
+                      builder: (context) => Homepage(
+                            userId: widget.userId,
+                            index: 0,
+                          )),
                 );
               }
               //Navigator.pop(context);

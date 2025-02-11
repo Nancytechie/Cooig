@@ -142,7 +142,8 @@ class _MySearchPageState extends State<MySearchPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProfilePage(
-                            userid: data.id, // Pass the user ID to ProfilePage
+                            userid: data.id,
+                            index: 4, // Pass the user ID to ProfilePage
                           ),
                         ),
                       );

@@ -236,6 +236,7 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                             MaterialPageRoute(
                                 builder: (context) => Noticeboard(
                                       userId: widget.userId,
+                                      index: 2,
                                     )),
                           );
                         },
@@ -522,7 +523,10 @@ class _upcomingNoticeState extends State<upcomingNotice> {
             ),
           ],
         ),
-        bottomNavigationBar: Nav(userId: widget.userId),
+        bottomNavigationBar: Nav(
+          userId: widget.userId,
+          index: 3,
+        ),
       ),
     );
   }

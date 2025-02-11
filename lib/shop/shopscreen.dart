@@ -1,23 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-<<<<<<< HEAD
-import 'package:cooig_firebase/navbar.dart';
-=======
+import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
->>>>>>> 251b47f2e7ffab135c52c139fcddf2f4efb50c02
+//import 'package:cooig_firebase/basescreen.dart';
+//import 'package:cooig_firebase/navbar.dart';
+
+//import 'package:cooig_firebase/navbar.dart';
+//import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/shop/rentscreen.dart';
 import 'package:cooig_firebase/shop/sellitemupload.dart';
 
 import 'package:flutter/material.dart';
-import 'package:cooig_firebase/appbar.dart';
+//import 'package:cooig_firebase/appbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:animated_text_kit/animated_text_kit.dart';
+//import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:path/path.dart';
 
 class Shopscreen extends StatefulWidget {
   final dynamic userId;
 
-  const Shopscreen({super.key, required this.userId});
+  const Shopscreen({super.key, required this.userId, required int index});
 
   @override
   State<Shopscreen> createState() => _ShopscreenState();
@@ -47,9 +49,11 @@ class _ShopscreenState extends State<Shopscreen> {
         appBar: const CustomAppBar(
           title: 'Cooig',
           textSize: 30.0,
+          //automaticallyImplyLeading: false,
         ),
-        bottomNavigationBar: BottomNavScreen(userId: widget.userId),
+        // bottomNavigationBar: BottomNavScreen(userId: widget.userId),
         backgroundColor: Colors.transparent,
+
         body: Column(
           children: [
             Padding(
@@ -92,6 +96,7 @@ class _ShopscreenState extends State<Shopscreen> {
                             MaterialPageRoute(
                                 builder: (context) => Shopscreen(
                                       userId: widget.userId,
+                                      index: 1,
                                     )), // Ensure this route exists
                           );
                         },
@@ -366,6 +371,7 @@ class _ShopscreenState extends State<Shopscreen> {
             ),
           ],
         ),
+
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             // _showFilterDialog();
@@ -373,7 +379,11 @@ class _ShopscreenState extends State<Shopscreen> {
           backgroundColor: const Color(0XFF9752C5),
           child: const Icon(Icons.filter_list),
         ),
-          bottomNavigationBar: Nav(userId: widget.userId),
+
+        bottomNavigationBar: Nav(
+          userId: widget.userId,
+          index: 1,
+        ),
       ),
     );
   }
