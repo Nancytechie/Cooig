@@ -640,6 +640,8 @@ Future<void> _pickGif(BuildContext context) async {
         'timestamp': FieldValue.serverTimestamp(),
         'media': mediaUrls, // List of uploaded media URLs
         'text': posttext,
+        'likes': {},
+        'comments': [],
       });
 
       // Clear media and reset state after successful upload
