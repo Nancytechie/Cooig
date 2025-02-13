@@ -33,7 +33,7 @@ class _CommentSectionState extends State<CommentSection> {
     final userProfileImage = userDoc.data()?['profilepic'] ?? '';
 
     await FirebaseFirestore.instance
-        .collection('posts')
+        .collection('posts_upload')
         .doc(widget.userId) //post id se fetch
         .collection('comments')
         .add({
@@ -86,7 +86,7 @@ class _CommentSectionState extends State<CommentSection> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection('posts')
+                  .collection('posts_upload')
                   .doc(widget.userId)
                   .collection('comments')
                   .orderBy('timestamp')
