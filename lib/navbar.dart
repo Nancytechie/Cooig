@@ -1,6 +1,7 @@
 import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
 import 'package:cooig_firebase/notice/noticeboard.dart';
+//import 'package:cooig_firebase/profile/profi.dart';
 import 'package:cooig_firebase/profile/profile.dart';
 import 'package:cooig_firebase/shop/shopscreen.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
       ),
       PostScreen(userId: widget.userId),
       ProfilePage(
-        userid: widget.userId,
+        userId: widget.userId,
         index: 4,
       ),
     ];

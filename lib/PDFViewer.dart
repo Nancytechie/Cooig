@@ -6,7 +6,7 @@ import 'package:flutter_pdfview/flutter_pdfview.dart';
 class PDFViewerScreen extends StatelessWidget {
   final File file;
 
-  const PDFViewerScreen({Key? key, required this.file}) : super(key: key);
+  const PDFViewerScreen({super.key, required this.file});
 
   @override
   Widget build(BuildContext context) {

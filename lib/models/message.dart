@@ -16,6 +16,10 @@ class Message {
   DateTime? editedAt;
   bool isForwarded;
   bool isFavorite;
+  final String? postId; // For post sharing
+  final List<String>? mediaUrls; // For post sharing
+  final String? userName; // For post sharing
+  final String? userImage; // For post sharing
 
   // Typing-related fields (conversation-level, not per-message)
   bool isTyping;
@@ -45,7 +49,11 @@ class Message {
     this.isTyping = false,
     this.typingUser,
     this.themeColor,
-    this.deletedFor, // Add to constructor
+    this.deletedFor,
+    this.postId,
+    this.mediaUrls,
+    this.userName,
+    this.userImage,
   });
 
   // Factory method to create a Message object from Firestore document snapshot
@@ -74,8 +82,13 @@ class Message {
       isTyping: data['isTyping'] ?? false,
       typingUser: data['typingUser'],
       themeColor: data['themeColor'],
-      deletedFor:
-          List<String>.from(data['deletedFor'] ?? []), // Map Firestore field
+      deletedFor: List<String>.from(data['deletedFor'] ?? []),
+      postId: data['postId'],
+      mediaUrls: data['mediaUrls'] != null
+          ? List<String>.from(data['mediaUrls'])
+          : null,
+      userName: data['userName'],
+      userImage: data['userImage'],
     );
   }
 
@@ -98,8 +111,12 @@ class Message {
       'isFavorite': isFavorite,
       'isTyping': isTyping,
       'typingUser': typingUser,
-      'themeColor': themeColor, // Include themeColor in Firestore mapping
+      'themeColor': themeColor,
       'deletedFor': deletedFor ?? [],
+      'postId': postId,
+      'mediaUrls': mediaUrls,
+      'userName': userName,
+      'userImage': userImage,
     };
   }
 

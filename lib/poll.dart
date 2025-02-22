@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/chat_profile/home.dart';
+import 'package:cooig_firebase/home.dart';
 //import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/pollpage.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -36,11 +38,15 @@ class PollPage extends State<MyPollPage> {
     });
   }
 
+  String _generatePostID() {
+    return DateTime.now().millisecondsSinceEpoch.toString();
+  }
+
   Future<void> _onPostButtonClick() async {
     String question = _textController.text;
     List<String> options = [];
     List<String> imageUrls = [];
-
+    String postId = _generatePostID();
     // Upload images to Firebase Storage and get URLs
     for (int i = 0; i < pollOptions.length; i++) {
       if (isTextOption) {
@@ -60,11 +66,16 @@ class PollPage extends State<MyPollPage> {
       'userID': widget.userId,
       'options': isTextOption ? options : null,
       'imageUrls': !isTextOption ? imageUrls : null,
-      'createdAt': FieldValue.serverTimestamp(),
+      'timestamp': FieldValue.serverTimestamp(),
+      'type': 'poll',
+      'postID': postId,
     };
 
-    // Save to Firestore
-    await FirebaseFirestore.instance.collection('polls').add(pollData);
+    // Save to Firestores
+    await FirebaseFirestore.instance
+        .collection('posts_upload')
+        .doc(postId)
+        .set(pollData);
   }
 
   @override
@@ -247,7 +258,8 @@ class PollPage extends State<MyPollPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => PollScreen(userId: widget.userId)),
+                    builder: (context) =>
+                        Homepage(userId: widget.userId, index: 0)),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -268,8 +280,8 @@ class PollPage extends State<MyPollPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildTextField(),
-              const SizedBox(height: 20),
-              _buildDescriptionRow(),
+              //const SizedBox(height: 20),
+              //_buildDescriptionRow(),
               const SizedBox(height: 20),
               _buildPollSection(),
             ],

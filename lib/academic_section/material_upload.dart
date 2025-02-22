@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,28 +25,39 @@ class MaterialUpload extends StatefulWidget {
 class _MaterialUploadState extends State<MaterialUpload> {
   final _titleController = TextEditingController();
   final _notesLinkController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
-
-  // Form validation
 
   Future<void> _uploadMaterial() async {
     if (_formKey.currentState?.validate() ?? false) {
       final title = _titleController.text;
       final notesLink = _notesLinkController.text;
 
-      final yearString = widget.year.toString(); // Convert year to String
+      final yearString = widget.year.toString();
       final branch = widget.branch;
       final subject = widget.subject;
       final unitName = widget.unitName;
 
+      // Get the current user's details
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        Fluttertoast.showToast(msg: 'User not logged in');
+        return;
+      }
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+      final userData = userDoc.data() as Map<String, dynamic>? ?? {};
+      final userName = userData['full_name'] ?? 'Anonymous';
+      final userProfilePic = userData['profilepic'] ?? '';
+
       try {
-        // Reference to the Firestore collection for storing the note
         final noteRef = FirebaseFirestore.instance
             .collection('branches')
             .doc(branch)
             .collection('years')
-            .doc(yearString) // Use yearString in the Firestore path
+            .doc(yearString)
             .collection('subjects')
             .doc(subject)
             .collection('units')
@@ -53,18 +65,18 @@ class _MaterialUploadState extends State<MaterialUpload> {
             .collection('notes')
             .doc();
 
-        // Set the data for the new note
         await noteRef.set({
           'title': title,
           'notesLink': notesLink,
           'timestamp': FieldValue.serverTimestamp(),
-          'likes': 0, // Initial likes count
-          'userName':
-              'Anonymous', // Replace this with actual user name if needed
+          'likes': 0,
+          'userName': userName,
+          'userProfilePic': userProfilePic,
+          'userId': currentUser.uid, // Store the user ID for notifications
         });
 
         Fluttertoast.showToast(msg: 'Material uploaded successfully');
-        Navigator.pop(context); // Go back to the previous page
+        Navigator.pop(context);
       } catch (e) {
         Fluttertoast.showToast(msg: 'Failed to upload material');
       }

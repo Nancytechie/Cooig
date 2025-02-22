@@ -1,23 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/bar.dart';
-//import 'package:cooig_firebase/basescreen.dart';
-//import 'package:cooig_firebase/navbar.dart';
-
-//import 'package:cooig_firebase/navbar.dart';
-//import 'package:cooig_firebase/bar.dart';
-import 'package:cooig_firebase/shop/rentscreen.dart';
-import 'package:cooig_firebase/shop/sellitemupload.dart';
-
+import 'package:cooig_firebase/individual_chat_screen.dart';
 import 'package:flutter/material.dart';
-//import 'package:cooig_firebase/appbar.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-//import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:path/path.dart';
+import 'package:cooig_firebase/shop/rentupload.dart'; // Import your Rent upload screen
+import 'package:cooig_firebase/shop/sellitemupload.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:photo_view/photo_view.dart'; // For zoomable image
+import 'package:cooig_firebase/background.dart'; // Assuming background.dart contains the RadialGradientBackground widget
+// Import your Sell upload screen
 
 class Shopscreen extends StatefulWidget {
-  final dynamic userId;
+  final String userId; // Ensure userId is passed correctly
 
   const Shopscreen({super.key, required this.userId, required int index});
 
@@ -27,463 +20,546 @@ class Shopscreen extends StatefulWidget {
 
 class _ShopscreenState extends State<Shopscreen> {
   String query = '';
-  bool isFoundSelected = true;
-  String selectedCategory = 'All';
-  DateTime? selectedDate;
-  final int _currentIndex = 0;
+  int _selectedIndex = 0; // 0 for Sell/Buy, 1 for Rent
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
         gradient: RadialGradient(
-          colors: [
-            Color(0XFF9752C5),
-            Color(0xFF000000),
-          ],
-          radius: 0.1,
+          colors: [Color(0XFF9752C5), Color(0xFF000000)],
+          radius: 0.0,
           center: Alignment.bottomCenter,
         ),
       ),
       child: Scaffold(
-        appBar: const CustomAppBar(
-          title: 'Cooig',
-          textSize: 30.0,
-          //automaticallyImplyLeading: false,
-        ),
-        // bottomNavigationBar: BottomNavScreen(userId: widget.userId),
         backgroundColor: Colors.transparent,
-
+        bottomNavigationBar: Nav(
+          userId: widget.userId,
+          index: 1,
+        ),
         body: Column(
           children: [
+            // Sell/Buy and Rent Tabs
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 40.0, right: 40.0, top: 20.0, bottom: 20.0),
-              child: TextField(
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Search',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
-                    borderRadius: BorderRadius.horizontal(
-                      left: Radius.circular(27),
-                      right: Radius.circular(27),
+              padding: const EdgeInsets.only(top: 65, bottom: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Sell/Buy Button
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _selectedIndex = 0;
+                      });
+                    },
+                    child: Column(
+                      children: [
+                        Text(
+                          'Sell/Buy',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: _selectedIndex == 0
+                                ? Colors.white
+                                : Colors.grey,
+                          ),
+                        ),
+                        if (_selectedIndex == 0)
+                          Container(
+                            margin: const EdgeInsets.only(top: 5),
+                            height: 2,
+                            width: 80,
+                            color: Colors.purple,
+                          ),
+                      ],
                     ),
                   ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    query = value;
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            isFoundSelected = false;
-                          });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Shopscreen(
-                                      userId: widget.userId,
-                                      index: 1,
-                                    )), // Ensure this route exists
-                          );
-                        },
-                        child: Text(
-                          'Sell',
-                          style: TextStyle(
-                            color: const Color.fromARGB(255, 181, 166, 166),
-                            fontSize: 21,
-                            fontWeight: FontWeight.bold,
-                            decoration: !isFoundSelected
-                                ? TextDecoration.underline
-                                : TextDecoration.none,
-                            decorationColor:
-                                const Color.fromARGB(255, 179, 73, 211),
-                          ),
-                        ),
-                      ),
-                      const VerticalDivider(
-                        width: 20,
-                        color: Colors.white,
-                        thickness: 1,
-                      ),
-                      const SizedBox(width: 20),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            isFoundSelected = true;
-                          });
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => rentscreen(
-                                      userId: widget.userId,
-                                    )),
-                          );
-                        },
-                        child: Text(
+                  const SizedBox(width: 40),
+                  // Rent Button
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _selectedIndex = 1;
+                      });
+                    },
+                    child: Column(
+                      children: [
+                        Text(
                           'Rent',
                           style: TextStyle(
-                            color: const Color.fromARGB(255, 181, 166, 166),
-                            fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            decoration: isFoundSelected
-                                ? TextDecoration.underline
-                                : TextDecoration.none,
+                            fontWeight: FontWeight.bold,
+                            color: _selectedIndex == 1
+                                ? Colors.white
+                                : Colors.grey,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SellItemScreen(
-                                    userId: widget
-                                        .userId)), // Ensure this route exists
-                          );
-                        },
-                        icon: const Icon(Icons.camera_alt, color: Colors.white),
-                        label: const Text(
-                          'Sell',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                        style: TextButton.styleFrom(
-                          backgroundColor: const Color(0XFF9752C5),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 8),
-                        ),
-                      ),
-                    ],
+                        if (_selectedIndex == 1)
+                          Container(
+                            margin: const EdgeInsets.only(top: 5),
+                            height: 2,
+                            width: 80,
+                            color: Colors.purple,
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
+            // Item List
             Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _buildQuery().snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snapshot.hasError) {
-                    return const Center(child: Text('An error occurred'));
-                  }
-                  if (!snapshot.hasData ||
-                      snapshot.data?.docs.isEmpty == true) {
-                    return const Center(child: Text('No items found'));
-                  }
-
-                  final documents = snapshot.data!.docs;
-
-                  final filteredPosts = documents.where((doc) {
-                    final title = doc['itemName'] as String;
-                    return title.contains(query);
-                  }).toList();
-
-                  return ListView.builder(
-                    itemCount: filteredPosts.length,
-                    itemBuilder: (context, index) {
-                      final doc = filteredPosts[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 180,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            children: [
-                              Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: const BorderRadius.horizontal(
-                                        left: Radius.circular(15)),
-                                    child: Image.network(
-                                      doc['imageUrl'],
-                                      width: MediaQuery.of(context).size.width *
-                                          0.4, // 40% of the width
-                                      height: double.infinity,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  doc['itemName'],
-                                                  style: const TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black),
-                                                ),
-                                                SizedBox(
-                                                  width: 100,
-                                                ),
-                                                PopupMenuButton<String>(
-                                                  onSelected: (value) {
-                                                    if (value == 'delete') {
-                                                      _deletePost(doc.id);
-                                                    }
-                                                  },
-                                                  itemBuilder: (context) {
-                                                    // Only show delete option if the post belongs to the current user
-                                                    return [
-                                                      if (doc['postedByUserId'] ==
-                                                          widget.userId)
-                                                        const PopupMenuItem(
-                                                          value: 'delete',
-                                                          child: Text('Delete'),
-                                                        ),
-                                                    ];
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              '₹${doc['price']}',
-                                              style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              doc['details'],
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey[700]),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const Spacer(),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Align(
-                                                  alignment:
-                                                      Alignment.bottomRight,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 90.0,
-                                                            right: 0.0,
-                                                            top: 0.0,
-                                                            bottom: 1.0),
-                                                    child: ElevatedButton(
-                                                      onPressed: () {
-                                                        // Navigate to message section with seller
-                                                      },
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        backgroundColor:
-                                                            const Color(
-                                                                0XFF9752C5),
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      8.0),
-                                                        ),
-                                                      ),
-                                                      child: const Text('BUY',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 16)),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ]),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Positioned(
-                                bottom: 8,
-                                left: 8,
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 15,
-                                      backgroundImage: NetworkImage(
-                                        doc['profilepic'] as String? ??
-                                            '', // Replace with dynamic profile image URL
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      doc['username'], // Replace with dynamic username
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Color.fromARGB(
-                                              255, 118, 113, 113)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+              child: _selectedIndex == 0
+                  ? _buildItemList('sellposts') // Sell/Buy items
+                  : _buildItemList('rentposts'), // Rent items
             ),
           ],
         ),
-
+        // Floating Action Button for Upload
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // _showFilterDialog();
+            // Navigate to the appropriate upload page
+            if (_selectedIndex == 0) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SellItemScreen(
+                    userId: widget.userId, // Pass userId to SellItemScreen
+                  ),
+                ),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Rentupload(
+                    userId: widget.userId, // Pass userId to Rentupload
+                  ),
+                ),
+              );
+            }
           },
           backgroundColor: const Color(0XFF9752C5),
-          child: const Icon(Icons.filter_list),
-        ),
-
-        bottomNavigationBar: Nav(
-          userId: widget.userId,
-          index: 1,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                _selectedIndex == 0 ? Icons.sell : Icons.sell_outlined,
+                size: 24,
+              ), // Icon
+              const SizedBox(height: 4), // Space between icon and text
+              Text(
+                _selectedIndex == 0 ? 'Sell' : 'Rent', // Text
+                style: const TextStyle(fontSize: 15),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Query _buildQuery() {
-    final collection = FirebaseFirestore.instance.collection('sellposts');
-    Query query = collection;
+  // Build the item list
+  Widget _buildItemList(String collectionName) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection(collectionName).snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return const Center(child: Text('An error occurred'));
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text('No items found'));
+        }
 
-    if (selectedCategory != 'All') {
-      query = query.where('category', isEqualTo: selectedCategory);
-    }
+        final documents = snapshot.data!.docs;
 
-    if (selectedDate != null) {
-      final startOfDay =
-          DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day);
-      final endOfDay = DateTime(selectedDate!.year, selectedDate!.month,
-          selectedDate!.day, 23, 59, 59);
-      query = query.where('date',
-          isGreaterThanOrEqualTo: startOfDay, isLessThanOrEqualTo: endOfDay);
-    }
+        return ListView.builder(
+          itemCount: documents.length,
+          itemBuilder: (context, index) {
+            final doc = documents[index];
+            final userIdFromDoc = doc['postedByUserId'] ??
+                'unknown'; // Get userId from the document
+            final isCurrentUserPost = userIdFromDoc ==
+                widget.userId; // Check if it's the current user's post
 
-    return query;
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ItemDetailsPage(
+                      itemName: doc['itemName'],
+                      price: doc['price'],
+                      details: doc['details'],
+                      imageUrl: doc['imageUrl'],
+                    ),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 180,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      // Item Image
+                      ClipRRect(
+                        borderRadius: const BorderRadius.horizontal(
+                            left: Radius.circular(15)),
+                        child: Stack(
+                          children: [
+                            Image.network(
+                              doc['imageUrl'],
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                            Positioned(
+                              bottom: 8,
+                              left: 8,
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 15,
+                                    backgroundImage: NetworkImage(
+                                      doc['profilepic'] as String? ?? '',
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    doc['username'],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromARGB(255, 118, 113, 113),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      // Item Details
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    doc['itemName'],
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                  ),
+                                  if (isCurrentUserPost)
+                                    IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text("Confirm Delete"),
+                                              content: Text(
+                                                  "Are you sure you want to delete this post?"),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context)
+                                                        .pop(); // Close the dialog
+                                                  },
+                                                  child: Text("Cancel"),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    // Delete the post
+                                                    FirebaseFirestore.instance
+                                                        .collection(
+                                                            collectionName)
+                                                        .doc(doc.id)
+                                                        .delete();
+                                                    Navigator.of(context)
+                                                        .pop(); // Close the dialog
+                                                  },
+                                                  child: Text("Delete",
+                                                      style: TextStyle(
+                                                          color: Colors.red)),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                '₹${doc['price']}',
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                doc['details'],
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.grey[700]),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const Spacer(),
+                              // Buy/Rent Button
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Handle buy/rent action
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => IndividualChatScreen(
+                                            currentUserId: widget.userId,
+                                            chatUserId: doc['postedByUserId'],
+                                            fullName:
+                                                doc['username'] ?? 'Unknown',
+                                            image: doc["profilepic"] ??
+                                                'https://via.placeholder.com/150',
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 74, 72, 72))),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0XFF9752C5),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                child: Text(
+                                  _selectedIndex == 0 ? 'BUY' : 'RENT',
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
+}
 
-  // void _showFilterDialog() {
-  //   showDialog(
-  //     context: context, // This is Flutter's BuildContext
-  //     builder: (BuildContext dialogContext) {
-  //       // Rename the parameter to avoid conflict
-  //       return AlertDialog(
-  //         title: const Text('Filter'),
-  //         content: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             DropdownButtonFormField<String>(
-  //               value: selectedCategory,
-  //               items: ['All', 'Electronics', 'Clothing', 'Books', 'Other']
-  //                   .map((category) => DropdownMenuItem<String>(
-  //                         value: category,
-  //                         child: Text(category),
-  //                       ))
-  //                   .toList(),
-  //               onChanged: (value) {
-  //                 setState(() {
-  //                   selectedCategory = value!;
-  //                 });
-  //               },
-  //             ),
-  //             TextButton(
-  //               onPressed: () async {
-  //                 final pickedDate = await showDatePicker(
-  //                   context: dialogContext, // Use the renamed context here
-  //                   initialDate: DateTime.now(),
-  //                   firstDate: DateTime(2020),
-  //                   lastDate: DateTime(2030),
-  //                 );
-  //                 setState(() {
-  //                   selectedDate = pickedDate;
-  //                 });
-  //               },
-  //               child: Text(selectedDate == null
-  //                   ? 'Select Date'
-  //                   : selectedDate!.toString()),
-  //             ),
-  //           ],
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(dialogContext)
-  //                   .pop(); // Use the renamed context here
-  //             },
-  //             child: const Text('Cancel'),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(dialogContext)
-  //                   .pop(); // Use the renamed context here
-  //             },
-  //             child: const Text('Apply'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+// Item Details Page
 
-  Future<void> _deletePost(String postId) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('sellposts')
-          .doc(postId)
-          .delete();
-      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
-        const SnackBar(content: Text('Post deleted successfully')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
-        SnackBar(content: Text('Error deleting post: $e')),
-      );
-    }
+class ItemDetailsPage extends StatelessWidget {
+  final String itemName;
+  final String price;
+  final String details;
+  final String imageUrl;
+
+  const ItemDetailsPage({
+    required this.itemName,
+    required this.price,
+    required this.details,
+    required this.imageUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        // Transparent AppBar with back button
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Color(0XFF9752C5)),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        backgroundColor: Colors.black,
+
+        // Radial Gradient Background
+        body: RadialGradientBackground(
+          colors: const [Color(0XFF9752C5), Color(0xFF000000)],
+          radius: 0.0,
+          centerAlignment: Alignment.bottomCenter,
+          child: Center(
+            child: Container(
+              width: 360,
+              height: 670,
+              decoration: BoxDecoration(
+                color: const Color(0xFF252525),
+                borderRadius: BorderRadius.circular(20.86),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0xFFCACACA),
+                    blurRadius: 9.24,
+                    offset: Offset(2.77, 2.77),
+                  ),
+                  BoxShadow(
+                    color: Color(0xFFC9C9C9),
+                    blurRadius: 9.24,
+                    offset: Offset(-2.77, -2.77),
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Image Section
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ImageViewScreen(imageUrl: imageUrl),
+                          ),
+                        );
+                      },
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        width: double.infinity,
+                        height: 335,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            const Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Details Section
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Item Name
+                          Text(
+                            itemName,
+                            style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          const SizedBox(height: 8),
+
+                          // Price
+                          Row(
+                            children: [
+                              const Icon(Icons.currency_rupee,
+                                  color: Colors.white),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Price: ₹$price',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Details Container
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(Icons.description,
+                                        color: Colors.white),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Details',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  details,
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Zoomable full-screen image viewer
+class ImageViewScreen extends StatelessWidget {
+  final String imageUrl;
+
+  const ImageViewScreen({super.key, required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0XFF9752C5),
+        title: const Text('Image'),
+      ),
+      body: PhotoView(
+        imageProvider: NetworkImage(imageUrl),
+        backgroundDecoration: const BoxDecoration(
+          color: Colors.black,
+        ),
+      ),
+    );
   }
 }

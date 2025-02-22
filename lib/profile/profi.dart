@@ -1,17 +1,16 @@
+/*
 import 'dart:io';
-
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cooig_firebase/appbar.dart';
-import 'package:cooig_firebase/bar.dart';
+import 'package:cooig_firebase/appbar.dart'; // Replace with your actual import
+import 'package:cooig_firebase/bar.dart'; // Replace with your actual import
 import 'package:cooig_firebase/home.dart';
-import 'package:cooig_firebase/loginsignup/login.dart';
+import 'package:cooig_firebase/loginsignup/login.dart'; // Replace with your actual import
 import 'package:cooig_firebase/pdfviewerurl.dart';
-
+import 'package:cooig_firebase/profile/editprofile.dart'; // Replace with your actual import
+import 'package:cooig_firebase/society/society_login.dart'; // Replace with your actual import
 import 'package:cooig_firebase/society/societyprofile/editsocietyprofile.dart';
-
-import 'package:cooig_firebase/upload.dart';
+import 'package:cooig_firebase/upload.dart'; // Replace with your actual import
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,21 +19,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-// ignore: depend_on_referenced_packages
-class Societyprofile extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   final dynamic userid;
 
-  const Societyprofile({super.key, required this.userid});
+  const ProfilePage({super.key, required this.userid, required int index});
 
   @override
-  State<Societyprofile> createState() => _SocietyprofileState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _SocietyprofileState extends State<Societyprofile>
+class _ProfilePageState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
@@ -42,42 +38,88 @@ class _SocietyprofileState extends State<Societyprofile>
   File? _profilepic;
   String? bannerImageUrl;
   String? profilepic;
-  TextEditingController _societyNameController = TextEditingController();
-  TextEditingController _aboutController = TextEditingController();
-  final _LinkController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final bool _isEditing = false;
+  TabController? _tabController;
   List<Map<String, dynamic>> _posts = [];
 
-  bool _isEditing = false;
-  TabController? _tabController;
-//profile
-  String? societyName;
-  String? about;
-  String? category;
-  String? establishedYear;
-  String? status;
-  String? link;
-  Future<void> _openLink(BuildContext context, String url) async {
-    debugPrint('Opening URL: $url'); // Log the URL for debugging
-    if (url.isNotEmpty && Uri.tryParse(url)?.hasScheme == true) {
-      try {
-        final Uri uri = Uri.parse(url);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-        } else {
-          debugPrint('Could not launch URL: $url'); // Log the error
-          throw 'Could not open the link';
-        }
-      } catch (e) {
-        debugPrint('Error launching URL: $e'); // Log the exception
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to open link: $e')),
-        );
+  // Profile data
+  String? username;
+  String? bio;
+  String? branch;
+  String? year;
+  int _bondsCount = 0;
+  final int _postsCount = 0; // Replace with actual post count if available
+  bool _isBonded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+    _fetchUserData();
+    _fetchPosts();
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      DocumentSnapshot userDoc =
+          await _firestore.collection('users').doc(widget.userid).get();
+
+      if (userDoc.exists) {
+        Map<String, dynamic>? userData =
+            userDoc.data() as Map<String, dynamic>?;
+
+        setState(() {
+          username = userData?['username'] ?? "Username";
+          bio = userData?['bio'] ?? "Bio goes here";
+          branch = userData?['branch'] ?? "Branch";
+          year = userData?['year'] ?? "Year";
+          _bondsCount = userData?['bonds'] ?? 0;
+          _isBonded = userData?['isBonded'] ?? false;
+
+          _usernameController.text = username!;
+          _bioController.text = bio!;
+
+          bannerImageUrl = userData?['bannerImageUrl'];
+          profilepic = userData?['profilepic'];
+        });
+      } else {
+        setState(() {
+          username = "Username";
+          bio = "Bio goes here";
+          branch = "Branch";
+          year = "Year";
+          _bondsCount = 0;
+
+          _usernameController.text = username!;
+          _bioController.text = bio!;
+
+          bannerImageUrl = null;
+          profilepic = null;
+        });
       }
-    } else {
-      debugPrint('Invalid URL provided: $url'); // Log invalid URLs
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid URL')),
-      );
+    } catch (e) {
+      print("Error fetching user data: $e");
+      setState(() {
+        username = "Username";
+        bio = "Bio goes here";
+        branch = "Branch";
+        year = "Year";
+        _bondsCount = 0;
+
+        _usernameController.text = username!;
+        _bioController.text = bio!;
+
+        bannerImageUrl = null;
+        profilepic = null;
+      });
     }
   }
 
@@ -107,86 +149,11 @@ class _SocietyprofileState extends State<Societyprofile>
   }
 
   @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-    _fetchUserData();
-  }
-
-  @override
-  void dispose() {
-    _tabController?.dispose();
-    super.dispose();
-  }
-
-  Future<void> _fetchUserData() async {
-    try {
-      // Fetch user document from Firestore
-      DocumentSnapshot userDoc =
-          await _firestore.collection('users').doc(widget.userid).get();
-
-      if (userDoc.exists) {
-        // Safely access user data
-        Map<String, dynamic>? userData =
-            userDoc.data() as Map<String, dynamic>?;
-
-        setState(() {
-          // Fetch and set the required fields with fallbacks
-          societyName = userData?['full_name'] ?? "Society Name";
-          about = userData?['about'] ?? "About goes here";
-          category = userData?['category'] ?? "Category";
-          establishedYear = userData?['establishedYear'] ?? "Year";
-          status = userData?['status'] ?? "Non-Recruiting";
-          link = userData?['Link'] ?? "";
-
-          // Text controllers for editable fields
-          _societyNameController.text = societyName!;
-          _aboutController.text = about!;
-
-          // Image URLs
-          bannerImageUrl = userData?['bannerImageUrl'] ?? null;
-          profilepic = userData?['profilepic'] ?? null;
-        });
-      } else {
-        // Handle case where the document does not exist
-        setState(() {
-          societyName = "Society Name";
-          about = "About goes here";
-          category = "Category";
-          establishedYear = "Year";
-
-          _societyNameController.text = societyName!;
-          _aboutController.text = about!;
-
-          bannerImageUrl = null;
-          profilepic = null;
-        });
-      }
-    } catch (e) {
-      // Handle errors
-      print("Error fetching user data: $e");
-      setState(() {
-        societyName = "Society Name";
-        about = "About goes here";
-        category = "Category";
-        establishedYear = "Year";
-
-        _societyNameController.text = societyName!;
-        _aboutController.text = about!;
-
-        bannerImageUrl = null;
-        profilepic = null;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Cooig',
         textSize: 30.0,
-        //iconTheme: const IconThemeData(color: Colors.white),
       ),
       backgroundColor: Colors.black,
       bottomNavigationBar: Nav(
@@ -194,91 +161,117 @@ class _SocietyprofileState extends State<Societyprofile>
         index: 4,
       ),
       drawer: NavigationDrawer(userId: widget.userid),
-      body: Column(children: [
-        // Banner and Profile Image Sections
-        Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            GestureDetector(
-              child: Container(
-                width: double.infinity,
-                height: 120,
-                color: Colors.grey[300],
-                child: bannerImageUrl != null
-                    ? Image.network(bannerImageUrl!, fit: BoxFit.cover)
-                    : Icon(Icons.camera_alt, color: Colors.grey[700]),
-              ),
-            ),
-            Positioned(
-              bottom: -50,
-              child: GestureDetector(
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.white,
-                  backgroundImage:
-                      profilepic != null ? NetworkImage(profilepic!) : null,
-                  child: profilepic == null
-                      ? Icon(Icons.person, size: 50, color: Colors.grey[700])
-                      : null,
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -50,
-              left: 14,
-              child: _buildCircularBox(category ?? 'category'),
-            ),
-            Positioned(
-              bottom: -50,
-              right: 14,
-              child: _buildCircularBox(establishedYear ?? 'establishedYear'),
-            ),
-          ],
-        ),
-
-        SizedBox(height: 60),
-
-        // societyName Display
-        Center(
-          child: Row(
-            mainAxisSize: MainAxisSize
-                .min, // Ensures the Row takes up only as much space as needed
+      body: Column(
+        children: [
+          // Banner and Profile Image Sections
+          Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
             children: [
-              Text(
-                societyName ?? 'Society Name',
-                style: GoogleFonts.lexend(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+              GestureDetector(
+                child: Container(
+                  width: double.infinity,
+                  height: 120,
+                  color: Colors.grey[300],
+                  child: bannerImageUrl != null
+                      ? Image.network(bannerImageUrl!, fit: BoxFit.cover)
+                      : Icon(Icons.camera_alt, color: Colors.grey[700]),
                 ),
               ),
-              const SizedBox(
-                  width: 2), // Add spacing between the text and the icon
-              Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 24,
+              Positioned(
+                bottom: -50,
+                child: GestureDetector(
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.white,
+                    backgroundImage:
+                        profilepic != null ? NetworkImage(profilepic!) : null,
+                    child: profilepic == null
+                        ? Icon(Icons.person, size: 50, color: Colors.grey[700])
+                        : null,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -60,
+                left: 14,
+                child: _buildCircularBox(branch ?? 'Branch'),
+              ),
+              Positioned(
+                bottom: -60,
+                right: 14,
+                child: _buildCircularBox(year ?? 'Year'),
               ),
             ],
           ),
-        ),
 
-        SizedBox(height: 7),
+          SizedBox(height: 60),
 
-        // Post and Bond Count
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [],
+          // Username Display
+          Center(
+            child: Text(
+              username ?? 'Username',
+              style: GoogleFonts.lexend(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
-          ],
-        ),
+          ),
 
-        // Bond Action Button
-        SizedBox(height: 15),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          SizedBox(height: 7),
+
+          // Post and Bond Count
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _posts.length.toString(),
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    'Posts',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.grey[300],
+                    ),
+                  ),
+                ],
+              ),
+              // SizedBox(width: 40),
+              // Column(
+              //   children: [
+              //     Text(
+              //       _bondsCount.toString(),
+              //       style: GoogleFonts.poppins(
+              //         fontSize: 18,
+              //         fontWeight: FontWeight.bold,
+              //         color: Colors.white,
+              //       ),
+              //     ),
+              //     Text(
+              //       'Bonds',
+              //       style: GoogleFonts.poppins(
+              //         fontSize: 14,
+              //         color: Colors.grey[300],
+              //       ),
+              //     ),
+              //   ],
+              // ),
+            ],
+          ),
+
+          SizedBox(height: 15),
+
+          // Conditional Buttons
+
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -310,7 +303,7 @@ class _SocietyprofileState extends State<Societyprofile>
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditSocietyprofile(
+                      builder: (context) => EditProfilePage(
                         userid: widget.userid,
                       ),
                     ),
@@ -334,85 +327,56 @@ class _SocietyprofileState extends State<Societyprofile>
               ),
             ],
           ),
-        ]),
 
-        SizedBox(height: 15),
+          SizedBox(height: 15),
 
-        // about Display
-        Text(
-          about ?? 'about goes here :)',
-          style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[300]),
-        ),
-
-        SizedBox(height: 15),
-
-        // Posts Grid View
-        Expanded(
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, // 3 columns for the grid
-              crossAxisSpacing: 4.0,
-              mainAxisSpacing: 4.0,
-            ),
-            itemCount: _posts.length,
-            itemBuilder: (context, index) {
-              final post = _posts[index];
-              return GestureDetector(
-                onTap: () {
-                  // Navigate to the detailed post view
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PostDetailScreen(post: post),
-                    ),
-                  );
-                },
-                child: Image.network(
-                  post['media']
-                      [0], // Use the first media item for the grid thumbnail
-                  fit: BoxFit.cover,
-                ),
-              );
-            },
+          // Bio Display
+          Text(
+            bio ?? 'Bio goes here :)',
+            style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[300]),
           ),
-        ),
 
-        // Tab Bar
-        // TabBar(
-        //   controller: _tabController,
-        //   tabs: [
-        //     Tab(text: 'Posts'),
-        //     Tab(text: 'Highlights'),
-        //     Tab(text: 'Clips'),
-        //     Tab(text: 'Bookmark'),
-        //   ],
-        //   labelColor: Colors.white,
-        //   unselectedLabelColor: Color.fromARGB(255, 187, 183, 183),
-        //   indicatorColor: Colors.purple[50],
-        //   dividerColor: Colors.black,
-        // ),
+          SizedBox(height: 15),
 
-        // // Tab Views Content
-        // Expanded(
-        //   child: TabBarView(
-        //     controller: _tabController,
-        //     children: [
-        //       Center(child: Text('Posts Content')),
-        //       Center(child: Text('Highlights Content')),
-        //       Center(child: Text('Clips Content')),
-        //       Center(child: Text('Bookmark Content')),
-        //     ],
-        //   ),
-        // ),
-      ]),
+          // Posts Grid View
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, // 3 columns for the grid
+                crossAxisSpacing: 4.0,
+                mainAxisSpacing: 4.0,
+              ),
+              itemCount: _posts.length,
+              itemBuilder: (context, index) {
+                final post = _posts[index];
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate to the detailed post view
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PostDetailScreen(post: post),
+                      ),
+                    );
+                  },
+                  child: Image.network(
+                    post['media']
+                        [0], // Use the first media item for the grid thumbnail
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  // Helper function to display circular boxes (category/establishedYear)
   Widget _buildCircularBox(String text) {
     return Container(
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 112, 24, 171),
+        color: Color(0xff50555C),
         borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
@@ -422,8 +386,6 @@ class _SocietyprofileState extends State<Societyprofile>
       ),
     );
   }
-
-  // Image picker function
 }
 
 class NavigationDrawer extends StatelessWidget {
@@ -468,12 +430,12 @@ class NavigationDrawer extends StatelessWidget {
                       } else {
                         var data =
                             snapshot.data!.data() as Map<String, dynamic>;
-                        String? email = data['category'] as String?;
+                        String? email = data['course_name'] as String?;
                         String? name = data['full_name'] as String?;
                         String? imageUrl = data['profilepic'] as String?;
 
                         return UserAccountsDrawerHeader(
-                          accountEmail: Text(email ?? "No category Available"),
+                          accountEmail: Text(email ?? "No Course Available"),
                           accountName: Text(name ?? "No Name Available"),
                           currentAccountPicture: buildProfilePicture(
                             imageUrl ?? 'https://via.placeholder.com/150',
@@ -491,13 +453,13 @@ class NavigationDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Iconsax.user_edit, color: Colors.white),
-              title: const Text("Edit Society Profile",
+              title: const Text("Edit Profile",
                   style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditSocietyprofile(
+                    builder: (context) => EditProfilePage(
                       userid: userId,
                     ),
                   ),
@@ -505,10 +467,20 @@ class NavigationDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.group_add, color: Colors.white),
-              title: const Text("Recruitment",
-                  style: TextStyle(color: Colors.white)),
-              onTap: () {},
+              leading:
+                  const Icon(CupertinoIcons.group_solid, color: Colors.white),
+              title: const Text(
+                "Society login",
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SocietyLogin(),
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Iconsax.security_safe, color: Colors.white),
@@ -534,22 +506,17 @@ class NavigationDrawer extends StatelessWidget {
               onTap: () {},
             ),
             ListTile(
-              leading: const Icon(Icons.swap_calls, color: Colors.white),
-              title: const Text("Switch to main account",
-                  style: TextStyle(color: Colors.white)),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Login(),
-                    ));
-              },
-            ),
-            ListTile(
               leading: const Icon(Iconsax.logout, color: Colors.white),
               title:
                   const Text("Log out", style: TextStyle(color: Colors.white)),
-              onTap: () {},
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Login()),
+                  (route) => false, // Remove all previous routes
+                );
+              },
             ),
           ],
         ),
@@ -606,6 +573,8 @@ class NavigationDrawer extends StatelessWidget {
     );
   }
 }
+
+/*class PostDetailScreen extends StatelessWidget {}*/
 
 class PostDetailScreen extends StatelessWidget {
   final Map<String, dynamic> post;
@@ -725,3 +694,4 @@ class PostDetailScreen extends StatelessWidget {
     return "${dateTime.day}/${dateTime.month}/${dateTime.year} at ${dateTime.hour}:${dateTime.minute}";
   }
 }
+*/

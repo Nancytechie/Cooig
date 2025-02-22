@@ -1,5 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_final_fields
 
+import 'dart:async';
+import 'dart:core';
+import 'dart:core';
 import 'dart:io';
 //import 'dart:io';
 import 'package:cooig_firebase/PDFViewer.dart';
@@ -392,12 +395,15 @@ class _PostScreenState extends State<PostScreen> {
           .collection('posts_upload')
           .doc(postID)
           .set({
+        'type': 'post',
         'postID': postID,
         'userID': widget.userId,
         //'username': widget.username, // Replace with the actual username
         'timestamp': FieldValue.serverTimestamp(),
         'media': mediaUrls, // List of uploaded media URLs
         'text': posttext,
+        'likes': {},
+        'comments': [],
       });
 
       // Clear media and reset state after successful upload
@@ -665,7 +671,7 @@ class _PostScreenState extends State<PostScreen> {
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.network(
-                        _selectedGif!.images!.original!.url!,
+                        _selectedGif!.images!.original!.url,
                         width: screenWidth,
                         fit: BoxFit.contain,
                         loadingBuilder: (context, child, loadingProgress) {

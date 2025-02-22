@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 //import 'package:photofilters/photofilters.dart';
-import 'package:image/image.dart' as imageLib;
-import 'package:pro_image_editor/modules/filter_editor/filter_editor.dart';
 import 'paintscreen.dart';
 
 class ImagePreviewScreen extends StatefulWidget {

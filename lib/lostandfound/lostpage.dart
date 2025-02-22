@@ -20,7 +20,6 @@ class Lostpage extends StatefulWidget {
 }
 
 class _LostpageState extends State<Lostpage> {
-  final String userId = 'kD3X6HBv8eP6nA3WasHjE0RMHnH3';
   String query = '';
 
   String selectedCategory = 'All';
@@ -103,15 +102,6 @@ class _LostpageState extends State<Lostpage> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.black,
-          title: Text(
-            'Cooig',
-            style: GoogleFonts.libreBodoni(
-              textStyle: TextStyle(
-                color: Color(0XFF9752C5),
-                fontSize: 26,
-              ),
-            ),
-          ),
         ),
         backgroundColor: Colors.transparent,
         body: Column(
@@ -146,25 +136,25 @@ class _LostpageState extends State<Lostpage> {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
-              child: TextField(
-                style: TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Search',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
-                    borderRadius: BorderRadius.horizontal(
-                      left: Radius.circular(27),
-                      right: Radius.circular(27),
-                    ),
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    query = value;
-                  });
-                },
-              ),
+              // child: TextField(
+              //   style: TextStyle(color: Colors.white),
+              //   decoration: const InputDecoration(
+              //     labelText: 'Search',
+              //     enabledBorder: OutlineInputBorder(
+              //       borderSide:
+              //           BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
+              //       borderRadius: BorderRadius.horizontal(
+              //         left: Radius.circular(27),
+              //         right: Radius.circular(27),
+              //       ),
+              //     ),
+              //   ),
+              //   onChanged: (value) {
+              //     setState(() {
+              //       query = value;
+              //     });
+              //   },
+              // ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -390,21 +380,21 @@ class _LostpageState extends State<Lostpage> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  IconButton(
-                                    icon: Icon(Icons.chat_bubble_outline,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      _showCommentSection(item['id']);
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.near_me,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      //_sharePost(item['title'],
-                                      // item['description'], item['image']);
-                                    },
-                                  ),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.chat_bubble_outline,
+                                  //       color: Colors.white),
+                                  //   onPressed: () {
+                                  //     _showCommentSection(item['id']);
+                                  //   },
+                                  // ),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.near_me,
+                                  //       color: Colors.white),
+                                  //   onPressed: () {
+                                  //     //_sharePost(item['title'],
+                                  //     // item['description'], item['image']);
+                                  //   },
+                                  // ),
                                 ],
                               ),
                             ),

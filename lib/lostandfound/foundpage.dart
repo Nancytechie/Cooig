@@ -134,15 +134,6 @@ class _FoundpageState extends State<Foundpage> {
           appBar: AppBar(
             centerTitle: true,
             backgroundColor: Colors.black,
-            title: Text(
-              'Cooig',
-              style: GoogleFonts.libreBodoni(
-                textStyle: TextStyle(
-                  color: Color(0XFF9752C5),
-                  fontSize: 26,
-                ),
-              ),
-            ),
           ),
           backgroundColor: Colors.transparent,
           body: Column(
@@ -177,25 +168,25 @@ class _FoundpageState extends State<Foundpage> {
               Padding(
                 padding: const EdgeInsets.only(
                     left: 40.0, right: 40.0, top: 20.0, bottom: 20.0),
-                child: TextField(
-                  style: TextStyle(color: Colors.white),
-                  decoration: const InputDecoration(
-                    labelText: 'Search',
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
-                      borderRadius: BorderRadius.horizontal(
-                        left: Radius.circular(27),
-                        right: Radius.circular(27),
-                      ),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      query = value;
-                    });
-                  },
-                ),
+                // child: TextField(
+                //   style: TextStyle(color: Colors.white),
+                //   decoration: const InputDecoration(
+                //     labelText: 'Search',
+                //     enabledBorder: OutlineInputBorder(
+                //       borderSide:
+                //           BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
+                //       borderRadius: BorderRadius.horizontal(
+                //         left: Radius.circular(27),
+                //         right: Radius.circular(27),
+                //       ),
+                //     ),
+                //   ),
+                //   onChanged: (value) {
+                //     setState(() {
+                //       query = value;
+                //     });
+                //   },
+                // ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -214,7 +205,7 @@ class _FoundpageState extends State<Foundpage> {
                               MaterialPageRoute(
                                   builder: (context) => Lostpage(
                                         userId: widget.userId,
-                                        index: 2,
+                                        index: 3,
                                       )), // Ensure this route exists
                             );
                           },
@@ -404,22 +395,22 @@ class _FoundpageState extends State<Foundpage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  IconButton(
-                                    icon: Icon(Icons.chat_bubble_outline,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      // Navigate to comments screen
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(builder: (context) => CommentsScreen(postId: item['id'])),
-                                      // );
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.near_me,
-                                        color: Colors.white),
-                                    onPressed: () {},
-                                  ),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.chat_bubble_outline,
+                                  //       color: Colors.white),
+                                  //   onPressed: () {
+                                  //     // Navigate to comments screen
+                                  //     // Navigator.push(
+                                  //     //   context,
+                                  //     //   MaterialPageRoute(builder: (context) => CommentsScreen(postId: item['id'])),
+                                  //     // );
+                                  //   },
+                                  // ),
+                                  // IconButton(
+                                  //   icon: Icon(Icons.near_me,
+                                  //       color: Colors.white),
+                                  //   onPressed: () {},
+                                  // ),
                                 ],
                               ),
                             ],

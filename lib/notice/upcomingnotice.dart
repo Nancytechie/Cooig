@@ -5,6 +5,7 @@ import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/notice/noticeboard.dart';
 import 'package:cooig_firebase/notice/noticedetailscreen.dart';
 import 'package:cooig_firebase/notice/noticeupload.dart';
+import 'package:cooig_firebase/notice/starredpostsscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/background.dart';
@@ -12,6 +13,7 @@ import 'package:cooig_firebase/background.dart';
 //import 'package:cooig/userprofile.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 // import 'package:share/share.dart';
 
@@ -189,35 +191,60 @@ class _upcomingNoticeState extends State<upcomingNotice> {
       radius: 0.0,
       centerAlignment: Alignment.bottomCenter,
       child: Scaffold(
-        appBar: const CustomAppBar(
-          title: 'NoticeBoard',
-          textSize: 30.0,
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.black,
+          title: Text(
+            'NoticeBoard',
+            style: GoogleFonts.libreBodoni(
+              textStyle: const TextStyle(
+                color: Color(0XFF9752C5),
+                fontSize: 26,
+              ),
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.star, // Favorite star icon
+                color: Colors.white, // You can customize this color
+              ),
+              onPressed: () {
+                // Navigate to StarredPostsScreen when star icon is clicked
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const StarredPostsScreen()),
+                );
+              },
+            ),
+          ],
         ),
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(
-                  left: 40.0, right: 40.0, top: 20.0, bottom: 20.0),
-              child: TextField(
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Search',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
-                    borderRadius: BorderRadius.horizontal(
-                      left: Radius.circular(27),
-                      right: Radius.circular(27),
-                    ),
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    query = value;
-                  });
-                },
-              ),
+                  left: 40.0, right: 40.0, top: 10.0, bottom: 20.0),
+              // child: TextField(
+              //   style: const TextStyle(color: Colors.white),
+              //   decoration: const InputDecoration(
+              //     labelText: 'Search',
+              //     enabledBorder: OutlineInputBorder(
+              //       borderSide:
+              //           BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
+              //       borderRadius: BorderRadius.horizontal(
+              //         left: Radius.circular(27),
+              //         right: Radius.circular(27),
+              //       ),
+              //     ),
+              //   ),
+              //   onChanged: (value) {
+              //     setState(() {
+              //       query = value;
+              //     });
+              //   },
+              // ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -490,24 +517,24 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                                           // Save post logic here
                                         },
                                       ),
-                                      IconButton(
-                                        icon: const Icon(Icons.calendar_today,
-                                            color: Colors.white),
-                                        onPressed: () {
-                                          _addToGoogleCalendar(
-                                              item['dateTime'] ?? '',
-                                              item['heading'] ?? '');
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.share,
-                                            color: Colors.white),
-                                        onPressed: () {
-                                          _shareNotice(
-                                              item['heading'] ?? 'No Title',
-                                              item['imageUrl'] ?? '');
-                                        },
-                                      ),
+                                      // IconButton(
+                                      //   icon: const Icon(Icons.calendar_today,
+                                      //       color: Colors.white),
+                                      //   onPressed: () {
+                                      //     _addToGoogleCalendar(
+                                      //         item['dateTime'] ?? '',
+                                      //         item['heading'] ?? '');
+                                      //   },
+                                      // ),
+                                      // IconButton(
+                                      //   icon: const Icon(Icons.share,
+                                      //       color: Colors.white),
+                                      //   onPressed: () {
+                                      //     _shareNotice(
+                                      //         item['heading'] ?? 'No Title',
+                                      //         item['imageUrl'] ?? '');
+                                      //   },
+                                      // ),
                                     ],
                                   ),
                                 ],
@@ -525,7 +552,7 @@ class _upcomingNoticeState extends State<upcomingNotice> {
         ),
         bottomNavigationBar: Nav(
           userId: widget.userId,
-          index: 3,
+          index: 2,
         ),
       ),
     );

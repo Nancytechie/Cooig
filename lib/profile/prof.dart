@@ -1,133 +1,177 @@
+/*
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/academic_section/branch_page.dart';
 import 'package:cooig_firebase/bar.dart';
+import 'package:cooig_firebase/chatmain.dart';
 import 'package:cooig_firebase/loginsignup/login.dart';
 import 'package:cooig_firebase/pdfviewerurl.dart';
+//import 'package:cooig_firebase/profile/editprofile.dart';
+import 'package:cooig_firebase/notifications.dart';
+import 'package:cooig_firebase/post.dart';
 import 'package:cooig_firebase/profile/editprofile.dart';
+//import 'package:cooig_firebase/clips.dart'; // Import the ClipsScreen
+import 'package:cooig_firebase/search.dart';
 import 'package:cooig_firebase/society/society_login.dart';
 import 'package:cooig_firebase/upload.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_fonts/google_fonts.dart';
+//import 'package:cooig_firebase/upload.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+//import 'package:line_icons/line_icons.dart';
+import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:video_player/video_player.dart';
+//import 'package:camera/camera.dart'; // Import camera package
 
-class ProfilePage extends StatefulWidget {
-  final String userId;
+import 'package:carousel_slider/carousel_slider.dart';
+//import 'package:chewie/chewie.dart';
+import 'package:cooig_firebase/chatmain.dart';
+//import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
+import 'package:cooig_firebase/notifications.dart';
+//import 'package:cooig_firebase/PDFViewer.dart';
+import 'package:cooig_firebase/search.dart';
+//import 'package:cooig_firebase/postscreen.dart';
+import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
+//import 'package:path/path.dart';
+import 'package:cooig_firebase/post.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
+//import 'package:carousel_slider/carousel_slider.dart';
 
-  const ProfilePage({super.key, required this.userId, required int index});
+// Import the ClipsScreen
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
+// Import camera package
+
+//import 'package:chewie/chewie.dart';
+//import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
+//import 'package:cooig_firebase/PDFViewer.dart';
+//import 'package:cooig_firebase/postscreen.dart';
+//import 'package:path/path.dart';
+//import 'package:carousel_slider/carousel_slider.dart';
+
+class Homepage extends StatefulWidget {
+  dynamic userId;
+
+  Homepage({super.key, required this.userId, required int index});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<Homepage> createState() => _HomePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _HomePageState extends State<Homepage> {
   late Future<DocumentSnapshot> _userDataFuture;
+
+  File? _bannerImage;
+  File? _profilepic;
+  String? bannerImageUrl;
+  String? profilepic;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Map<String, String?> selectedOptions = {};
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
-  // Profile Data Variables
+  final bool _isEditing = false;
+  TabController? _tabController;
+  List<Map<String, dynamic>> _posts = [];
+
+  // Profile data
   String? username;
   String? bio;
   String? branch;
   String? year;
-  String? bannerImageUrl;
-  String? profilepic;
   int _bondsCount = 0;
-  int _postsCount = 0;
+  final int _postsCount = 0; // Replace with actual post count if available
   bool _isBonded = false;
-
-  List<Map<String, dynamic>> _posts = [];
 
   @override
   void initState() {
     super.initState();
+    //_tabController = TabController(length: 4, vsync: this);
     _fetchUserData();
+   // _fetchPosts();
   }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
+ 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.black,
+        centerTitle: false,
+        title: Text(
+          "Cooig",
+          style: GoogleFonts.libreBodoni(
+            textStyle: TextStyle(
+              color: const Color(0XFF9752C5),
+              fontSize: 30, // ite text for contrast
+            ),  
+          ),
+        ),
+        elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Notifications(
+                            userId: widget.userId,
+                          )));
+            },
+            icon: const Badge(
+              backgroundColor: Color(0xFF635A8F),
+              textColor: Colors.white,
+              label: Text('5'),
+              child: Icon(Icons.notifications, color: Colors.white),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          mainChat(currentUserId: widget.userId)));
+            },
+            icon: const Badge(
+              backgroundColor: Color(0xFF635A8F),
+              textColor: Colors.white,
+              label: Text('5'),
+              child: Icon(Icons.messenger_outline_rounded, color: Colors.white),
+            ),
+          ),
+        ],
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       drawer: NavigationDrawer(userId: widget.userId),
       bottomNavigationBar: Nav(
         userId: widget.userId,
         index: 4,
       ),
-      body: FutureBuilder(
-        future: _fetchUserData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildProfileBox(),
-                const SizedBox(height: 16),
-                _buildPostStream(widget.userId),
-              ],
-            ),
-          );
-        },
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildProfileBox(widget.userId),
+            //_buildUserPostInput(widget.userId),
+            const SizedBox(height: 16),
+            _buildPostStream(widget.userId),
+          ],
+        ),
       ),
     );
   }
 
-  /// **Build App Bar**
-  AppBar _buildAppBar() {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: Colors.black,
-      centerTitle: true,
-      title: Text(
-        "Cooig",
-        style: GoogleFonts.libreBodoni(
-          textStyle: const TextStyle(
-            color: Color(0XFF9752C5),
-            fontSize: 30,
-          ),
-        ),
-      ),
-      elevation: 0,
-      leading: Builder(
-        builder: (context) => IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white), // Drawer icon
-          onPressed: () {
-            Scaffold.of(context).openDrawer(); // Opens the drawer
-          },
-        ),
-      ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Badge(
-            backgroundColor: Color(0xFF635A8F),
-            textColor: Colors.white,
-            label: Text('5'),
-            child: Icon(Icons.notifications, color: Colors.white),
-          ),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Badge(
-            backgroundColor: Color(0xFF635A8F),
-            textColor: Colors.white,
-            label: Text('5'),
-            child: Icon(Icons.messenger_outline_rounded, color: Colors.white),
-          ),
-        ),
-      ],
-      iconTheme: IconThemeData(color: Colors.white),
-    );
-  }
-
-  /// **Fetch User Data from Firestore**
   Future<void> _fetchUserData() async {
     try {
       DocumentSnapshot userDoc =
@@ -144,221 +188,247 @@ class _ProfilePageState extends State<ProfilePage> {
           year = userData?['year'] ?? "Year";
           _bondsCount = userData?['bonds'] ?? 0;
           _isBonded = userData?['isBonded'] ?? false;
+
+          _usernameController.text = username!;
+          _bioController.text = bio!;
+
           bannerImageUrl = userData?['bannerImageUrl'];
           profilepic = userData?['profilepic'];
         });
-      }
-      // Fetch the number of posts by the user
-      QuerySnapshot postSnapshot = await _firestore
-          .collection('posts')
-          .where('userId', isEqualTo: widget.userId)
-          .get();
+      } else {
+        setState(() {
+          username = "Username";
+          bio = "Bio goes here";
+          branch = "Branch";
+          year = "Year";
+          _bondsCount = 0;
 
-      setState(() {
-        _postsCount = postSnapshot.size; // Count the posts
-      });
+          _usernameController.text = username!;
+          _bioController.text = bio!;
+
+          bannerImageUrl = null;
+          profilepic = null;
+        });
+      }
     } catch (e) {
       print("Error fetching user data: $e");
+      setState(() {
+        username = "Username";
+        bio = "Bio goes here";
+        branch = "Branch";
+        year = "Year";
+        _bondsCount = 0;
+
+        _usernameController.text = username!;
+        _bioController.text = bio!;
+
+        bannerImageUrl = null;
+        profilepic = null;
+      });
     }
   }
-
-  /// **Build Profile Box**
-  Widget _buildProfileBox() {
-    return FutureBuilder<DocumentSnapshot>(
-      future: _firestore.collection('users').doc(widget.userId).get(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Center(child: Text("User data not found."));
-        }
-
-        var userData = snapshot.data!.data() as Map<String, dynamic>?;
-
-        // Assign values safely
-        String? fetchedUsername = userData?['username'] ?? "Username";
-        String? fetchedBio = userData?['bio'] ?? "Bio goes here";
-        String? fetchedBranch = userData?['branch'] ?? "Branch";
-        String? fetchedYear = userData?['year'] ?? "Year";
-        String? fetchedBannerImageUrl = userData?['bannerImageUrl'];
-        String? fetchedProfilePic = userData?['profilepic'];
-
-        return Column(
-          children: [
-            // **Banner & Profile Image**
-            Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 120,
-                  color: Colors.grey[300],
-                  child: fetchedBannerImageUrl != null
-                      ? Image.network(fetchedBannerImageUrl, fit: BoxFit.cover)
-                      : const Icon(Icons.camera_alt, color: Colors.grey),
-                ),
-                Positioned(
-                  bottom: -50,
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.white,
-                    backgroundImage: fetchedProfilePic != null
-                        ? NetworkImage(fetchedProfilePic)
-                        : null,
-                    child: fetchedProfilePic == null
-                        ? const Icon(Icons.person, size: 50, color: Colors.grey)
-                        : null,
-                  ),
-                ),
-                Positioned(
-                  bottom: -60,
-                  left: 14,
-                  child: _buildCircularBox(fetchedBranch!),
-                ),
-                Positioned(
-                  bottom: -60,
-                  right: 14,
-                  child: _buildCircularBox(fetchedYear!),
-                ),
-              ],
+Widget _buildProfileBox(userid) {
+  return Column(
+    children: [
+      // Banner and Profile Image Sections
+      Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          GestureDetector(
+            child: Container(
+              width: double.infinity,
+              height: 120,
+              color: Colors.grey[300],
+              child: bannerImageUrl != null
+                  ? Image.network(bannerImageUrl!, fit: BoxFit.cover)
+                  : Icon(Icons.camera_alt, color: Colors.grey[700]),
             ),
+          ),
+          Positioned(
+            bottom: -50,
+            child: GestureDetector(
+              child: CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.white,
+                backgroundImage:
+                    profilepic != null ? NetworkImage(profilepic!) : null,
+                child: profilepic == null
+                    ? Icon(Icons.person, size: 50, color: Colors.grey[700])
+                    : null,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -60,
+            left: 14,
+            child: _buildCircularBox(branch ?? 'Branch'),
+          ),
+          Positioned(
+            bottom: -60,
+            right: 14,
+            child: _buildCircularBox(year ?? 'Year'),
+          ),
+        ],
+      ),
 
-            const SizedBox(height: 60),
+      SizedBox(height: 60),
 
-            // **Username**
-            Center(
-              child: Text(
-                fetchedUsername!,
-                style: GoogleFonts.lexend(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
+      // Username Display
+      Center(
+        child: Text(
+          username ?? 'Username',
+          style: GoogleFonts.lexend(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ),
+
+      SizedBox(height: 7),
+
+      // Post Count Display
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _posts.length.toString(),
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
-            ),
-
-            const SizedBox(height: 7),
-
-            // **Post Count Display**
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      _postsCount.toString(),
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      'Posts',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.grey[300],
-                      ),
-                    ),
-                  ],
+              Text(
+                'Posts',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[300],
                 ),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      SizedBox(height: 15),
+
+      // Edit Profile Button
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditProfilePage(
+                    userid: userid,
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 17, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.edit, color: Colors.black),
+                SizedBox(width: 5),
+                Text('Edit Profile',
+                    style: GoogleFonts.poppins(color: Colors.black)),
               ],
             ),
+          ),
+        ],
+      ),
 
-            const SizedBox(height: 15),
+      SizedBox(height: 15),
 
-            // **Edit Profile Button**
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          EditProfilePage(userid: widget.userId)),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 17, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.edit, color: Colors.black),
-                  const SizedBox(width: 5),
-                  Text('Edit Profile',
-                      style: GoogleFonts.poppins(color: Colors.black)),
-                ],
-              ),
-            ),
+      // Bio Display
+      Text(
+        bio ?? 'Bio goes here :)',
+        style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[300]),
+      ),
 
-            const SizedBox(height: 15),
-
-            // **Bio Display**
-            Text(
-              fetchedBio!,
-              style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[300]),
-            ),
-
-            const SizedBox(height: 15),
-          ],
-        );
-      },
-    );
-  }
-
-  /// **Build Post Stream**
-/*
-  Widget _buildPostStream() {
-    return StreamBuilder(
-      stream: _firestore.collection('posts').where('userId', isEqualTo: widget.userId).snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No posts available."));
-        }
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: snapshot.data!.docs.length,
-          itemBuilder: (context, index) {
-            var post = snapshot.data!.docs[index];
-            return ListTile(
-              title: Text(post['content']),
-              subtitle: Text("Posted on: ${post['timestamp']}"),
-            );
-          },
-        );
-      },
-    );
-  }
-*/
-  /// **Build Circular Info Boxes**
-  ///
-
+      SizedBox(height: 15),
+    ],
+  );
+}
   Widget _buildCircularBox(String text) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xff50555C),
+        color: Color(0xff50555C),
         borderRadius: BorderRadius.circular(20),
       ),
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 30),
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
       child: Text(
         text,
-        style:
-            const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       ),
     );
   }
+}
+
+
+
+Widget buildProfilePicture(String imageUrl, BuildContext context , String userId) {
+  return Stack(
+    alignment: Alignment.center,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          width: 100, // Adjust size as needed
+          height: 100,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(width: 2.0, color: Colors.purpleAccent),
+          ),
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(imageUrl),
+          ),
+        ),
+      ),
+      Positioned(
+        bottom: 0,
+        right: 3, // Adjust as needed to position the icon
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Screen(
+                        userId: userId,
+                      )), // Replace with your screen
+            );
+          },
+          child: Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(width: 2.0, color: const Color(0xFF5334C7)),
+            ),
+            child: const Icon(
+              Icons.add,
+              color: Colors.purple,
+              size: 10,
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
 }
 
 Widget _buildPostStream(userId) {
@@ -457,10 +527,6 @@ Widget _buildPostStream(userId) {
   );
 }
 
-void setState(Null Function() param0) {}
-
-//void setState(Null Function() param0) {}
-
 class PollWidget extends StatefulWidget {
   final String pollId; // Pass poll ID from Firestore
   final String userName;
@@ -495,7 +561,7 @@ class _PollWidgetState extends State<PollWidget> {
     widget.onOptionSelected(option);
 
     final pollRef =
-        FirebaseFirestore.instance.collection('posts').doc(widget.pollId);
+        FirebaseFirestore.instance.collection('polls').doc(widget.pollId);
 
     FirebaseFirestore.instance.runTransaction((transaction) async {
       final pollSnapshot = await transaction.get(pollRef);
@@ -1235,9 +1301,7 @@ class NavigationDrawer extends StatelessWidget {
                           accountEmail: const Text(""),
                           accountName: const Text(""),
                           currentAccountPicture: buildProfilePicture(
-                              'https://via.placeholder.com/150',
-                              context,
-                              userId),
+                              'https://via.placeholder.com/150', context , userId),
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
@@ -1253,9 +1317,9 @@ class NavigationDrawer extends StatelessWidget {
                           accountEmail: Text(email ?? "No Course Available"),
                           accountName: Text(name ?? "No Name Available"),
                           currentAccountPicture: buildProfilePicture(
-                              imageUrl ?? 'https://via.placeholder.com/150',
-                              context,
-                              userId),
+                            imageUrl ?? 'https://via.placeholder.com/150',
+                            context, userId
+                          ),
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
@@ -1337,55 +1401,4 @@ class NavigationDrawer extends StatelessWidget {
         ),
       );
 }
-
-Widget buildProfilePicture(
-    String imageUrl, BuildContext context, String userId) {
-  return Stack(
-    alignment: Alignment.center,
-    children: [
-      Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          width: 100, // Adjust size as needed
-          height: 100,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(width: 2.0, color: Colors.purpleAccent),
-          ),
-          child: CircleAvatar(
-            backgroundImage: NetworkImage(imageUrl),
-          ),
-        ),
-      ),
-      Positioned(
-        bottom: 0,
-        right: 3, // Adjust as needed to position the icon
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Screen(
-                        userId: userId,
-                      )), // Replace with your screen
-            );
-          },
-          child: Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              border: Border.all(width: 2.0, color: const Color(0xFF5334C7)),
-            ),
-            child: const Icon(
-              Icons.add,
-              color: Colors.purple,
-              size: 10,
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
-}
+*/

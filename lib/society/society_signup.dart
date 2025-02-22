@@ -157,7 +157,7 @@ class _SocietySignupState extends State<SocietySignup> {
 
           // Add user details to Firestore
           await _firestore.collection('users').doc(user.uid).set({
-            'societyName': _societyNameController.text,
+            'full_name': _societyNameController.text,
             'about': _aboutController.text,
             'email': _emailController.text,
             'establishedYear': _establishedYearController.text,

@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooig_firebase/profile/profile.dart';
+import 'package:cooig_firebase/profile/otherprofile.dart';
+import 'package:cooig_firebase/profile/profi.dart';
+import 'package:cooig_firebase/society/societyprofile/othersociety.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MySearchPage extends StatefulWidget {
-  const MySearchPage({super.key});
+  dynamic userId;
+  MySearchPage({super.key, required this.userId});
 
   @override
   State<MySearchPage> createState() => _MySearchPageState();
@@ -25,11 +29,13 @@ class _MySearchPageState extends State<MySearchPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'Cooig',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 30.0,
+          style: GoogleFonts.libreBodoni(
+            textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 23, // White text for contrast
+            ),
           ),
         ),
         backgroundColor: Colors.black,
@@ -126,11 +132,11 @@ class _MySearchPageState extends State<MySearchPage> {
                   return ListTile(
                     leading: CircleAvatar(
                       radius: 25,
-                      backgroundImage:
-                          data['image'] != null && data['image'].isNotEmpty
-                              ? NetworkImage(data['image'])
-                              : const NetworkImage(
-                                  'https://via.placeholder.com/150'),
+                      backgroundImage: data['profilepic'] != null &&
+                              data['profilepic'].isNotEmpty
+                          ? NetworkImage(data['profilepic'])
+                          : const NetworkImage(
+                              'https://via.placeholder.com/150'),
                     ),
                     title: Text(
                       data['full_name'],
@@ -138,15 +144,29 @@ class _MySearchPageState extends State<MySearchPage> {
                     ),
                     // Navigate to ProfilePage on tap
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProfilePage(
-                            userid: data.id,
-                            index: 4, // Pass the user ID to ProfilePage
+                      if (data['role'] == "Student") {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Otherprofile(
+                              otheruserid: data.id, userId: widget.userId,
+
+                              // Pass the user ID to ProfilePage
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Othersociety(
+                              otheruserid: data.id,
+                              userId: widget
+                                  .userId, // Pass the user ID to ProfilePage
+                            ),
+                          ),
+                        );
+                      }
                     },
                   );
                 });

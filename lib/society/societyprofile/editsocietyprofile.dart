@@ -40,14 +40,13 @@ class _EditSocietyprofileState extends State<EditSocietyprofile> {
     super.initState();
     _fetchUserData();
   }
-   
 
   Future<void> _fetchUserData() async {
     DocumentSnapshot userDoc =
         await _firestore.collection('users').doc(widget.userid).get();
 
     setState(() {
-      societyName = userDoc['societyName'] ?? 'societyName';
+      societyName = userDoc['full_name'] ?? 'Society Name';
       about = userDoc['about'] ?? 'about goes here';
       category = userDoc['category'] ?? 'category';
       establishedYear = userDoc['establishedYear'] ?? 'establishedYear';
@@ -87,10 +86,9 @@ class _EditSocietyprofileState extends State<EditSocietyprofile> {
   }
 
   Future<void> _saveChanges() async {
-   
     try {
       await _firestore.collection('users').doc(widget.userid).update({
-        'societyName': _societyNameController.text,
+        'full_name': _societyNameController.text,
         'about': _aboutController.text,
         'establishedYear': _establishedYearController.text,
         'category': _categoryController.text,

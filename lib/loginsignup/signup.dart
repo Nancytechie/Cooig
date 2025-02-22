@@ -137,7 +137,6 @@ class _SignUpState extends State<SignUp> {
             'college_name': _selectedCollege,
             'course_name': _selectedCourse,
             'email': user.email,
-            'image': '',
             'username': '',
             'branch': '',
             'bio': '',

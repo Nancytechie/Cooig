@@ -4,10 +4,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-// For image cropping
-import 'package:image_picker/image_picker.dart'; // For picking images
-import 'package:cooig_firebase/background.dart';
-import 'package:path/path.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:cooig_firebase/background.dart'; // Ensure this import is correct
+import 'package:path/path.dart' as path; // Use an alias for the path package
 
 class Rentupload extends StatefulWidget {
   final String userId;
@@ -47,14 +46,26 @@ class _RentuploadState extends State<Rentupload> {
         _itemNameController.text.isEmpty ||
         _categoryController.text.isEmpty ||
         _priceController.text.isEmpty ||
-        _detailsController.text.isEmpty ||
-        _contactDetailsController.text.isEmpty) {
-      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+        _detailsController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text('Please fill in all fields and select an image.')),
       );
       return;
     }
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by tapping outside
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(
+            color: Colors.purple, // Customize the loading indicator color
+          ),
+        );
+      },
+    );
 
     try {
       final fileName = DateTime.now().millisecondsSinceEpoch.toString();
@@ -96,20 +107,41 @@ class _RentuploadState extends State<Rentupload> {
         'price': _priceController.text,
         'details': _detailsController.text,
         'imageUrl': downloadUrl,
-        'contactDetails': _contactDetailsController.text,
         'username':
             userData['full_name'] ?? userData['societyName'] ?? 'Unknown',
-        'profilepic': userData['profilepic'] ??
-            '', // Replace with the actual username from your authentication
+        'profilepic': userData['profilepic'] ?? '',
         'timestamp': FieldValue.serverTimestamp(),
-        'postedByUserId':widget.userId,
+        'postedByUserId': widget.userId,
       });
 
+      // Close the loading dialog
+      Navigator.of(context).pop();
+
+      // Show success dialog with green tick
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          Future.delayed(const Duration(seconds: 2), () {
+            Navigator.of(context).pop(); // Close the success dialog
+            Navigator.of(context).pop(); // Go back to the previous page
+          });
+          return const Center(
+            child: Icon(
+              Icons.check_circle,
+              color: Colors.green,
+              size: 100,
+            ),
+          );
+        },
+      );
+
       Fluttertoast.showToast(msg: "Post uploaded successfully");
-      Navigator.pop(context as BuildContext);
     } catch (e) {
+      // Close the loading dialog in case of error
+      Navigator.of(context).pop();
       print('Error uploading post: $e');
-      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to upload post. Error: $e')),
       );
     }
@@ -122,21 +154,19 @@ class _RentuploadState extends State<Rentupload> {
         Color(0XFF9752C5),
         Color(0xFF000000),
       ],
-      radius: 0.8,
+      radius: 0.0,
       centerAlignment: Alignment.bottomRight,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.black,
-          title: Text(
-            'Rent Item Details',
-            style: GoogleFonts.ebGaramond(
-              textStyle: TextStyle(
-                color: Color.fromARGB(255, 254, 253, 255),
-                fontSize: 30,
-              ),
-            ),
-          ),
+          title: Text('Renting Item Details',
+              style: GoogleFonts.ebGaramond(
+                textStyle: const TextStyle(
+                  color: Color.fromARGB(255, 254, 253, 255),
+                  fontSize: 22,
+                ),
+              )),
           leading: IconButton(
             icon: const Icon(
               Icons.arrow_back,
@@ -176,15 +206,25 @@ class _RentuploadState extends State<Rentupload> {
                             : Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
-                                child: ElevatedButton(
-                                  onPressed: _pickImage,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        const Color(0XFF9752C5), // Button color
-                                  ),
-                                  child: const Text('Select Image of Item',
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: ElevatedButton.icon(
+                                    onPressed: _pickImage,
+                                    icon: Icon(Icons.add, color: Colors.white),
+                                    label: Text(
+                                      'Upload Image',
                                       style: TextStyle(
-                                          color: Colors.white, fontSize: 16)),
+                                          color: Colors.white, fontSize: 18),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Color(0xFF9752C5),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
                         Padding(
@@ -218,25 +258,24 @@ class _RentuploadState extends State<Rentupload> {
                             maxLines: 5,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: _buildTextField(
-                            controller: _contactDetailsController,
-                            label: 'Contact Details',
-                          ),
-                        ),
                         const SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: _uploadPost,
                           style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color(0XFF9752C5), // Button color
-                              textStyle: const TextStyle(
-                                  fontSize: 20,
-                                  color: Color.fromARGB(255, 249, 249, 249))),
-                          child: const Text('Upload',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16)),
+                            backgroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Upload',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 30),
                       ],
@@ -266,15 +305,15 @@ class _RentuploadState extends State<Rentupload> {
         fillColor: const Color(0xFF252525),
         filled: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0), // Rounded corners
+          borderRadius: BorderRadius.circular(10.0), // Rounded corners
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0), // Rounded corners
+          borderRadius: BorderRadius.circular(10.0), // Rounded corners
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0), // Rounded corners
+          borderRadius: BorderRadius.circular(10.0), // Rounded corners
           borderSide: const BorderSide(
               color: Colors.purple), // Purple border when focused
         ),

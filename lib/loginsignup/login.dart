@@ -7,7 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,7 +17,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  // final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool passwordVisible = false;
   final TextEditingController _emailController = TextEditingController();
@@ -26,18 +25,18 @@ class _LoginState extends State<Login> {
   String _errorMessage = ''; // Variable to hold error message
 
   Future<void> _loginWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      await _auth.signInWithCredential(credential);
-    } catch (error) {
-      print('Error signing in with Google: $error');
-    }
+    // try {
+    //   final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    //   final GoogleSignInAuthentication googleAuth =
+    //       await googleUser!.authentication;
+    //   final AuthCredential credential = GoogleAuthProvider.credential(
+    //     accessToken: googleAuth.accessToken,
+    //     idToken: googleAuth.idToken,
+    //   );
+    //   await _auth.signInWithCredential(credential);
+    // } catch (error) {
+    //   print('Error signing in with Google: $error');
+    // }
   }
 
   Future<void> _loginWithEmail() async {

@@ -73,40 +73,49 @@ class _NoticeUploadPageState extends State<NoticeUploadPage> {
   Future<void> _uploadNotice() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Upload the image and get the URL
-    String? imageUrl;
-    if (_imageFile != null) {
-      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      final storageRef =
-          FirebaseStorage.instance.ref().child('noticeposts').child(fileName);
-      final uploadTask = storageRef.putFile(_imageFile!);
-      final snapshot = await uploadTask.whenComplete(() => {});
-      imageUrl = await snapshot.ref.getDownloadURL();
-    }
+    // Show a loading indicator while uploading
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing the dialog
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
 
-    // Combine selected date and time
-    DateTime? fullDateTime;
-    String? timeString;
-    if (_selectedDate != null && _selectedTime != null) {
-      fullDateTime = DateTime(
-        _selectedDate!.year,
-        _selectedDate!.month,
-        _selectedDate!.day,
-        _selectedTime!.hour,
-        _selectedTime!.minute,
-      );
-      timeString =
-          _selectedTime!.format(context); // Format the time as a string
-    }
-
-    final userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.userId)
-        .get();
-    final userData = userDoc.data() as Map<String, dynamic>;
-
-    // Upload notice details to Firestore, include fullDateTime and timeString if available
     try {
+      // Upload the image and get the URL
+      String? imageUrl;
+      if (_imageFile != null) {
+        final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+        final storageRef =
+            FirebaseStorage.instance.ref().child('noticeposts').child(fileName);
+        final uploadTask = storageRef.putFile(_imageFile!);
+        final snapshot = await uploadTask.whenComplete(() => {});
+        imageUrl = await snapshot.ref.getDownloadURL();
+      }
+
+      // Combine selected date and time
+      DateTime? fullDateTime;
+      String? timeString;
+      if (_selectedDate != null && _selectedTime != null) {
+        fullDateTime = DateTime(
+          _selectedDate!.year,
+          _selectedDate!.month,
+          _selectedDate!.day,
+          _selectedTime!.hour,
+          _selectedTime!.minute,
+        );
+        timeString =
+            _selectedTime!.format(context); // Format the time as a string
+      }
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .get();
+      final userData = userDoc.data() as Map<String, dynamic>;
+
+      // Upload notice details to Firestore
       await FirebaseFirestore.instance.collection('noticeposts').add({
         'heading': _headingController.text,
         'location': _locationController.text,
@@ -121,12 +130,46 @@ class _NoticeUploadPageState extends State<NoticeUploadPage> {
         'timestamp':
             FieldValue.serverTimestamp(), // Server timestamp for creation time
         "isStarred": false,
-        'postedByUserId':widget.userId,
+        'postedByUserId': widget.userId,
       });
 
-      Fluttertoast.showToast(msg: "Notice uploaded successfully");
-      _clearForm();
+      // Close the loading dialog
+      Navigator.pop(context);
+
+      // Show "Post Uploaded" success message
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 50,
+              ),
+              SizedBox(height: 10),
+              Text(
+                "Post Uploaded",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // Wait for 1.5 seconds and then navigate back to the noticeboard page
+      await Future.delayed(Duration(seconds: 1));
+      Navigator.pop(context); // Close the success dialog
+      Navigator.pop(context); // Navigate back to the noticeboard page
     } catch (error) {
+      // Close the loading dialog
+      Navigator.pop(context);
+
+      // Show error message
       Fluttertoast.showToast(msg: "Failed to upload notice: $error");
     }
   }

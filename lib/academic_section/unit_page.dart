@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/academic_section/material_upload.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart'; // Ensure this is imported
@@ -23,16 +24,16 @@ class UnitPage extends StatefulWidget {
 }
 
 class _UnitPageState extends State<UnitPage> {
-  bool isLiked = false;
+  // Track like state for each note by its ID
+  Map<String, bool> likedNotes = {};
 
-  // Increment likes for a specific note
-  Future<void> _handleLike(String noteId) async {
-    final String yearString = widget.year.toString(); // Convert year to String
+  Future<void> _handleLike(String noteId, String userId) async {
+    final String yearString = widget.year.toString();
     DocumentReference noteRef = FirebaseFirestore.instance
         .collection('branches')
         .doc(widget.branch)
         .collection('years')
-        .doc(yearString) // Use yearString in the Firestore path
+        .doc(yearString)
         .collection('subjects')
         .doc(widget.subject)
         .collection('units')
@@ -44,8 +45,7 @@ class _UnitPageState extends State<UnitPage> {
       DocumentSnapshot noteSnapshot = await transaction.get(noteRef);
       if (noteSnapshot.exists) {
         int currentLikes = noteSnapshot['likes'] ?? 0;
-        // Toggle the like state
-        if (isLiked) {
+        if (likedNotes[noteId] ?? false) {
           transaction.update(noteRef, {'likes': currentLikes + 1});
         } else {
           transaction.update(noteRef, {'likes': currentLikes - 1});
@@ -53,13 +53,22 @@ class _UnitPageState extends State<UnitPage> {
       }
     });
 
-    // Toggle the local liked state after the transaction is completed
+    // Create a notification for the like
+    if (!(likedNotes[noteId] ?? false)) {
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'type': 'like notes', // Ensure the type is 'like notes'
+        'fromUserID': FirebaseAuth.instance.currentUser!.uid,
+        'toUserID': userId,
+        'noteId': noteId,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    }
+
     setState(() {
-      isLiked = !isLiked;
+      likedNotes[noteId] = !(likedNotes[noteId] ?? false);
     });
   }
 
-  // Open the URL when clicked
   Future<void> _openLink(BuildContext context, String url) async {
     if (url.isNotEmpty && Uri.tryParse(url)?.hasScheme == true) {
       try {
@@ -86,8 +95,7 @@ class _UnitPageState extends State<UnitPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String yearString = widget.year
-        .toString(); // Convert year to String for the Firestore query
+    final String yearString = widget.year.toString();
 
     return Scaffold(
       appBar: AppBar(
@@ -103,9 +111,8 @@ class _UnitPageState extends State<UnitPage> {
           IconButton(
             icon: Row(
               children: [
-                Icon(Icons.add,
-                    color: const Color.fromARGB(255, 146, 226, 85)), // "+" Icon
-                SizedBox(width: 4), // Spacing between icon and text
+                Icon(Icons.add, color: const Color.fromARGB(255, 146, 226, 85)),
+                SizedBox(width: 4),
                 Text(
                   'Add Yours',
                   style: TextStyle(
@@ -138,15 +145,15 @@ class _UnitPageState extends State<UnitPage> {
             .collection('branches')
             .doc(widget.branch)
             .collection('years')
-            .doc(yearString) // Use yearString in the Firestore query
+            .doc(yearString)
             .collection('subjects')
             .doc(widget.subject)
             .collection('units')
             .doc(widget.unitName)
             .collection('notes')
-            .orderBy('timestamp', descending: true) // Sorting by timestamp
-            .orderBy('likes', descending: true) // Sorting by likes
-            .limit(20) // Limiting results
+            .orderBy('timestamp', descending: true)
+            .orderBy('likes', descending: true)
+            .limit(20)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -176,7 +183,8 @@ class _UnitPageState extends State<UnitPage> {
             children: snapshot.data!.docs.map((doc) {
               var data = doc.data() as Map<String, dynamic>;
               String noteId = doc.id;
-              String notesLink = data['notesLink'] ?? ''; // Extract notesLink
+              String notesLink = data['notesLink'] ?? '';
+              String userId = data['userId'] ?? '';
 
               return GestureDetector(
                 onTap: () {
@@ -191,10 +199,10 @@ class _UnitPageState extends State<UnitPage> {
                       center: Alignment.bottomRight,
                       radius: 1.5,
                       colors: [
-                        Color(0XFF9752C5), // Start color
-                        const Color.fromARGB(255, 132, 92, 241), // End color
+                        Color(0XFF9752C5),
+                        const Color.fromARGB(255, 132, 92, 241),
                       ],
-                      stops: [2.0, 3.0], // Defines smooth color transition
+                      stops: [2.0, 3.0],
                     ),
                     borderRadius: BorderRadius.circular(15.0),
                     boxShadow: [
@@ -202,8 +210,7 @@ class _UnitPageState extends State<UnitPage> {
                         color: Colors.black.withOpacity(0.3),
                         spreadRadius: 4,
                         blurRadius: 10,
-                        offset:
-                            Offset(0, 4), // Shadow slightly below the container
+                        offset: Offset(0, 4),
                       ),
                     ],
                   ),
@@ -214,7 +221,7 @@ class _UnitPageState extends State<UnitPage> {
                         children: [
                           CircleAvatar(
                             backgroundImage: NetworkImage(
-                              data['profilePicUrl'] ??
+                              data['userProfilePic'] ??
                                   'https://example.com/defaultProfilePic.jpg',
                             ),
                             radius: 20,
@@ -253,9 +260,11 @@ class _UnitPageState extends State<UnitPage> {
                               IconButton(
                                 icon: Icon(
                                   Icons.favorite,
-                                  color: isLiked ? Colors.red : Colors.white,
+                                  color: likedNotes[noteId] ?? false
+                                      ? Colors.red
+                                      : Colors.white,
                                 ),
-                                onPressed: () => _handleLike(noteId),
+                                onPressed: () => _handleLike(noteId, userId),
                               ),
                               Text(
                                 '${data['likes'] ?? 0} Likes',
@@ -271,7 +280,7 @@ class _UnitPageState extends State<UnitPage> {
                             children: [
                               IconButton(
                                 icon: Icon(Icons.near_me, color: Colors.white),
-                                onPressed: () => _handleLike(noteId),
+                                onPressed: () => _handleLike(noteId, userId),
                               ),
                               Text(
                                 'Share',

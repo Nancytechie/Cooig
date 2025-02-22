@@ -1,18 +1,15 @@
-import 'package:card_swiper/card_swiper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:chewie/chewie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/academic_section/branch_page.dart';
 import 'package:cooig_firebase/bar.dart';
-import 'package:cooig_firebase/basescreen.dart';
 import 'package:cooig_firebase/chatmain.dart';
-import 'package:cooig_firebase/navbar.dart';
 import 'package:cooig_firebase/pdfviewerurl.dart';
 //import 'package:cooig_firebase/profile/editprofile.dart';
 import 'package:cooig_firebase/notifications.dart';
 import 'package:cooig_firebase/post.dart';
 //import 'package:cooig_firebase/clips.dart'; // Import the ClipsScreen
 import 'package:cooig_firebase/search.dart';
+import 'package:cooig_firebase/selectuser.dart';
 //import 'package:cooig_firebase/upload.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 //import 'package:line_icons/line_icons.dart';
@@ -22,14 +19,10 @@ import 'package:video_player/video_player.dart';
 
 import 'package:carousel_slider/carousel_slider.dart';
 //import 'package:chewie/chewie.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooig_firebase/academic_section/branch_page.dart';
-import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/chatmain.dart';
 //import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
 import 'package:cooig_firebase/notifications.dart';
 //import 'package:cooig_firebase/PDFViewer.dart';
-import 'package:cooig_firebase/pdfviewerurl.dart';
 import 'package:cooig_firebase/search.dart';
 //import 'package:cooig_firebase/postscreen.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +30,19 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 //import 'package:path/path.dart';
 import 'package:cooig_firebase/post.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:video_player/video_player.dart';
+//import 'package:carousel_slider/carousel_slider.dart';
+
+// Import the ClipsScreen
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
+// Import camera package
+
+//import 'package:chewie/chewie.dart';
+//import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
+//import 'package:cooig_firebase/PDFViewer.dart';
+//import 'package:cooig_firebase/postscreen.dart';
+//import 'package:path/path.dart';
 //import 'package:carousel_slider/carousel_slider.dart';
 
 class Homepage extends StatefulWidget {
@@ -52,6 +57,8 @@ class Homepage extends StatefulWidget {
 class _HomePageState extends State<Homepage> {
   late Future<DocumentSnapshot> _userDataFuture;
 
+  //get postId => null;
+
   @override
   void initState() {
     super.initState();
@@ -61,8 +68,77 @@ class _HomePageState extends State<Homepage> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      userId: widget.userId,
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.black,
+        centerTitle: false,
+        title: Row(
+          children: [
+            IconButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => BranchPage()));
+              },
+              icon: const Icon(Icons.school, color: Colors.white),
+            ),
+            const SizedBox(width: 1),
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MySearchPage(
+                              userId: widget.userId,
+                            )));
+              },
+              icon: const Icon(Icons.search, color: Colors.white),
+            ),
+            const SizedBox(width: 50),
+            const Text('Cooig',
+                style: TextStyle(color: Colors.white, fontSize: 30.0)),
+          ],
+        ),
+        elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Notifications(
+                            userId: widget.userId,
+                          )));
+            },
+            icon: const Badge(
+              backgroundColor: Color(0xFF635A8F),
+              textColor: Colors.white,
+              label: Text('5'),
+              child: Icon(Icons.notifications, color: Colors.white),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          mainChat(currentUserId: widget.userId)));
+            },
+            icon: const Badge(
+              backgroundColor: Color(0xFF635A8F),
+              textColor: Colors.white,
+              label: Text('5'),
+              child: Icon(Icons.messenger_outline_rounded, color: Colors.white),
+            ),
+          ),
+        ],
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      bottomNavigationBar: Nav(
+        userId: widget.userId,
+        index: 0,
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +183,7 @@ class _HomePageState extends State<Homepage> {
                 return _buildPlaceholderInput();
               } else {
                 var data = snapshot.data!.data() as Map<String, dynamic>;
-                String? imageUrl = data['image'] as String?;
+                String? imageUrl = data['profilepic'] as String?;
                 return _buildUserInputRow(imageUrl);
               }
             },
@@ -181,17 +257,18 @@ class _HomePageState extends State<Homepage> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final posts = snapshot.data!.docs;
+        final posts = snapshot.data?.docs ?? [];
+        //final posttype = posts["type"];
 
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: posts.length,
           itemBuilder: (context, index) {
-            final post = posts[index].data()
-                as Map<String, dynamic>?; // Add null check here
-            if (post == null) {
-              return const SizedBox.shrink(); // Skip this post if it's null
+            final post = posts[index].data() as Map<String, dynamic>?;
+
+            if (post == null || !post.containsKey('userID')) {
+              return const SizedBox.shrink(); // Null safety check
             }
 
             return FutureBuilder<DocumentSnapshot>(
@@ -200,29 +277,53 @@ class _HomePageState extends State<Homepage> {
                   .doc(post['userID'])
                   .get(),
               builder: (context, userSnapshot) {
-                if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                  return const SizedBox
-                      .shrink(); // Skip if user data doesn't exist
+                if (!userSnapshot.hasData || userSnapshot.data == null) {
+                  return const SizedBox.shrink();
                 }
 
-                final user = userSnapshot.data!.data()
-                    as Map<String, dynamic>?; // Add null check here
+                final user = userSnapshot.data!.data() as Map<String, dynamic>?;
+
                 if (user == null) {
-                  return const SizedBox.shrink(); // Skip if user data is null
+                  return const SizedBox.shrink();
                 }
 
                 final userName = user['full_name'] ?? 'Unknown';
                 final userImage = user['profilepic'] ?? '';
+                final posttype = post['type'];
 
-                return PostWidget(
-                  userName: userName,
-                  userImage: userImage,
-                  text: post['text'] ?? '',
-                  mediaUrls: post['media'] != null
-                      ? List<String>.from(post['media'])
-                      : [],
-                  timestamp: post['timestamp'],
-                );
+                if (posttype == "poll") {
+                  Map<String, String?> selectedOptions = {};
+                  return PollWidget(
+                    pollId: posts[index].id, // Pass the document ID as pollId
+                    userName: userName,
+                    userImage: userImage,
+                    question: post['question'] ?? '',
+                    options: post['options'] != null
+                        ? post['options'].cast<String>()
+                        : [],
+                    imageUrls: post['imageUrls'] != null
+                        ? post['imageUrls'].cast<String>()
+                        : [],
+                    isTextOption: post['options'] != null,
+                    selectedOption: selectedOptions[posts[index].id],
+                    onOptionSelected: (String option) {
+                      setState(() {
+                        selectedOptions[posts[index].id] = option;
+                      });
+                    },
+                  );
+                } else {
+                  return PostWidget(
+                    postID: posts[index].id,
+                    userName: userName,
+                    userImage: userImage,
+                    text: post['text'] ?? '',
+                    mediaUrls: post['media'] != null
+                        ? List<String>.from(post['media'])
+                        : [],
+                    timestamp: post['timestamp'] ?? Timestamp.now(),
+                  );
+                }
               },
             );
           },
@@ -232,7 +333,193 @@ class _HomePageState extends State<Homepage> {
   }
 }
 
-class PostWidget extends StatelessWidget {
+class PollWidget extends StatefulWidget {
+  final String pollId; // Pass poll ID from Firestore
+  final String userName;
+  final String userImage;
+  final String question;
+  final List<String> options;
+  final List<String> imageUrls;
+  final bool isTextOption;
+  final String? selectedOption;
+  final void Function(String option) onOptionSelected;
+  const PollWidget({
+    super.key,
+    required this.pollId,
+    required this.userName,
+    required this.userImage,
+    required this.question,
+    required this.options,
+    required this.imageUrls,
+    required this.isTextOption,
+    required this.selectedOption,
+    required this.onOptionSelected,
+  });
+
+  @override
+  _PollWidgetState createState() => _PollWidgetState();
+}
+
+class _PollWidgetState extends State<PollWidget> {
+  void _handleVote(String option) async {
+    if (widget.selectedOption != null) return;
+
+    widget.onOptionSelected(option);
+
+    final pollRef = FirebaseFirestore.instance
+        .collection('posts_upload')
+        .doc(widget.pollId);
+
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      final pollSnapshot = await transaction.get(pollRef);
+      if (!pollSnapshot.exists) return;
+
+      final pollData = pollSnapshot.data() as Map<String, dynamic>;
+      final votes = Map<String, int>.from(pollData['votes'] ?? {});
+
+      votes[option] = (votes[option] ?? 0) + 1;
+
+      transaction.update(pollRef, {'votes': votes});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('posts_upload')
+            .doc(widget.pollId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return const CircularProgressIndicator();
+          }
+
+          final pollData = snapshot.data!.data() as Map<String, dynamic>;
+          final votes = Map<String, int>.from(pollData['votes'] ?? {});
+          final totalVotes = votes.values.fold(0, (sum, count) => sum + count);
+
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: widget.userImage.isNotEmpty
+                          ? NetworkImage(widget.userImage)
+                          : const AssetImage('assets/default_avatar.png')
+                              as ImageProvider,
+                      radius: 20,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      widget.userName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  widget.question,
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                ),
+                const SizedBox(height: 10),
+                ...widget.options.map((option) {
+                  final voteCount = votes[option] ?? 0;
+                  final percentage =
+                      totalVotes > 0 ? voteCount / totalVotes : 0.0;
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Stack(
+                      children: [
+                        ElevatedButton(
+                          onPressed: widget.selectedOption == null
+                              ? () => _handleVote(option)
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              side: widget.selectedOption == option
+                                  ? const BorderSide(
+                                      color: Colors.blue, width: 2)
+                                  : const BorderSide(
+                                      color: Colors.white, width: 2),
+                            ),
+                            minimumSize: const Size(400, 50),
+                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                          ),
+                          child: Text(
+                            option,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        if (widget.selectedOption != null &&
+                            widget.selectedOption == option)
+                          Positioned(
+                            top: 2,
+                            left: 0,
+                            right: 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 400 * percentage,
+                                  height: 35,
+                                  color: const Color.fromRGBO(128, 0, 128, 0.3),
+                                ),
+                                const SizedBox(height: 0),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    '${(percentage * 100).toStringAsFixed(1)}% ($voteCount votes)',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ),
+          );
+        });
+  }
+}
+
+class PostWidget extends StatefulWidget {
+  final String postID;
   final String userName;
   final String userImage;
   final String text;
@@ -241,12 +528,204 @@ class PostWidget extends StatelessWidget {
 
   const PostWidget({
     super.key,
+    required this.postID,
     required this.userName,
     required this.userImage,
     required this.text,
     required this.mediaUrls,
     required this.timestamp,
   });
+
+  @override
+  _PostWidgetState createState() => _PostWidgetState();
+}
+
+class _PostWidgetState extends State<PostWidget> {
+  bool isLiked = false;
+  int likeCount = 0;
+  int commentCount = 0;
+  TextEditingController commentController = TextEditingController();
+  String? currentUserID = FirebaseAuth.instance.currentUser?.uid;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPostData();
+  }
+
+  Future<void> _fetchPostData() async {
+    DocumentSnapshot postSnapshot = await FirebaseFirestore.instance
+        .collection('posts_upload')
+        .doc(widget.postID)
+        .get();
+
+    if (postSnapshot.exists) {
+      Map<String, dynamic> postData =
+          postSnapshot.data() as Map<String, dynamic>;
+
+      // Handle likes as a Map<String, dynamic>
+      Map<String, dynamic> likesMap = postData['likes'] ?? {};
+      List<dynamic> commentsList = postData['comments'] ?? [];
+
+      setState(() {
+        likeCount = likesMap.length; // Count the number of keys in the map
+        commentCount = commentsList.length;
+        isLiked = currentUserID != null &&
+            likesMap.containsKey(
+                currentUserID); // Check if the current user's ID is in the map
+      });
+    }
+  }
+
+  void _toggleLike() async {
+    if (currentUserID == null) {
+      print("User is not authenticated.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("You must be logged in to like a post."),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    try {
+      // Fetch the post document
+      DocumentSnapshot postSnapshot = await FirebaseFirestore.instance
+          .collection('posts_upload')
+          .doc(widget.postID)
+          .get();
+
+      if (!postSnapshot.exists) {
+        print("Post does not exist.");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Post not found."),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+
+      // Get post data
+      Map<String, dynamic> postData =
+          postSnapshot.data() as Map<String, dynamic>;
+      String postOwnerID = postData['userID'];
+
+      // Prevent users from liking their own posts
+      if (currentUserID == postOwnerID) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("You cannot like your own post."),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+
+      // Check if the user has already liked the post
+      Map<String, dynamic> likesMap = postData['likes'] ?? {};
+      bool isCurrentlyLiked = likesMap.containsKey(currentUserID);
+
+      // Update the likes map in Firestore
+      if (isCurrentlyLiked) {
+        // Remove the user's like
+        await FirebaseFirestore.instance
+            .collection('posts_upload')
+            .doc(widget.postID)
+            .update({
+          'likes.$currentUserID':
+              FieldValue.delete(), // Remove the specific key from the map
+        });
+      } else {
+        // Add the user's like
+        await FirebaseFirestore.instance
+            .collection('posts_upload')
+            .doc(widget.postID)
+            .update({
+          'likes.$currentUserID': true, // Add the user's ID to the map
+        });
+      }
+
+      // Update the UI
+      setState(() {
+        isLiked = !isCurrentlyLiked;
+        likeCount = isCurrentlyLiked ? likeCount - 1 : likeCount + 1;
+      });
+
+      // Add a notification if the post is liked
+      if (!isCurrentlyLiked) {
+        await FirebaseFirestore.instance.collection('notifications').add({
+          'type': 'like',
+          'fromUserID': currentUserID,
+          'toUserID': postOwnerID,
+          'postID': widget.postID,
+          'timestamp': Timestamp.now(),
+        });
+      }
+
+      print("Like toggled successfully.");
+    } catch (e) {
+      // Log the error and show a snackbar
+      print("Error toggling like: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to like the post: ${e.toString()}"),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  void _addComment() async {
+    if (commentController.text.isEmpty || currentUserID == null) return;
+
+    DocumentReference postRef = FirebaseFirestore.instance
+        .collection('posts_upload')
+        .doc(widget.postID);
+
+    // Add the comment to Firestore
+    await postRef.update({
+      'comments': FieldValue.arrayUnion([
+        {
+          'userID': currentUserID,
+          'text': commentController.text,
+          'timestamp': Timestamp.now(),
+        }
+      ]),
+    });
+
+    // Update the UI
+    setState(() {
+      commentCount++;
+    });
+
+    // Clear the comment input field
+    commentController.clear();
+
+    // Fetch the post data to get the post owner's ID
+    DocumentSnapshot postSnapshot = await postRef.get();
+    if (postSnapshot.exists) {
+      Map<String, dynamic> postData =
+          postSnapshot.data() as Map<String, dynamic>;
+      String postOwnerID = postData['userID'];
+
+      // Add a notification for the comment
+
+      // Ensure the commenter is not the post owner
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'type': 'comment',
+        'fromUserID': currentUserID,
+        'toUserID': postOwnerID,
+        'postID': widget.postID,
+        'timestamp': Timestamp.now(),
+        'commentText':
+            commentController.text, // Optional: Include the comment text
+      });
+    }
+
+    print("Comment added successfully.");
+  }
 
   String _formatTimestamp(Timestamp timestamp) {
     final dateTime = timestamp.toDate();
@@ -270,21 +749,13 @@ class PostWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> media = _classifyMedia(mediaUrls);
+    List<Map<String, dynamic>> media = _classifyMedia(widget.mediaUrls);
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.black,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,27 +763,27 @@ class PostWidget extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                backgroundImage: userImage.isNotEmpty
-                    ? NetworkImage(userImage)
+                backgroundImage: widget.userImage.isNotEmpty
+                    ? NetworkImage(widget.userImage)
                     : const AssetImage('assets/default_avatar.png')
                         as ImageProvider,
-                radius: 20,
+                radius: 22,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    userName,
+                    widget.userName,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 3),
                   Text(
-                    _formatTimestamp(timestamp),
+                    _formatTimestamp(widget.timestamp),
                     style: const TextStyle(
                       fontSize: 12,
                       color: Colors.grey,
@@ -322,17 +793,14 @@ class PostWidget extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Text(
-            text,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-            ),
+            widget.text,
+            style: const TextStyle(fontSize: 15, color: Colors.white),
           ),
-          const SizedBox(height: 10),
-          // Iterate through the documents
+          const SizedBox(height: 12),
 
+          // Media Rendering
           if (media.isNotEmpty)
             CarouselSlider(
               options: CarouselOptions(
@@ -390,16 +858,272 @@ class PostWidget extends StatelessWidget {
                     ),
                   );
                 }
-
                 return const SizedBox.shrink();
               }).toList(),
             ),
+
+          // Like & Comment Buttons
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // Like Button Group
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                        color: isLiked ? Colors.red : Colors.white,
+                        size: 20,
+                      ),
+                      onPressed: _toggleLike,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                    ),
+                    Text(
+                      '$likeCount',
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(width: 16), // Spacing between button groups
+
+                // Comment Button Group
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.comment,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                CommentsScreen(postID: widget.postID),
+                          ),
+                        );
+                      },
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                    ),
+                    Text(
+                      '$commentCount',
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(width: 16), // Spacing between button groups
+
+                // Share Button
+                IconButton(
+                  icon: const Icon(
+                    Icons.share,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    // Implement share functionality
+                    // Share.share('Check out this post!'); You'll need to import 'package:share_plus/share_plus.dart'
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectUserScreen(
+                          postID: widget.postID,
+                          userName: widget.userName,
+                          userImage: widget.userImage,
+                          text: widget.text,
+                          mediaUrls: widget.mediaUrls,
+                          timestamp: widget.timestamp,
+                        ),
+                      ),
+                    );
+                  },
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
   }
 }
 
+/*
+  @override
+  Widget build(BuildContext context) {
+    List<Map<String, dynamic>> media = _classifyMedia(widget.mediaUrls);
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: widget.userImage.isNotEmpty
+                    ? NetworkImage(widget.userImage)
+                    : const AssetImage('assets/default_avatar.png')
+                        as ImageProvider,
+                radius: 22,
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.userName,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    _formatTimestamp(widget.timestamp),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            widget.text,
+            style: const TextStyle(fontSize: 15, color: Colors.white),
+          ),
+          const SizedBox(height: 12),
+
+          // Media Rendering
+          if (media.isNotEmpty)
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 200,
+                enlargeCenterPage: true,
+                enableInfiniteScroll: false,
+                aspectRatio: 16 / 9,
+              ),
+              items: media.map((medi) {
+                if (medi['type'] == 'image') {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Image.network(
+                      medi['url'],
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
+                  );
+                } else if (medi['type'] == 'video') {
+                  return VideoPlayerWidget(medi['url']);
+                } else if (medi['type'] == 'pdf') {
+                  String url = medi['url'];
+                  final String fileName = Uri.decodeFull(
+                      url.split('/o/').last.split('?').first.split('%2F').last);
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PDFViewerFromUrl(
+                            pdfUrl: url,
+                            fileName: fileName,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      color: const Color.fromARGB(255, 44, 32, 32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.picture_as_pdf,
+                              size: 40, color: Colors.red),
+                          const SizedBox(height: 8),
+                          Text(
+                            fileName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              }).toList(),
+            ),
+
+          // Like & Comment Buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      isLiked ? Icons.favorite : Icons.favorite_border,
+                      color: isLiked ? Colors.red : Colors.white,
+                      size: 20,
+                    ),
+                    onPressed: _toggleLike,
+                  ),
+                  Text(
+                    '$likeCount',
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.comment,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CommentsScreen(postID: widget.postID),
+                        ),
+                      );
+                    },
+                  ),
+                  Text(
+                    '$commentCount',
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+*/
 class VideoPlayerWidget extends StatefulWidget {
   final String videoUrl;
 
@@ -460,158 +1184,224 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 }
 
-class PollWidget extends StatefulWidget {
-  final String userName;
-  final String userImage;
-  final String question;
-  final List<String> options;
-  final List<String> imageUrls;
-  final bool isTextOption;
+class CommentsScreen extends StatefulWidget {
+  final String postID;
 
-  const PollWidget({
-    super.key,
-    required this.userName,
-    required this.userImage,
-    required this.question,
-    required this.options,
-    required this.imageUrls,
-    required this.isTextOption,
-  });
+  const CommentsScreen({super.key, required this.postID});
 
   @override
-  _PollWidgetState createState() => _PollWidgetState();
+  _CommentsScreenState createState() => _CommentsScreenState();
 }
 
-class _PollWidgetState extends State<PollWidget> {
-  String? selectedOption;
-  Map<String, int> votes = {}; // To store votes per option
-  int totalVotes = 0; // To store total votes
+class _CommentsScreenState extends State<CommentsScreen> {
+  final TextEditingController _commentController = TextEditingController();
+  String? currentUserID = FirebaseAuth.instance.currentUser?.uid;
+  bool _isEmojiVisible = false;
 
-  void _handleVote(String option) {
+  Future<void> _addComment() async {
+    if (_commentController.text.isEmpty || currentUserID == null) return;
+
+    DocumentReference postRef = FirebaseFirestore.instance
+        .collection('posts_upload')
+        .doc(widget.postID);
+
+    // Fetch the post data to get the post owner's ID
+    DocumentSnapshot postSnapshot = await postRef.get();
+    final postData = postSnapshot.data() as Map<String, dynamic>;
+    final String postOwnerID = postData['userID'];
+
+    // Add the comment to the post
+    await postRef.update({
+      'comments': FieldValue.arrayUnion([
+        {
+          'userID': currentUserID,
+          'text': _commentController.text,
+          'timestamp': Timestamp.now(),
+        }
+      ]),
+    });
+
+    // Add a notification to the notifications collection
+    await FirebaseFirestore.instance.collection('notifications').add({
+      'type': 'comment',
+      'fromUserID': currentUserID,
+      'toUserID': postOwnerID,
+      'postID': widget.postID,
+      'timestamp': Timestamp.now(),
+      'commentText':
+          _commentController.text, // Optional: Include the comment text
+      'isRead': false, // Mark the notification as unread
+    });
+
+    print("Commented and notification added");
+    _commentController.clear();
+  }
+
+  String timeAgo(Timestamp timestamp) {
+    final DateTime commentTime = timestamp.toDate();
+    final DateTime currentTime = DateTime.now();
+    final Duration difference = currentTime.difference(commentTime);
+
+    if (difference.inDays > 365) {
+      return '${(difference.inDays / 365).floor()} years ago';
+    } else if (difference.inDays > 30) {
+      return '${(difference.inDays / 30).floor()} months ago';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes} minutes ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
+  void _toggleEmojiPicker() {
     setState(() {
-      if (selectedOption == null) {
-        selectedOption = option;
-        votes[option] = (votes[option] ?? 0) + 1;
-        totalVotes += 1;
-      }
+      _isEmojiVisible = !_isEmojiVisible;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: const Text('Comments', style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: widget.userImage.isNotEmpty
-                    ? NetworkImage(widget.userImage)
-                    : AssetImage('assets/default_avatar.png') as ImageProvider,
-                radius: 20,
-              ),
-              SizedBox(width: 10),
-              Text(
-                widget.userName,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-              Spacer(),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Iconsax.settings,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Text(
-            widget.question,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 10),
-          if (widget.isTextOption)
-            ...widget.options.map((option) {
-              double percentage =
-                  totalVotes > 0 ? (votes[option] ?? 0) / totalVotes : 0.0;
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('posts_upload')
+            .doc(widget.postID)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ElevatedButton(
-                      onPressed: selectedOption == null
-                          ? () => _handleVote(option)
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        elevation: 5,
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          side: BorderSide(color: Colors.white, width: 2),
-                        ),
-                        minimumSize: Size(400, 0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 25,
-                          vertical: 15,
-                        ),
-                      ),
-                      child: Text(
-                        option,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    if (selectedOption != null) ...[
-                      SizedBox(height: 10),
-                      LinearPercentIndicator(
-                        width: MediaQuery.of(context).size.width - 60,
-                        lineHeight: 24.0,
-                        percent: percentage,
-                        backgroundColor: Colors.grey,
-                        progressColor: Colors.purple,
-                        center: Text(
-                          "${(percentage * 100).toStringAsFixed(1)}%",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
+          final postData = snapshot.data!.data() as Map<String, dynamic>;
+          final comments = postData['comments'] as List<dynamic>? ?? [];
+          final String postOwnerID = postData['userID']; // Fetch from postID
+
+          final bool isCurrentUserPostOwner = currentUserID == postOwnerID;
+
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: comments.length,
+                  itemBuilder: (context, index) {
+                    final comment = comments[index] as Map<String, dynamic>;
+                    Timestamp? timestamp =
+                        comment['timestamp'] as Timestamp?; // Correct retrieval
+
+                    return FutureBuilder<DocumentSnapshot>(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(comment['userID'])
+                          .get(),
+                      builder: (context, userSnapshot) {
+                        if (!userSnapshot.hasData ||
+                            !userSnapshot.data!.exists) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final userData =
+                            userSnapshot.data!.data() as Map<String, dynamic>;
+                        final userName = userData['full_name'] ?? 'Unknown';
+                        final userImage = userData['profilepic'] ?? '';
+                        final String timeAgoText = timestamp != null
+                            ? timeAgo(timestamp)
+                            : 'Unknown time';
+
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: userImage.isNotEmpty
+                                ? NetworkImage(userImage)
+                                : const AssetImage('assets/default_avatar.png')
+                                    as ImageProvider,
                           ),
+                          title: Text(
+                            userName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                comment['text'],
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                timeAgoText,
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              // Emoji Picker (Only if user is NOT the post owner)
+              if (_isEmojiVisible && !isCurrentUserPostOwner)
+                SizedBox(
+                  height: 250,
+                  child: EmojiPicker(
+                    onEmojiSelected: (category, emoji) {
+                      _commentController.text += emoji.emoji;
+                    },
+                  ),
+                ),
+              // Comment Input Bar (Only if user is NOT the post owner)
+              if (!isCurrentUserPostOwner)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  color: Colors.black,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.emoji_emotions,
+                            color: Colors.blue),
+                        onPressed: _toggleEmojiPicker,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _commentController,
+                          decoration: InputDecoration(
+                            hintText: 'Add a comment...',
+                            hintStyle: const TextStyle(color: Colors.white54),
+                            filled: true,
+                            fillColor: Colors.grey[900],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                          ),
+                          style: const TextStyle(color: Colors.white),
                         ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.send, color: Colors.blue),
+                        onPressed: _addComment,
                       ),
                     ],
-                  ],
+                  ),
                 ),
-              );
-            }),
-        ],
+            ],
+          );
+        },
       ),
     );
   }

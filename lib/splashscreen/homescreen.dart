@@ -1,5 +1,4 @@
 //import 'package:cooig_firebase/chat_profile/home.dart';
-import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/loginsignup/login.dart';
 import 'package:flutter/material.dart';

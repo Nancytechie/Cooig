@@ -8,6 +8,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class MicScreen extends StatefulWidget {
+  const MicScreen({super.key});
+
   @override
   _MicScreenState createState() => _MicScreenState();
 }

@@ -1,3 +1,4 @@
+/*
 import 'package:cooig_firebase/academic_section/branch_page.dart';
 import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/chatmain.dart';
@@ -10,8 +11,7 @@ class BaseScreen extends StatelessWidget {
   final Widget body;
   final String userId;
 
-  const BaseScreen({required this.body, required this.userId, Key? key})
-      : super(key: key);
+  const BaseScreen({required this.body, required this.userId, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +91,7 @@ class BaseScreen extends StatelessWidget {
     );
   }
 }
-/*
+
  PreferredSizeWidget _buildAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
@@ -163,4 +163,4 @@ class BaseScreen extends StatelessWidget {
       iconTheme: const IconThemeData(color: Colors.white),
     );
   }
-  */
+*/  

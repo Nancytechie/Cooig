@@ -249,26 +249,26 @@ class _NoticeboardState extends State<Noticeboard> {
           children: [
             Padding(
               padding: const EdgeInsets.only(
-                  left: 40.0, right: 40.0, top: 20.0, bottom: 20.0),
-              child: TextField(
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Search',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
-                    borderRadius: BorderRadius.horizontal(
-                      left: Radius.circular(27),
-                      right: Radius.circular(27),
-                    ),
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    query = value;
-                  });
-                },
-              ),
+                  left: 40.0, right: 40.0, top: 10.0, bottom: 20.0),
+              // child: TextField(
+              //   style: const TextStyle(color: Colors.white),
+              //   decoration: const InputDecoration(
+              //     labelText: 'Search',
+              //     enabledBorder: OutlineInputBorder(
+              //       borderSide:
+              //           BorderSide(color: Color.fromARGB(255, 96, 39, 146)),
+              //       borderRadius: BorderRadius.horizontal(
+              //         left: Radius.circular(27),
+              //         right: Radius.circular(27),
+              //       ),
+              //     ),
+              //   ),
+              //   onChanged: (value) {
+              //     setState(() {
+              //       query = value;
+              //     });
+              //   },
+              // ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -544,24 +544,24 @@ class _NoticeboardState extends State<Noticeboard> {
                                               item['id'], item['starredBy']);
                                         },
                                       ),
-                                      IconButton(
-                                        icon: const Icon(Icons.calendar_today,
-                                            color: Colors.white),
-                                        onPressed: () {
-                                          _addToGoogleCalendar(
-                                              item['dateTime'] ?? '',
-                                              item['heading'] ?? '');
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.share,
-                                            color: Colors.white),
-                                        onPressed: () {
-                                          _shareNotice(
-                                              item['heading'] ?? 'No Title',
-                                              item['imageUrl'] ?? '');
-                                        },
-                                      ),
+                                      // IconButton(
+                                      //   icon: const Icon(Icons.calendar_today,
+                                      //       color: Colors.white),
+                                      //   onPressed: () {
+                                      //     _addToGoogleCalendar(
+                                      //         item['dateTime'] ?? '',
+                                      //         item['heading'] ?? '');
+                                      //   },
+                                      // ),
+                                      // IconButton(
+                                      //   icon: const Icon(Icons.share,
+                                      //       color: Colors.white),
+                                      //   onPressed: () {
+                                      //     _shareNotice(
+                                      //         item['heading'] ?? 'No Title',
+                                      //         item['imageUrl'] ?? '');
+                                      //   },
+                                      // ),
                                     ],
                                   ),
                                 ],
