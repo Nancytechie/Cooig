@@ -386,6 +386,126 @@ class _PollWidgetState extends State<PollWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('posts_upload')
+          .doc(widget.pollId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const CircularProgressIndicator();
+        }
+
+        final pollData = snapshot.data!.data() as Map<String, dynamic>;
+        final votes = Map<String, int>.from(pollData['votes'] ?? {});
+        final totalVotes = votes.values.fold(0, (sum, count) => sum + count);
+
+        return Container(
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: widget.userImage.isNotEmpty
+                        ? NetworkImage(widget.userImage)
+                        : const AssetImage('assets/default_avatar.png')
+                            as ImageProvider,
+                    radius: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    widget.userName,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(widget.question,
+                  style: const TextStyle(fontSize: 16, color: Colors.white)),
+              const SizedBox(height: 10),
+              ...widget.options.map((option) {
+                final voteCount = votes[option] ?? 0;
+                final percentage =
+                    totalVotes > 0 ? (voteCount / totalVotes) : 0.0;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Stack(
+                    children: [
+                      ElevatedButton(
+                        onPressed: widget.selectedOption == null
+                            ? () => _handleVote(option)
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            side: widget.selectedOption == option
+                                ? const BorderSide(color: Colors.blue, width: 2)
+                                : const BorderSide(
+                                    color: Colors.white, width: 2),
+                          ),
+                          minimumSize: const Size(400, 50),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(option,
+                                style: const TextStyle(color: Colors.white)),
+                            Text(
+                                '${(percentage * 100).toStringAsFixed(1)}% ($voteCount)',
+                                style: const TextStyle(color: Colors.white)),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 400 * percentage,
+                          decoration: BoxDecoration(
+                            color: Colors.purple.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              if (totalVotes > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text('Total votes: $totalVotes',
+                      style:
+                          const TextStyle(fontSize: 14, color: Colors.white)),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/*
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('posts_upload')
             .doc(widget.pollId)
@@ -517,7 +637,7 @@ class _PollWidgetState extends State<PollWidget> {
         });
   }
 }
-
+*/
 class PostWidget extends StatefulWidget {
   final String postID;
   final String userName;

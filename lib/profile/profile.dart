@@ -164,8 +164,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   /// **Build Profile Box**
   Widget _buildProfileBox() {
-    return FutureBuilder<DocumentSnapshot>(
-      future: _firestore.collection('users').doc(widget.userId).get(),
+    return StreamBuilder<DocumentSnapshot>(
+      stream: _firestore.collection('users').doc(widget.userId).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -396,11 +396,11 @@ Widget _buildPostStream(userId) {
             return const SizedBox.shrink();
           }
 
-          return FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance
+          return StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance
                 .collection('users')
                 .doc(post['userID'])
-                .get(),
+                .snapshots(),
             builder: (context, userSnapshot) {
               if (!userSnapshot.hasData || userSnapshot.data == null) {
                 return const SizedBox.shrink();
@@ -1091,11 +1091,11 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     Timestamp? timestamp =
                         comment['timestamp'] as Timestamp?; // Correct retrieval
 
-                    return FutureBuilder<DocumentSnapshot>(
-                      future: FirebaseFirestore.instance
+                    return StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseFirestore.instance
                           .collection('users')
                           .doc(comment['userID'])
-                          .get(),
+                          .snapshots(),
                       builder: (context, userSnapshot) {
                         if (!userSnapshot.hasData ||
                             !userSnapshot.data!.exists) {
@@ -1220,11 +1220,11 @@ class NavigationDrawer extends StatelessWidget {
               child: Center(
                 child: Align(
                   alignment: Alignment.center,
-                  child: FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance
+                  child: StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
                         .collection('users')
                         .doc(userId)
-                        .get(),
+                        .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();

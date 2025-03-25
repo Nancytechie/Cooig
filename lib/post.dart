@@ -810,11 +810,12 @@ class _PostScreenState extends State<PostScreen> {
               return Container(
                 color: Colors.black, // Background color of the bottom sheet
                 height: 200,
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(12.0),
                 child: GridView.count(
-                  crossAxisCount: 4,
+                  crossAxisCount: 3,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
+                  // childAspectRatio: 0.1,
                   children: [
                     _buildOptionIcon(
                         Icons.camera_alt, 'Camera', _pickImageFromCamera),
@@ -822,10 +823,10 @@ class _PostScreenState extends State<PostScreen> {
                         Icons.photo, 'Gallery', _pickFilesFromGallery),
                     _buildOptionIcon(
                         Icons.insert_drive_file, 'Document', _pickAllFiles),
-                    _buildOptionIcon(
-                        Icons.audiotrack, 'Audio', _pickaudioFiles),
-                    _buildOptionIcon(Icons.location_on, 'Location',
-                        () => _showLocationPermissionsDialog(context)), //
+                    //_buildOptionIcon(
+                    //  Icons.audiotrack, 'Audio', _pickaudioFiles),
+                    //_buildOptionIcon(Icons.location_on, 'Location',
+                    //  () => _showLocationPermissionsDialog(context)), //
                     _buildOptionIcon(Icons.poll, 'Poll', () {
                       Navigator.push(
                         context,
