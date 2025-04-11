@@ -549,7 +549,14 @@ class NavigationDrawer extends StatelessWidget {
               leading: const Icon(Iconsax.logout, color: Colors.white),
               title:
                   const Text("Log out", style: TextStyle(color: Colors.white)),
-              onTap: () {},
+              onTap: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => Login()),
+                  (route) => false, // Remove all previous routes
+                );
+              },
             ),
           ],
         ),

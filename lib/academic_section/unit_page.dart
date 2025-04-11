@@ -282,11 +282,11 @@ class _UnitPageState extends State<UnitPage> {
                                 icon: Icon(Icons.near_me, color: Colors.white),
                                 onPressed: () => _handleLike(noteId, userId),
                               ),
-                              Text(
-                                'Share',
-                                style: TextStyle(
-                                    fontSize: 13, color: Colors.white70),
-                              ),
+                              // Text(
+                              //   'Share',
+                              //   style: TextStyle(
+                              //       fontSize: 13, color: Colors.white70),
+                              // ),
                             ],
                           ),
                         ],

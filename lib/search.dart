@@ -140,9 +140,11 @@ class _MySearchPageState extends State<MySearchPage> {
                     ),
                     title: Text(
                       data['full_name'],
-                      style: const TextStyle(color: Colors.white),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     // Navigate to ProfilePage on tap
+                    // jiya yeh mt htana
                     onTap: () {
                       if (data['role'] == "Student") {
                         Navigator.push(
