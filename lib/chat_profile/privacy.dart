@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({super.key});
@@ -8,10 +10,45 @@ class PrivacyScreen extends StatefulWidget {
 }
 
 class _PrivacyScreenState extends State<PrivacyScreen> {
-  bool messageDisappear = false;
   bool readReceipts = true;
   bool typingIndicator = true;
-  bool lastSeen = true;
+  String? currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    _loadPrivacySettings();
+  }
+
+  Future<void> _loadPrivacySettings() async {
+    if (currentUserId == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('userPrivacySettings')
+        .doc(currentUserId)
+        .get();
+
+    if (doc.exists) {
+      setState(() {
+        readReceipts = doc.data()?['readReceipts'] ?? true;
+        typingIndicator = doc.data()?['typingIndicator'] ?? true;
+      });
+    }
+  }
+
+  Future<void> _updatePrivacySettings() async {
+    if (currentUserId == null) return;
+
+    await FirebaseFirestore.instance
+        .collection('userPrivacySettings')
+        .doc(currentUserId)
+        .set({
+      'readReceipts': readReceipts,
+      'typingIndicator': typingIndicator,
+      'lastUpdated': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +61,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         backgroundColor: const Color(0xFF9752C5),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Go back to the previous screen
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
@@ -34,55 +69,27 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         child: ListView(
           children: [
             buildPrivacySection(
-              'Manage Message Visibility',
-              [
-                buildSwitchTile(
-                  'Auto-Disappear Messages',
-                  'Messages will vanish when the chat is closed.',
-                  messageDisappear,
-                  (value) {
-                    setState(() {
-                      messageDisappear = value;
-                    });
-                  },
-                ),
-                buildStaticTile(
-                  'End-to-End Encryption',
-                  'Messages are encrypted for your privacy.',
-                ),
-              ],
-            ),
-            buildPrivacySection(
               'Interaction Control',
               [
                 buildSwitchTile(
                   'Read Confirmations',
                   'Let others see when you\'ve read their messages.',
                   readReceipts,
-                  (value) {
-                    setState(() {
-                      readReceipts = value;
-                    });
+                  (value) async {
+                    setState(() => readReceipts = value);
+                    await _updatePrivacySettings();
+                    
+                    // Update all conversations to reflect this change
+                    await _updateReadReceiptsInConversations(value);
                   },
                 ),
                 buildSwitchTile(
                   'Typing Visibility',
                   'Show when you are typing a message.',
                   typingIndicator,
-                  (value) {
-                    setState(() {
-                      typingIndicator = value;
-                    });
-                  },
-                ),
-                buildSwitchTile(
-                  'Last Online Status',
-                  'Display your last active status.',
-                  lastSeen,
-                  (value) {
-                    setState(() {
-                      lastSeen = value;
-                    });
+                  (value) async {
+                    setState(() => typingIndicator = value);
+                    await _updatePrivacySettings();
                   },
                 ),
               ],
@@ -117,6 +124,26 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _updateReadReceiptsInConversations(bool enabled) async {
+    if (currentUserId == null) return;
+
+    // Get all conversations where this user is a participant
+    final conversations = await FirebaseFirestore.instance
+        .collection('conversations')
+        .where('participants', arrayContains: currentUserId)
+        .get();
+
+    // Update read receipts setting in each conversation
+    final batch = FirebaseFirestore.instance.batch();
+    for (final doc in conversations.docs) {
+      batch.update(doc.reference, {
+        'readReceipts.$currentUserId': enabled,
+      });
+    }
+
+    await batch.commit();
   }
 
   Widget buildPrivacySection(String title, List<Widget> children) {
@@ -177,33 +204,6 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
     );
   }
 
-  Widget buildStaticTile(String title, String subtitle) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget buildActionTile(String title, IconData icon, VoidCallback onTap) {
     return ListTile(
       title: Text(title, style: TextStyle(fontSize: 16)),
@@ -224,7 +224,7 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
       'Technical Problems',
     ];
 
-    String? selectedIssue; // Variable to hold the selected issue
+    String? selectedIssue;
 
     showDialog(
       context: context,
@@ -252,23 +252,17 @@ class _PrivacyScreenState extends State<PrivacyScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close the dialog
-                  },
+                  onPressed: () => Navigator.pop(context),
                   child: Text('Cancel'),
                 ),
                 ElevatedButton(
                   onPressed: selectedIssue != null
                       ? () {
-                          // Handle reporting logic here
-                          Navigator.pop(context); // Close the dialog
+                          Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('$selectedIssue reported!'),
-                            ),
-                          );
-                        }
-                      : null, // Disable button if no issue is selected
+                            SnackBar(content: Text('$selectedIssue reported!')),);
+                      }
+                      : null,
                   child: Text('Report'),
                 ),
               ],

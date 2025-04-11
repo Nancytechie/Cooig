@@ -83,8 +83,8 @@ class _HomeScreenState extends State<HomeScreen>
               unselectedLabelColor: Colors.white70,
               tabs: [
                 Tab(text: 'Chats'),
-                Tab(text: 'Groups'),
-                Tab(text: 'Archived'),
+                // Tab(text: 'Groups'),
+                // Tab(text: 'Archived'),
               ],
             ),
           ),

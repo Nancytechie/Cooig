@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/chat_profile/privacy.dart';
+import 'package:cooig_firebase/chat_profile/theme.dart';
 import 'package:cooig_firebase/home.dart';
 import 'package:http/http.dart' as http;
 import 'package:cooig_firebase/chat_profile/home.dart';
@@ -1085,36 +1087,87 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
             ],
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.call),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => VoiceCallScreen(
-                    userId: widget.chatUserId,
-                    userName: widget.fullName,
-                  ),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.videocam),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => VideoCallScreen(
-                    userId: widget.chatUserId,
-                    userName: widget.fullName,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+actions: [
+  PopupMenuButton<String>(
+    icon: Icon(Icons.more_vert),
+    onSelected: (String choice) {
+      switch (choice) {
+        case 'Profile':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => IndividualChatScreen(
+                fullName: widget.fullName,
+                image: widget.image,
+                currentUserId: widget.currentUserId,
+                chatUserId: widget.chatUserId,
+                backgroundColor: Colors.white,
+              ),
+            ),
+          );
+          break;
+        case 'Theme':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ThemeSelectionScreen(
+                onThemeSelected: (Color selectedColor) {
+                  FirebaseFirestore.instance
+                      .collection('conversations')
+                      .doc(widget.currentUserId)
+                      .update({
+                    'backgroundColor': selectedColor.value,
+                  });
+                },
+              ),
+            ),
+          );
+          break;
+        case 'Privacy':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PrivacyScreen(),
+            ),
+          );
+          break;
+      }
+    },
+    itemBuilder: (BuildContext context) => [
+      PopupMenuItem(
+        value: 'Profile',
+        child: Row(
+          children: [
+            Icon(Icons.person, size: 20),
+            SizedBox(width: 10),
+            Text('Profile'),
+          ],
+        ),
+      ),
+      PopupMenuItem(
+        value: 'Theme',
+        child: Row(
+          children: [
+            Icon(Icons.palette, size: 20),
+            SizedBox(width: 10),
+            Text('Theme'),
+          ],
+        ),
+      ),
+      PopupMenuItem(
+        value: 'Privacy',
+        child: Row(
+          children: [
+            Icon(Icons.lock, size: 20),
+            SizedBox(width: 10),
+            Text('Privacy'),
+          ],
+        ),
+      ),
+    ],
+  ),
+],
+
       ),
       body: Column(
         children: [
