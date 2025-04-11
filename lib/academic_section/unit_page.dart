@@ -278,10 +278,10 @@ class _UnitPageState extends State<UnitPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              IconButton(
-                                icon: Icon(Icons.near_me, color: Colors.white),
-                                onPressed: () => _handleLike(noteId, userId),
-                              ),
+                              // IconButton(
+                              //   icon: Icon(Icons.near_me, color: Colors.white),
+                              //   onPressed: () => _handleLike(noteId, userId),
+                              // ),
                               // Text(
                               //   'Share',
                               //   style: TextStyle(
