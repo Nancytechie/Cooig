@@ -732,7 +732,7 @@ class _NavState extends State<Nav> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => Societyprofile(userid: widget.userId)),
+                builder: (context) => Societyprofile(userid: widget.userId ,index : 4)),
           );
         } else if (userRole == "Student") {
           Navigator.pushReplacement(

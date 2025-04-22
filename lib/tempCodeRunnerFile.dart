@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,7 +20,6 @@ class _MicScreenState extends State<MicScreen> {
   late FlutterSoundRecorder _recorder;
   bool _isRecorderInitialized = false;
   bool isRecording = false;
-  bool isPreviewAvailable = false;
   String recordingDuration = "00:00";
   Timer? _timer;
   DateTime? _startTime;
@@ -52,17 +52,12 @@ class _MicScreenState extends State<MicScreen> {
         '${dir.path}/post_audio_${DateTime.now().millisecondsSinceEpoch}.aac';
 
     await _recorder.startRecorder(
-      toFile: recordedFilePath,
-      codec: Codec.aacADTS,
-    );
+        toFile: recordedFilePath, codec: Codec.aacADTS);
 
     _startTime = DateTime.now();
     _startTimer();
 
-    setState(() {
-      isRecording = true;
-      isPreviewAvailable = false;
-    });
+    setState(() => isRecording = true);
   }
 
   Future<void> stopRecording() async {
@@ -71,28 +66,17 @@ class _MicScreenState extends State<MicScreen> {
     final path = await _recorder.stopRecorder();
     _timer?.cancel();
 
+    final totalDuration = DateTime.now().difference(_startTime!).inSeconds;
+
+    if (path != null) {
+      final url = await uploadToFirebase(File(path), 'post_audios');
+      widget.onSendRecording("$url?duration=$totalDuration");
+    }
+
     setState(() {
       isRecording = false;
-      isPreviewAvailable = true;
-    });
-  }
-
-  void resetRecording() {
-    setState(() {
-      recordedFilePath = null;
       recordingDuration = "00:00";
-      isPreviewAvailable = false;
     });
-  }
-
-  void sendRecording() async {
-    if (recordedFilePath == null) return;
-
-    final totalDuration = DateTime.now().difference(_startTime!).inSeconds;
-    final url = await uploadToFirebase(File(recordedFilePath!), 'post_audios');
-    widget.onSendRecording("$url?duration=$totalDuration");
-
-    Navigator.pop(context);
   }
 
   Future<String> uploadToFirebase(File file, String folder) async {
@@ -130,67 +114,51 @@ class _MicScreenState extends State<MicScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (isRecording) ...[
-                WaveWidget(),
-                SizedBox(height: 10),
-                Text(
-                  recordingDuration,
-                  style: TextStyle(color: Colors.white, fontSize: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              isRecording ? "Recording..." : "Hold mic to record",
+              style: TextStyle(color: Colors.white70),
+            ),
+            SizedBox(height: 20),
+            if (isRecording)
+              Text(
+                recordingDuration,
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            SizedBox(height: 20),
+            GestureDetector(
+              onLongPress: startRecording,
+              onLongPressUp: stopRecording,
+              child: Container(
+                padding: EdgeInsets.all(25),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isRecording ? Colors.red : Colors.grey[800],
                 ),
-                SizedBox(height: 30),
-              ],
-              GestureDetector(
-                onTap: () {
-                  isRecording ? stopRecording() : startRecording();
-                },
-                child: Container(
-                  padding: EdgeInsets.all(25),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isRecording ? Colors.red : Colors.grey[800],
-                  ),
-                  child: Icon(
-                    Icons.mic,
-                    color: Colors.white,
-                    size: 40,
-                  ),
+                child: Icon(
+                  Icons.mic,
+                  color: Colors.white,
+                  size: 40,
                 ),
               ),
+            ),
+            if (isRecording) ...[
               SizedBox(height: 30),
-              if (!isRecording && isPreviewAvailable) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.refresh, color: Colors.white),
-                      iconSize: 30,
-                      onPressed: resetRecording,
-                    ),
-                    SizedBox(width: 20),
-                    IconButton(
-                      icon: Icon(Icons.send, color: Colors.greenAccent),
-                      iconSize: 30,
-                      onPressed: sendRecording,
-                    ),
-                  ],
-                ),
-              ],
+              WaveWidget(),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  stopRecording();
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: Text("Cancel"),
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );

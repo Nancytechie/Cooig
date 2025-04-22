@@ -837,9 +837,19 @@ class _PostScreenState extends State<PostScreen> {
                       );
                     }),
                     _buildOptionIcon(Icons.mic, 'Voice', () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MicScreen()));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MicScreen(
+                            onSendRecording: (String urlWithDuration) {
+                              print("Recording uploaded: $urlWithDuration");
+                              // you can also set it to a controller or variable here
+                            },
+                          ),
+                        ),
+                      );
                     }),
+
                     _buildOptionIcon(Icons.gif, 'Gif', () => _pickGif(context)),
                   ],
                 ),

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cooig_firebase/profile/otherprofile.dart';
-import 'package:cooig_firebase/profile/profi.dart';
-import 'package:cooig_firebase/society/societyprofile/othersociety.dart';
+import 'package:cooig_firebase/profile/otherprofile.dart' as profile;
+//import 'package:cooig_firebase/profile/profi.dart';
+import 'package:cooig_firebase/society/societyprofile/othersociety.dart' as society;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -150,7 +150,7 @@ class _MySearchPageState extends State<MySearchPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Otherprofile(
+                            builder: (context) => profile.Otherprofile(
                               otheruserid: data.id, userId: widget.userId,
 
                               // Pass the user ID to ProfilePage
@@ -161,7 +161,7 @@ class _MySearchPageState extends State<MySearchPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Othersociety(
+                            builder: (context) => society.Othersociety(
                               otheruserid: data.id,
                               userId: widget
                                   .userId, // Pass the user ID to ProfilePage

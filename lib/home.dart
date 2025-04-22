@@ -297,6 +297,7 @@ class _HomePageState extends State<Homepage> {
                     pollId: posts[index].id, // Pass the document ID as pollId
                     userName: userName,
                     userImage: userImage,
+                    timestamp: post['timestamp'] ?? Timestamp.now(),
                     question: post['question'] ?? '',
                     options: post['options'] != null
                         ? post['options'].cast<String>()
@@ -342,6 +343,7 @@ class PollWidget extends StatefulWidget {
   final List<String> imageUrls;
   final bool isTextOption;
   final String? selectedOption;
+  final Timestamp timestamp;
   final void Function(String option) onOptionSelected;
   const PollWidget({
     super.key,
@@ -354,6 +356,7 @@ class PollWidget extends StatefulWidget {
     required this.isTextOption,
     required this.selectedOption,
     required this.onOptionSelected,
+    required this.timestamp,
   });
 
   @override
@@ -381,6 +384,11 @@ class _PollWidgetState extends State<PollWidget> {
 
       transaction.update(pollRef, {'votes': votes});
     });
+  }
+
+  String _formatTimestamp(Timestamp timestamp) {
+    final dateTime = timestamp.toDate();
+    return "${dateTime.day}/${dateTime.month}/${dateTime.year} at ${dateTime.hour}:${dateTime.minute}";
   }
 
   @override
@@ -428,6 +436,16 @@ class _PollWidgetState extends State<PollWidget> {
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                         color: Colors.white),
+                  ),
+                  const SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    _formatTimestamp(widget.timestamp),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),

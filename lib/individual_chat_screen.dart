@@ -156,20 +156,23 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   }
 
   void _initializeMessageStream() {
-    if (conversationId != null) {
+    if (conversationId != null && messagesStream == null) {
+      final newStream = FirebaseFirestore.instance
+          .collection('conversations')
+          .doc(conversationId)
+          .collection('messages')
+          .orderBy('sent', descending: true)
+          .snapshots()
+          .asyncMap((snapshot) => snapshot.docs
+              .map((doc) => Message.fromFirestore(doc))
+              .where((message) =>
+                  !(message.deletedFor?.contains(widget.currentUserId) ??
+                      false))
+              .toList());
+
+      if (!mounted) return;
       setState(() {
-        messagesStream = FirebaseFirestore.instance
-            .collection('conversations')
-            .doc(conversationId)
-            .collection('messages')
-            .orderBy('sent', descending: true)
-            .snapshots()
-            .map((snapshot) => snapshot.docs
-                .map((doc) => Message.fromFirestore(doc))
-                .where((message) =>
-                    !(message.deletedFor?.contains(widget.currentUserId) ??
-                        false))
-                .toList());
+        messagesStream = newStream;
       });
     }
   }
@@ -184,7 +187,8 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
         typingStream = FirebaseFirestore.instance
             .collection('chats')
             .doc(conversationId)
-            .snapshots();
+            .snapshots()
+            .distinct();
       });
       _fetchBackgroundColor();
       typingStream?.listen((snapshot) {
@@ -713,6 +717,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
     } catch (e) {
       print("Error sending message: $e");
     }
+    _controller.clear();
   }
 
   Future<String> uploadFileToStorage(File file, String folderName) async {
@@ -865,7 +870,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
     }
   }
 
-  Future<void> _selectDocument() async {
+  Future<void> _selectDocument() async {  //this is the main function of document uploading
     try {
       // Open file picker to select document
       FilePickerResult? result =
@@ -1087,87 +1092,86 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
             ],
           ),
         ),
-actions: [
-  PopupMenuButton<String>(
-    icon: Icon(Icons.more_vert),
-    onSelected: (String choice) {
-      switch (choice) {
-        case 'Profile':
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => IndividualChatScreen(
-                fullName: widget.fullName,
-                image: widget.image,
-                currentUserId: widget.currentUserId,
-                chatUserId: widget.chatUserId,
-                backgroundColor: Colors.white,
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert),
+            onSelected: (String choice) {
+              switch (choice) {
+                case 'Profile':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => IndividualChatScreen(
+                        fullName: widget.fullName,
+                        image: widget.image,
+                        currentUserId: widget.currentUserId,
+                        chatUserId: widget.chatUserId,
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
+                  );
+                  break;
+                case 'Theme':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ThemeSelectionScreen(
+                        onThemeSelected: (Color selectedColor) {
+                          FirebaseFirestore.instance
+                              .collection('conversations')
+                              .doc(widget.currentUserId)
+                              .update({
+                            'backgroundColor': selectedColor.value,
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                  break;
+                case 'Privacy':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PrivacyScreen(),
+                    ),
+                  );
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem(
+                value: 'Profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.person, size: 20),
+                    SizedBox(width: 10),
+                    Text('Profile'),
+                  ],
+                ),
               ),
-            ),
-          );
-          break;
-        case 'Theme':
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ThemeSelectionScreen(
-                onThemeSelected: (Color selectedColor) {
-                  FirebaseFirestore.instance
-                      .collection('conversations')
-                      .doc(widget.currentUserId)
-                      .update({
-                    'backgroundColor': selectedColor.value,
-                  });
-                },
+              PopupMenuItem(
+                value: 'Theme',
+                child: Row(
+                  children: [
+                    Icon(Icons.palette, size: 20),
+                    SizedBox(width: 10),
+                    Text('Theme'),
+                  ],
+                ),
               ),
-            ),
-          );
-          break;
-        case 'Privacy':
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => PrivacyScreen(),
-            ),
-          );
-          break;
-      }
-    },
-    itemBuilder: (BuildContext context) => [
-      PopupMenuItem(
-        value: 'Profile',
-        child: Row(
-          children: [
-            Icon(Icons.person, size: 20),
-            SizedBox(width: 10),
-            Text('Profile'),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        value: 'Theme',
-        child: Row(
-          children: [
-            Icon(Icons.palette, size: 20),
-            SizedBox(width: 10),
-            Text('Theme'),
-          ],
-        ),
-      ),
-      PopupMenuItem(
-        value: 'Privacy',
-        child: Row(
-          children: [
-            Icon(Icons.lock, size: 20),
-            SizedBox(width: 10),
-            Text('Privacy'),
-          ],
-        ),
-      ),
-    ],
-  ),
-],
-
+              PopupMenuItem(
+                value: 'Privacy',
+                child: Row(
+                  children: [
+                    Icon(Icons.lock, size: 20),
+                    SizedBox(width: 10),
+                    Text('Privacy'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -1175,11 +1179,7 @@ actions: [
             child: messagesStream == null
                 ? Center(child: CircularProgressIndicator())
                 : StreamBuilder<List<Message>>(
-                    stream: messagesStream?.map((messages) => messages
-                        .where((message) => !(message.deletedFor
-                                ?.contains(widget.currentUserId) ??
-                            false))
-                        .toList()),
+                    stream: messagesStream,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator());
@@ -1234,6 +1234,7 @@ actions: [
                                   ),
                                 ),
                               SwipeableContainer(
+                                key: ValueKey(message.messageId),
                                 message: message,
                                 isSentByCurrentUser: isSentByCurrentUser,
                                 onSwipeReply: (String replyPreview) {
@@ -1248,6 +1249,7 @@ actions: [
                                         details.globalPosition);
                                   },
                                   child: MessageBubble(
+                                    key: ValueKey(message.messageId),
                                     message: message,
                                     isSentByCurrentUser: isSentByCurrentUser,
                                     conversationId: conversationId ?? "",
@@ -1340,14 +1342,26 @@ actions: [
                     child: TextField(
                       controller: _controller,
                       onChanged: (value) {
-                        setState(() {
-                          isTyping = value.isNotEmpty;
-                        });
+                        isTyping = value.isNotEmpty;
+
+                        if (conversationId != null) {
+                          FirebaseFirestore.instance
+                              .collection('chats')
+                              .doc(conversationId)
+                              .update({'isTyping': value.isNotEmpty});
+                        }
                       },
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null, // Allows vertical expansion as needed
+                      minLines: 1, // Minimum height (optional)
                       decoration: InputDecoration(
                         labelText: 'Type a message...',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
                         ),
                       ),
                     ),
