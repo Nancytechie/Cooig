@@ -104,24 +104,24 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
       actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Badge(
-            backgroundColor: Color(0xFF635A8F),
-            textColor: Colors.white,
-            label: Text('5'),
-            child: Icon(Icons.notifications, color: Colors.white),
-          ),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Badge(
-            backgroundColor: Color(0xFF635A8F),
-            textColor: Colors.white,
-            label: Text('5'),
-            child: Icon(Icons.messenger_outline_rounded, color: Colors.white),
-          ),
-        ),
+        // IconButton(
+        //   onPressed: () {},
+        //   icon: const Badge(
+        //     backgroundColor: Color(0xFF635A8F),
+        //     textColor: Colors.white,
+        //     label: Text('5'),
+        //     child: Icon(Icons.notifications, color: Colors.white),
+        //   ),
+        // ),
+        // IconButton(
+        //   onPressed: () {},
+        //   icon: const Badge(
+        //     backgroundColor: Color(0xFF635A8F),
+        //     textColor: Colors.white,
+        //     label: Text('5'),
+        //     child: Icon(Icons.messenger_outline_rounded, color: Colors.white),
+        //   ),
+        // ),
       ],
       iconTheme: IconThemeData(color: Colors.white),
     );
@@ -457,9 +457,7 @@ Widget _buildPostStream(userId) {
   );
 }
 
-void setState(Null Function() param0) {
-}
-
+void setState(Null Function() param0) {}
 
 class PollWidget extends StatefulWidget {
   final String pollId; // Pass poll ID from Firestore
@@ -750,8 +748,6 @@ class _PollWidgetState extends State<PollWidget> {
   }
 }
 
-
-
 //void setState(Null Function() param0) {}
 
 class PostWidget extends StatefulWidget {
@@ -833,22 +829,29 @@ class _PostWidgetState extends State<PostWidget> {
       );
       return;
     }
-
-    List<dynamic> likesList = postData['likes'] ?? [];
+    List<dynamic> likesList = List.from(postData['likes'] ?? []);
     bool isCurrentlyLiked = likesList.contains(currentUserID);
+
+    // Only proceed if there's a valid state change
+    if (isCurrentlyLiked) {
+      likesList.remove(currentUserID);
+    } else {
+      likesList.add(currentUserID);
+    }
+
+    int updatedLikeCount = likesList.length;
 
     await FirebaseFirestore.instance
         .collection('posts_upload')
         .doc(widget.postID)
         .update({
-      'likes': isCurrentlyLiked
-          ? FieldValue.arrayRemove([currentUserID])
-          : FieldValue.arrayUnion([currentUserID])
+      'likes': likesList,
+      'likeCount': updatedLikeCount, // optional: use server-side count
     });
 
     setState(() {
       isLiked = !isCurrentlyLiked;
-      likeCount = isCurrentlyLiked ? likeCount - 1 : likeCount + 1;
+      likeCount = updatedLikeCount;
     });
   }
 
@@ -1399,29 +1402,29 @@ class NavigationDrawer extends StatelessWidget {
                 );
               },
             ),
-            ListTile(
-              leading: const Icon(Iconsax.security_safe, color: Colors.white),
-              title:
-                  const Text("Privacy", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.bookmark, color: Colors.white),
-              title: const Text("Bookmarked",
-                  style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(LineIcons.handshake, color: Colors.white),
-              title: const Text("Help", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(LineIcons.cog, color: Colors.white),
-              title:
-                  const Text("Settings", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
+            // ListTile(
+            //   leading: const Icon(Iconsax.security_safe, color: Colors.white),
+            //   title:
+            //       const Text("Privacy", style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.bookmark, color: Colors.white),
+            //   title: const Text("Bookmarked",
+            //       style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(LineIcons.handshake, color: Colors.white),
+            //   title: const Text("Help", style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(LineIcons.cog, color: Colors.white),
+            //   title:
+            //       const Text("Settings", style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
             ListTile(
               leading: const Icon(Iconsax.logout, color: Colors.white),
               title:

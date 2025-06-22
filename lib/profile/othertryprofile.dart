@@ -1,17 +1,11 @@
 import 'dart:io';
 
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/individual_chat_screen.dart';
-import 'package:cooig_firebase/pdfviewerurl.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:video_player/video_player.dart';
 
 class Otherprofile extends StatefulWidget {
   dynamic userId;

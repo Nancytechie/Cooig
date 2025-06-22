@@ -183,10 +183,10 @@ class _LostpageState extends State<Lostpage> {
                             color: const Color.fromARGB(255, 181, 166, 166),
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
-                            decoration: !isFoundSelected
-                                ? TextDecoration.underline
-                                : TextDecoration.none,
-                            decorationColor: Color.fromARGB(255, 179, 73, 211),
+                            // decoration: !isFoundSelected
+                            //     ? TextDecoration.underline
+                            //     : TextDecoration.none,
+                            // decorationColor: Color.fromARGB(255, 179, 73, 211),
                           ),
                         ),
                       ),
@@ -215,9 +215,9 @@ class _LostpageState extends State<Lostpage> {
                             color: const Color.fromARGB(255, 181, 166, 166),
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            decoration: isFoundSelected
-                                ? TextDecoration.underline
-                                : TextDecoration.none,
+                            // decoration: isFoundSelected
+                            //     ? TextDecoration.underline
+                            //     : TextDecoration.none,
                           ),
                         ),
                       ),

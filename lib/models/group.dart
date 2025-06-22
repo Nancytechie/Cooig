@@ -26,10 +26,13 @@ class Group {
       id: doc.id,
       name: data['name'] ?? '', // Default to empty string if not found
       imageUrl: data['image'] ?? '', // Default to empty string if not found
-      description: data['description'] ?? '', // Default to empty string if not found
-      memberIds: List<String>.from(data['memberIds'] ?? []), // Default to empty list if not found
+      description:
+          data['description'] ?? '', // Default to empty string if not found
+      memberIds: List<String>.from(
+          data['memberIds'] ?? []), // Default to empty list if not found
       createdAt: (data['createdAt'] as Timestamp).toDate(),
-      createdBy: data['createdBy'] ?? '', // Default to empty string if not found
+      createdBy:
+          data['createdBy'] ?? '', // Default to empty string if not found
     );
   }
 

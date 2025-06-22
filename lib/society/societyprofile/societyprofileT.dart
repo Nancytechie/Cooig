@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cooig_firebase/appbar.dart';
-import 'package:cooig_firebase/bar.dart';
 import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/loginsignup/login.dart';
 import 'package:cooig_firebase/pdfviewerurl.dart';
@@ -13,12 +11,10 @@ import 'package:cooig_firebase/upload.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 

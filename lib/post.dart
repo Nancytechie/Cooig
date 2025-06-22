@@ -1,7 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_final_fields
 
-import 'dart:async';
-import 'dart:core';
 import 'dart:core';
 import 'dart:io';
 //import 'dart:io';
@@ -17,14 +15,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/mapscreen.dart';
 import 'package:cooig_firebase/poll.dart';
-import 'package:cooig_firebase/postpage.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:giphy_get/giphy_get.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
@@ -357,7 +353,10 @@ class _PostScreenState extends State<PostScreen> {
 
     if (result != null && result.files.single.path != null) {
       String filePath = result.files.single.path!;
-      await player.setFilePath(filePath);
+      await player.setFilePath(filePath);        
+
+
+      
       duration = player.duration ?? Duration.zero;
       if (mounted) {
         setState(() {

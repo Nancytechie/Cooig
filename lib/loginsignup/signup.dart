@@ -5,9 +5,7 @@ import 'package:cooig_firebase/loginsignup/userprofile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:csv/csv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SignUp extends StatefulWidget {
@@ -64,49 +62,60 @@ class _SignUpState extends State<SignUp> {
 
   Future<void> _signUpWithEmail() async {
     // Validation logic...
+    final RegExp igdtuwEmailRegex =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@igdtuw\.ac\.in$');
 
-    try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      User? user = userCredential.user;
-      if (user != null) {
-        await user.sendEmailVerification();
-        Fluttertoast.showToast(
-          msg: "Verification email sent. Please check your inbox.",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-        );
-
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text("Verify Your Email"),
-            content: Text(
-                "A verification link has been sent to ${user.email}. Please verify your email to complete the sign-up process."),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text("OK"),
-              ),
-            ],
-          ),
-        );
-
-        _checkEmailVerificationStatus(); // Start polling for verification
-      }
-    } catch (e) {
-      print("Error signing up: $e");
+    if (!igdtuwEmailRegex.hasMatch(_emailController.text)) {
       Fluttertoast.showToast(
-        msg: "Sign up failed: $e",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
+        msg: 'Enter a valid college email id.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
       );
+      return;
+    } else {
+      try {
+        UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+
+        User? user = userCredential.user;
+        if (user != null) {
+          await user.sendEmailVerification();
+          Fluttertoast.showToast(
+            msg: "Verification email sent. Please check your inbox.",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+          );
+
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Verify Your Email"),
+              content: Text(
+                  "A verification link has been sent to ${user.email}. Please verify your email to complete the sign-up process."),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text("OK"),
+                ),
+              ],
+            ),
+          );
+
+          _checkEmailVerificationStatus(); // Start polling for verification
+        }
+      } catch (e) {
+        print("Error signing up: $e");
+        Fluttertoast.showToast(
+          msg: "Sign up failed: $e",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
     }
   }
 

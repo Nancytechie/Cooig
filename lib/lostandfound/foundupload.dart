@@ -90,15 +90,13 @@ class _FoundItemScreenState extends State<FoundItemScreen> {
   Future<void> _pickImageFromGallery() async {
     final List<XFile> pickedImages = await _picker.pickMultiImage();
 
-    if (pickedImages != null) {
-      List<File> files = pickedImages.map((xFile) => File(xFile.path)).toList();
+    List<File> files = pickedImages.map((xFile) => File(xFile.path)).toList();
 
-      setState(() {
-        _galleryFiles.addAll(files);
-        media.addAll(files);
-      });
+    setState(() {
+      _galleryFiles.addAll(files);
+      media.addAll(files);
+    });
     }
-  }
 
   Future<void> _takePhoto() async {
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);

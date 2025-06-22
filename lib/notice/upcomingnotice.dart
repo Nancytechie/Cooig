@@ -7,7 +7,6 @@ import 'package:cooig_firebase/notice/noticedetailscreen.dart';
 import 'package:cooig_firebase/notice/noticeupload.dart';
 import 'package:cooig_firebase/notice/starredpostsscreen.dart';
 import 'package:flutter/material.dart';
-import 'package:cooig_firebase/appbar.dart';
 import 'package:cooig_firebase/background.dart';
 //import 'package:cooig/foundpage.dart';
 //import 'package:cooig/userprofile.dart';
@@ -204,20 +203,20 @@ class _upcomingNoticeState extends State<upcomingNotice> {
             ),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.star, // Favorite star icon
-                color: Colors.white, // You can customize this color
-              ),
-              onPressed: () {
-                // Navigate to StarredPostsScreen when star icon is clicked
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const StarredPostsScreen()),
-                );
-              },
-            ),
+            // IconButton(
+            //   icon: const Icon(
+            //     Icons.star, // Favorite star icon
+            //     color: Colors.white, // You can customize this color
+            //   ),
+            //   onPressed: () {
+            //     // Navigate to StarredPostsScreen when star icon is clicked
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => const StarredPostsScreen()),
+            //     );
+            //   },
+            // ),
           ],
         ),
         backgroundColor: Colors.transparent,
@@ -273,11 +272,11 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                             color: const Color.fromARGB(255, 181, 166, 166),
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
-                            decoration: !isFoundSelected
-                                ? TextDecoration.underline
-                                : TextDecoration.none,
-                            decorationColor:
-                                const Color.fromARGB(255, 179, 73, 211),
+                            // decoration: !isFoundSelected
+                            //     ? TextDecoration.underline
+                            //     : TextDecoration.none,
+                            // decorationColor:
+                            //     const Color.fromARGB(255, 179, 73, 211),
                           ),
                         ),
                       ),
@@ -306,9 +305,9 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                             color: const Color.fromARGB(255, 181, 166, 166),
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            decoration: isFoundSelected
-                                ? TextDecoration.underline
-                                : TextDecoration.none,
+                            // decoration: isFoundSelected
+                            //     ? TextDecoration.underline
+                            //     : TextDecoration.none,
                           ),
                         ),
                       ),
@@ -508,15 +507,15 @@ class _upcomingNoticeState extends State<upcomingNotice> {
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.star_border,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () {
-                                          // Save post logic here
-                                        },
-                                      ),
+                                      // IconButton(
+                                      //   icon: const Icon(
+                                      //     Icons.star_border,
+                                      //     color: Colors.white,
+                                      //   ),
+                                      //   onPressed: () {
+                                      //     // Save post logic here
+                                      //   },
+                                      // ),
                                       // IconButton(
                                       //   icon: const Icon(Icons.calendar_today,
                                       //       color: Colors.white),

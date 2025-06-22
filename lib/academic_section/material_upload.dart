@@ -48,7 +48,7 @@ class _MaterialUploadState extends State<MaterialUpload> {
           .collection('users')
           .doc(currentUser.uid)
           .get();
-      final userData = userDoc.data() as Map<String, dynamic>? ?? {};
+      final userData = userDoc.data() ?? {};
       final userName = userData['full_name'] ?? 'Anonymous';
       final userProfilePic = userData['profilepic'] ?? '';
 

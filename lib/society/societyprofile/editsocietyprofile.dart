@@ -319,6 +319,7 @@ class _EditSocietyprofileState extends State<EditSocietyprofile> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the Google Drive link';
                   }
+                  return null;
                 },
               ),
 

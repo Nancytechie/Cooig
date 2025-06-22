@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cooig_firebase/PDFViewer.dart';
 import 'package:cooig_firebase/chat_profile/privacy.dart';
 import 'package:cooig_firebase/chat_profile/theme.dart';
 import 'package:cooig_firebase/home.dart';
@@ -79,7 +80,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   late FlutterSoundPlayer _audioPlayer;
   final bool _isPlaying = false;
   String? _currentAudioUrl;
-
+  String? documentUrl;
   @override
   void initState() {
     super.initState();
@@ -323,6 +324,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
     Message message = Message(
       fromId: widget.currentUserId,
       toId: widget.chatUserId,
+
       msg: audioUrl, // Store the audio URL as the message content
       type: 'audio',
       read: false,
@@ -768,7 +770,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   Future<void> _selectFromGallery() async {
     try {
       final List<XFile> pickedFiles = await ImagePicker().pickMultiImage();
-      if (pickedFiles != null && pickedFiles.isNotEmpty) {
+      if (pickedFiles.isNotEmpty) {
         await _handleImageUpload(pickedFiles);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -870,22 +872,36 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
     }
   }
 
-  Future<void> _selectDocument() async {  //this is the main function of document uploading
+  Future<void> _selectDocument() async {
     try {
-      // Open file picker to select document
-      FilePickerResult? result =
-          await FilePicker.platform.pickFiles(type: FileType.any);
+      // Open file picker to select a document
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'docx'],
+        allowMultiple: false,
+      );
 
-      if (result != null) {
+      if (result != null && result.files.single.path != null) {
         File file = File(result.files.single.path!); // Get the selected file
+
+        // Show the PDF/docx viewer (Optional: only for PDF files or based on logic)
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PDFViewerScreen(file: file),
+          ),
+        );
+
+        // Upload the document and get the download URL
         String documentUrl = await uploadDocumentToStorage(file);
 
-        // Get the file name (this is the name saved by the user)
+        // Get the file name
         String fileName = result.files.single.name;
 
-        // Send the document name and URL as a message
-        _sendDocumentMessage(fileName, documentUrl);
+        // Send the document message
+        await _sendDocumentMessage(fileName, documentUrl);
       } else {
+        // User canceled or file path was null
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('No document selected')),
         );
@@ -898,19 +914,66 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
     }
   }
 
+  Future<void> _downloadDocument(String firebaseUrl, String fileName) async {
+    try {
+      // Fetch the PDF from the provided URL
+      final response = await http.get(Uri.parse(firebaseUrl));
+
+      if (response.statusCode == 200) {
+        // Get the Downloads directory
+        final directory = await DownloadsPath.downloadsDirectory();
+
+        if (directory != null) {
+          // Construct the full file path in the Downloads directory
+          final filePath = '${directory.path}/$fileName';
+
+          // Write the downloaded file bytes to the specified path
+          final file = File(filePath);
+          await file.writeAsBytes(response.bodyBytes);
+          Fluttertoast.showToast(
+            msg: 'PDF saved successfully to Downloads: $filePath',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: 'Downloads directory is not accessible.',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+          msg: 'Failed to download PDF . Try Again ',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: 'Failed to download PDF . Try Again ',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+  }
+
   Future<void> _sendDocumentMessage(String fileName, String documentUrl) async {
     if (conversationId == null || documentUrl.isEmpty) return;
 
     // Download the document for the receiver
+
     await _downloadDocument(documentUrl, fileName);
 
     Message message = Message(
       fromId: widget.currentUserId,
       toId: widget.chatUserId,
       msg: fileName, // Use the file name here
+      //msg :documentUrl,
       type: 'document', // Set type as 'document'
       read: false,
       sent: DateTime.now(),
+      //fileUrl: documentUrl,
     );
 
     try {
@@ -946,6 +1009,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
       }
     } catch (e) {
       print("Error downloading document: $e");
+        print('Failed to download document');
     }
   }
 */
@@ -1777,6 +1841,34 @@ class _MessageBubbleState extends State<MessageBubble> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
+                          final dir = await DownloadsPath.downloadsDirectory();
+                          final filePath = '${dir!.path}/${widget.message.msg}';
+                          final file = File(filePath);
+
+                          // If file exists, open it
+                          if (await file.exists()) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PDFViewerScreen(file: file),
+                              ),
+                            );
+                          } else {
+                            // If not, download first and then open
+                            //await _downloadDocument(widget.message.fileUrl, widget.message.msg);
+                            final downloadedFile = File(filePath);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PDFViewerScreen(file: downloadedFile),
+                              ),
+                            );
+                          }
+                        },
+
+                        /*
                           String localDocumentPath =
                               await _getLocalDocumentPath(widget
                                   .message.msg); //flutter toast t show download
@@ -1792,6 +1884,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                                 content: Text("Unable to open the document")));
                           }
                         },
+                        */
                         child: Text(
                           widget.message.msg.split('/').last,
                           style: const TextStyle(

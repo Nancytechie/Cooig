@@ -108,10 +108,11 @@ class _OtherprofileState extends State<Otherprofile>
               color: Colors.white), // Drawer icon
           onPressed: () {
             Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomeScreen(currentUserId: widget.userId)),
-                );
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      HomeScreen(currentUserId: widget.userId)),
+            );
           },
         ),
       ),
@@ -332,7 +333,7 @@ class _OtherprofileState extends State<Otherprofile>
                       builder: (context) => IndividualChatScreen(
                           currentUserId: widget.userId,
                           chatUserId: widget.otheruserid,
-                          fullName: username ?? 'Unknown',
+                          fullName: fetchedUsername ?? 'Unknown',
                           image:
                               profilepic ?? 'https://via.placeholder.com/150',
                           backgroundColor:
@@ -346,13 +347,24 @@ class _OtherprofileState extends State<Otherprofile>
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              child: Row(
-                children: [
-                  Icon(Icons.message, color: Colors.black),
-                  SizedBox(width: 5),
-                  Text('Messages',
-                      style: GoogleFonts.poppins(color: Colors.black)),
-                ],
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.message, color: Colors.black, size: 20),
+                    SizedBox(width: 6),
+                    Text(
+                      'Messages',
+                      style: GoogleFonts.poppins(
+                          color: Colors.black, fontSize: 14),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -1300,29 +1312,29 @@ class NavigationDrawer extends StatelessWidget {
                 );
               },
             ),
-            ListTile(
-              leading: const Icon(Iconsax.security_safe, color: Colors.white),
-              title:
-                  const Text("Privacy", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.bookmark, color: Colors.white),
-              title: const Text("Bookmarked",
-                  style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(LineIcons.handshake, color: Colors.white),
-              title: const Text("Help", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(LineIcons.cog, color: Colors.white),
-              title:
-                  const Text("Settings", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
+            // ListTile(
+            //   leading: const Icon(Iconsax.security_safe, color: Colors.white),
+            //   title:
+            //       const Text("Privacy", style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.bookmark, color: Colors.white),
+            //   title: const Text("Bookmarked",
+            //       style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(LineIcons.handshake, color: Colors.white),
+            //   title: const Text("Help", style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(LineIcons.cog, color: Colors.white),
+            //   title:
+            //       const Text("Settings", style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
             ListTile(
               leading: const Icon(Iconsax.logout, color: Colors.white),
               title:

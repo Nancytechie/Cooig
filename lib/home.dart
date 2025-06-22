@@ -11,31 +11,21 @@ import 'package:cooig_firebase/post.dart';
 import 'package:cooig_firebase/search.dart';
 import 'package:cooig_firebase/selectuser.dart';
 //import 'package:cooig_firebase/upload.dart';
-import 'package:iconsax_flutter/iconsax_flutter.dart';
 //import 'package:line_icons/line_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 //import 'package:camera/camera.dart'; // Import camera package
 
-import 'package:carousel_slider/carousel_slider.dart';
 //import 'package:chewie/chewie.dart';
-import 'package:cooig_firebase/chatmain.dart';
 //import 'package:cooig_firebase/lostandfound/lostpostscreen.dart';
-import 'package:cooig_firebase/notifications.dart';
 //import 'package:cooig_firebase/PDFViewer.dart';
-import 'package:cooig_firebase/search.dart';
 //import 'package:cooig_firebase/postscreen.dart';
-import 'package:flutter/material.dart';
-import 'package:iconsax_flutter/iconsax_flutter.dart';
 //import 'package:path/path.dart';
-import 'package:cooig_firebase/post.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 //import 'package:carousel_slider/carousel_slider.dart';
 
 // Import the ClipsScreen
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
 // Import camera package
 
 //import 'package:chewie/chewie.dart';
@@ -104,33 +94,26 @@ class _HomePageState extends State<Homepage> {
           IconButton(
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Notifications(
-                            userId: widget.userId,
-                          )));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Notifications(
+                    userId: widget.userId,
+                  ),
+                ),
+              );
             },
-            icon: const Badge(
-              backgroundColor: Color(0xFF635A8F),
-              textColor: Colors.white,
-              label: Text('5'),
-              child: Icon(Icons.notifications, color: Colors.white),
-            ),
+            icon: Icon(Icons.notifications, color: Colors.white),
           ),
           IconButton(
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          mainChat(currentUserId: widget.userId)));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => mainChat(currentUserId: widget.userId),
+                ),
+              );
             },
-            icon: const Badge(
-              backgroundColor: Color(0xFF635A8F),
-              textColor: Colors.white,
-              label: Text('5'),
-              child: Icon(Icons.messenger_outline_rounded, color: Colors.white),
-            ),
+            icon: Icon(Icons.messenger_outline_rounded, color: Colors.white),
           ),
         ],
         iconTheme: const IconThemeData(color: Colors.white),

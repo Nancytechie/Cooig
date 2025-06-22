@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # cooig_firebase
 
 A new Flutter project.
@@ -14,3 +15,6 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# Cooig
+>>>>>>> 60ac727414d397abb3be9975bc335c79203b4b93

@@ -1,7 +1,6 @@
-import 'package:cooig_firebase/individual_chat_screen.dart';
 import 'package:flutter/material.dart';
-import 'theme.dart'; // Import the theme selection screen
-import 'privacy.dart'; // Import the privacy screen
+// Import the theme selection screen
+// Import the privacy screen
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore for saving theme
 
 class HomePage extends StatefulWidget {

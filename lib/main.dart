@@ -1,26 +1,17 @@
-//import 'package:cooig_firebase/home.dart';
 import 'package:cooig_firebase/splashscreen/homescreen.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert'; // For json and utf8
-// For base64 encoding
+import 'dart:convert';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(
-    DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -47,11 +38,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  // Function to get Spotify Access Token using Client Credentials
   Future<void> _getSpotifyAccessToken() async {
     const String clientId = '5ad3ac6e91e64df59f6949998235db4e';
-    const String clientSecret =
-        'YOUR_CLIENT_SECRET'; // Replace with your client secret
+    const String clientSecret = 'YOUR_CLIENT_SECRET'; // Replace this
     const String tokenUrl = 'https://accounts.spotify.com/api/token';
 
     final response = await http.post(
@@ -68,7 +57,6 @@ class _MyAppState extends State<MyApp> {
       final jsonResponse = json.decode(response.body);
       final String accessToken = jsonResponse['access_token'];
 
-      // Save the access token in shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('spotify_access_token', accessToken);
 
@@ -84,8 +72,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.black,

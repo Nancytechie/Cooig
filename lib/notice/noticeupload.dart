@@ -125,7 +125,7 @@ class _NoticeUploadPageState extends State<NoticeUploadPage> {
             : null,
         'time': timeString, // Store the time as a string
         'imageUrl': imageUrl,
-        'username': userData['societyName'] ?? 'Unknown',
+        'username': userData['full_name'] ?? 'Unknown',
         'profilepic': userData['profilepic'] ?? '',
         'timestamp':
             FieldValue.serverTimestamp(), // Server timestamp for creation time

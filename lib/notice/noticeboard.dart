@@ -224,20 +224,20 @@ class _NoticeboardState extends State<Noticeboard> {
             ),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.star, // Favorite star icon
-                color: Colors.white, // You can customize this color
-              ),
-              onPressed: () {
-                // Navigate to StarredPostsScreen when star icon is clicked
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const StarredPostsScreen()),
-                );
-              },
-            ),
+            // IconButton(
+            //   icon: const Icon(
+            //     Icons.star, // Favorite star icon
+            //     color: Colors.white, // You can customize this color
+            //   ),
+            //   onPressed: () {
+            //     // Navigate to StarredPostsScreen when star icon is clicked
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) => const StarredPostsScreen()),
+            //     );
+            //   },
+            // ),
           ],
         ),
         backgroundColor: Colors.transparent,
@@ -532,18 +532,18 @@ class _NoticeboardState extends State<Noticeboard> {
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          item['starredBy'].contains(userId)
-                                              ? Icons.star
-                                              : Icons.star_border,
-                                          color: Colors.yellow,
-                                        ),
-                                        onPressed: () {
-                                          _toggleStar(
-                                              item['id'], item['starredBy']);
-                                        },
-                                      ),
+                                      // IconButton(
+                                      //   icon: Icon(
+                                      //     item['starredBy'].contains(userId)
+                                      //         ? Icons.star
+                                      //         : Icons.star_border,
+                                      //     color: Colors.yellow,
+                                      //   ),
+                                      //   onPressed: () {
+                                      //     _toggleStar(
+                                      //         item['id'], item['starredBy']);
+                                      //   },
+                                      // ),
                                       // IconButton(
                                       //   icon: const Icon(Icons.calendar_today,
                                       //       color: Colors.white),

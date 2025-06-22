@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax_flutter/iconsax_flutter.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class PollScreen extends StatefulWidget {
   final String userId; // Replace with your method to get the userId

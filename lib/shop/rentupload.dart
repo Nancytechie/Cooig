@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cooig_firebase/background.dart'; // Ensure this import is correct
-import 'package:path/path.dart' as path; // Use an alias for the path package
+// Use an alias for the path package
 
 class Rentupload extends StatefulWidget {
   final String userId;

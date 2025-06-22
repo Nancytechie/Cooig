@@ -206,24 +206,24 @@ class _SocietyprofileState extends State<Societyprofile>
         ),
       ),
       actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Badge(
-            backgroundColor: Color(0xFF635A8F),
-            textColor: Colors.white,
-            label: Text('5'),
-            child: Icon(Icons.notifications, color: Colors.white),
-          ),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Badge(
-            backgroundColor: Color(0xFF635A8F),
-            textColor: Colors.white,
-            label: Text('5'),
-            child: Icon(Icons.messenger_outline_rounded, color: Colors.white),
-          ),
-        ),
+        // IconButton(
+        //   onPressed: () {},
+        //   icon: const Badge(
+        //     backgroundColor: Color(0xFF635A8F),
+        //     textColor: Colors.white,
+        //     label: Text('5'),
+        //     child: Icon(Icons.notifications, color: Colors.white),
+        //   ),
+        // ),
+        // IconButton(
+        //   onPressed: () {},
+        //   icon: const Badge(
+        //     backgroundColor: Color(0xFF635A8F),
+        //     textColor: Colors.white,
+        //     label: Text('5'),
+        //     child: Icon(Icons.messenger_outline_rounded, color: Colors.white),
+        //   ),
+        // ),
       ],
       iconTheme: IconThemeData(color: Colors.white),
     );
@@ -1416,28 +1416,43 @@ class NavigationDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Iconsax.security_safe, color: Colors.white),
-              title:
-                  const Text("Privacy", style: TextStyle(color: Colors.white)),
-              onTap: () {},
+              leading: const Icon(Icons.swap_calls, color: Colors.white),
+              title: const Text(
+                "Student login",
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Login(),
+                  ),
+                );
+              },
             ),
-            ListTile(
-              leading: const Icon(Icons.bookmark, color: Colors.white),
-              title: const Text("Bookmarked",
-                  style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(LineIcons.handshake, color: Colors.white),
-              title: const Text("Help", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: const Icon(LineIcons.cog, color: Colors.white),
-              title:
-                  const Text("Settings", style: TextStyle(color: Colors.white)),
-              onTap: () {},
-            ),
+            // ListTile(
+            //   leading: const Icon(Iconsax.security_safe, color: Colors.white),
+            //   title:
+            //       const Text("Privacy", style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(Icons.bookmark, color: Colors.white),
+            //   title: const Text("Bookmarked",
+            //       style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(LineIcons.handshake, color: Colors.white),
+            //   title: const Text("Help", style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: const Icon(LineIcons.cog, color: Colors.white),
+            //   title:
+            //       const Text("Settings", style: TextStyle(color: Colors.white)),
+            //   onTap: () {},
+            // ),
             ListTile(
               leading: const Icon(Iconsax.logout, color: Colors.white),
               title:

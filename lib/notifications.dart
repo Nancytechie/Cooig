@@ -49,7 +49,7 @@ class _NotificationsState extends State<Notifications> {
         .doc(fromUserID)
         .get()
         .then((userDoc) {
-      final userData = userDoc.data() as Map<String, dynamic>? ?? {};
+      final userData = userDoc.data() ?? {};
       final userName = userData['full_name'] ?? 'Unknown';
       final userImage = userData['profilepic'] ?? '';
 
