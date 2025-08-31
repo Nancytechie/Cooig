@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cooig_firebase/profile/otherprofile.dart' as profile;
 //import 'package:cooig_firebase/profile/profi.dart';
-import 'package:cooig_firebase/society/societyprofile/othersociety.dart' as society;
+import 'package:cooig_firebase/society/societyprofile/othersociety.dart'
+    as society;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -87,9 +88,17 @@ class _MySearchPageState extends State<MySearchPage> {
                           contentPadding: EdgeInsets.symmetric(vertical: 8),
                         ),
                         onChanged: (value) {
-                          setState(() {
-                            searchName = value;
-                          });
+                          if (value.isNotEmpty) {
+                            String capitalized =
+                                value[0].toUpperCase() + value.substring(1);
+                            setState(() {
+                              searchName = capitalized;
+                            });
+                          } else {
+                            setState(() {
+                              searchName = '';
+                            });
+                          }
                         },
                       ),
                     ),
