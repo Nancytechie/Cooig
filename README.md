@@ -1,20 +1,8 @@
-<<<<<<< HEAD
-# cooig_firebase
+Cooig 🎓
 
-A new Flutter project.
+Your own college app
 
-## Getting Started
+Cooig is a campus-focused social and utility platform that connects students of the same college. It’s built to bring together everything a student needs in one place — from social interactions to study resources.
 
-This project is a starting point for a Flutter application.
+![fet](https://github.com/user-attachments/assets/38e36507-06dd-4449-9cac-61acb57c3427)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# Cooig
->>>>>>> 60ac727414d397abb3be9975bc335c79203b4b93
