@@ -61,5 +61,3 @@ Every student has a personal profile.
 
 Cooig isn’t just an app, it’s your college’s own platform. A place where everything student-related lives together: social, academic, and personal.
 
-Showcase your details, activities, and contributions.
-(Screenshot goes here)
