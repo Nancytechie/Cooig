@@ -13,7 +13,7 @@ Cooig is a campus-focused social and utility platform that connects students of 
 Share what’s on your mind with your college community.
 Only students from your college can see, react, and engage.
 A safe, closed environment for student interaction.
-<img width="524" height="536" alt="Resized_Cooig_Promo_Image" src="https://github.com/user-attachments/assets/51fd833b-bc82-4c5e-a014-024d19ad04bf" />
+<img width="1024" height="1536" alt="Resized_Cooig_Promo_Image" src="https://github.com/user-attachments/assets/51fd833b-bc82-4c5e-a014-024d19ad04bf" />
 
 
 🛒 Buy & Sell
